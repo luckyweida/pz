@@ -2,7 +2,7 @@
 
 namespace Pz\Orm;
 
-use Web\Db\Walle;
+use Pz\Db\Walle;
 
 /**
  * Class _Model
