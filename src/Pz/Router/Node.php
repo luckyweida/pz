@@ -22,10 +22,6 @@ class Node
      */
     private $rank;
     /**
-     * @var array
-     */
-    private $extras = array();
-    /**
      * @var string
      */
     private $url;
@@ -48,6 +44,10 @@ class Node
     /**
      * @var array
      */
+    private $extras = array();
+    /**
+     * @var array
+     */
     private $children = array();
 
     /**
@@ -56,20 +56,18 @@ class Node
      * @param $title
      * @param string $parentId
      * @param int $rank
-     * @param array $extras
      * @param string $url
      * @param string $template
      * @param int $status
      * @param int $allowExtra
      * @param int $maxParams
      */
-    public function __construct($id, $title, $parentId = '', $rank = 0, $extras = array(), $url = '', $template = '', $status = 1, $allowExtra = 0, $maxParams = 0)
+    public function __construct($id, $title, $parentId = '', $rank = 0, $url = '', $template = '', $status = 1, $allowExtra = 0, $maxParams = 0)
     {
         $this->id = $id;
         $this->title = $title;
         $this->parentId = $parentId;
         $this->rank = $rank;
-        $this->extras = $extras;
         $this->url = $url;
         $this->template = $template;
         $this->status = $status;
@@ -139,22 +137,6 @@ class Node
     public function setRank(int $rank)
     {
         $this->rank = $rank;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExtras(): array
-    {
-        return $this->extras;
-    }
-
-    /**
-     * @param array $extras
-     */
-    public function setExtras(array $extras)
-    {
-        $this->extras = $extras;
     }
 
     /**
@@ -240,6 +222,30 @@ class Node
     /**
      * @return array
      */
+    public function getExtras(): array
+    {
+        return $this->extras;
+    }
+
+    /**
+     * @param array $extras
+     */
+    public function setExtras(array $extras)
+    {
+        $this->extras = $extras;
+    }
+
+    /**
+     * @param Node $child
+     */
+    public function addExtra($key, $value)
+    {
+        $this->extras[$key] = $value;
+    }
+
+    /**
+     * @return array
+     */
     public function getChildren(): array
     {
         return $this->children;
@@ -282,7 +288,7 @@ class Node
         return 0;
     }
 
-    public function hasVisibleChildren()
+    public function hasActiveChildren()
     {
         foreach ($this->getChildren() as $itm) {
             if ($itm->getStatus() == 1) {

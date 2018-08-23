@@ -17,6 +17,8 @@ class Mary extends Mo
      */
     public function mary()
     {
+
+        return $this->render('layout.twig');
         $request = Request::createFromGlobals();
         $requestUri = $request->getRequestUri();
         if ($requestUri == '/pz') {
@@ -30,6 +32,6 @@ class Mary extends Mo
 
     public function getNodes()
     {
-
+        return array();
     }
 }

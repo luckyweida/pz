@@ -7,6 +7,12 @@ use Cocur\Slugify\Slugify;
 
 class Walle
 {
+    private $pdo;
+
+    public function __construct(\PDO $pdo)
+    {
+        $this->pdo = $pdo;
+    }
 
     public static function sync($pdo)
     {
@@ -16,10 +22,10 @@ class Walle
 
         $table = new Table($pdo, $tableName);
         $table->create();
-        $table->sync(static::fields());
+        $table->sync(static::getFields());
     }
 
-    public static function fields()
+    public static function getFields()
     {
         $rc = new \ReflectionClass(get_called_class());
         $properties = $rc->getProperties();
@@ -27,7 +33,7 @@ class Walle
         $result = array();
         foreach ($properties as $property) {
             $comment = $property->getDocComment();
-            preg_match('/@var(\ )+(.*)/', $comment, $matches);
+            preg_match('/@pz(\ )+(.*)/', $comment, $matches);
             if (count($matches) == 3) {
                 $result[$property->getName()] = $matches[2];
             }

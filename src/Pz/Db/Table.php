@@ -44,9 +44,7 @@ class Table
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($result as $itm) {
-            if ($itm['Field'] != 'id') {
-                $fields[$itm['Field']] = $itm['Type'] . ($itm['Null'] == 'NO' ? ' NOT NULL' : ' NULL');
-            }
+            $fields[$itm['Field']] = $itm['Type'] . ($itm['Null'] == 'NO' ? ' NOT NULL' : ' NULL');
         }
         return $fields;
     }

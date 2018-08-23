@@ -22,14 +22,20 @@ abstract class Mo extends Controller
     function getParams()
     {
         $request = Request::createFromGlobals();
-        $requestUri = $request->getPathInfo();
+        $requestUri = rtrim($request->getPathInfo(), '/');
         $fragments = explode('/', trim($requestUri, '/'));
         $args = array();
-        $node = $this->tree->getNodeByUrl($requestUri);
+        $node = $this->tree->getNodeByUrl($requestUri . '/');
+        if (!$node) {
+            $node = $this->tree->getNodeByUrl($requestUri);
+        }
         if (!$node) {
             for ($i = count($fragments), $il = 0; $i > $il; $i--) {
                 $parts = array_slice($fragments, 0, $i);
-                $node = $this->tree->getNodeByUrl('/' . implode('/', $parts));
+                $node = $this->tree->getNodeByUrl('/' . implode('/', $parts) . '/');
+                if (!$node) {
+                    $node = $this->tree->getNodeByUrl('/' . implode('/', $parts));
+                }
                 if ($node && (
                         (!$node->getAllowExtra() && (count($fragments) - count($parts) == 0)) ||
                         ($node->getAllowExtra() && $node->getMaxParams() >= (count($fragments) - count($parts)))
@@ -47,6 +53,7 @@ abstract class Mo extends Controller
             'fragments' => $fragments,
             'node' => $node,
             'root' => $this->tree->getRoot(),
+            'returnUrl' => '',
         );
     }
 
