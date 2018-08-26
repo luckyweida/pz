@@ -3,19 +3,28 @@
 namespace Pz\Router;
 
 
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class Mo extends Controller
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+    /**
+     * @var Tree
+     */
     private $tree;
 
     /**
      * Mo constructor.
      */
-    public function __construct()
+    public function __construct(Connection $connection)
     {
+        $this->connection = $connection;
         $this->tree = new Tree($this->getNodes());
     }
 
