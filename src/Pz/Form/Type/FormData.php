@@ -2,6 +2,7 @@
 namespace Pz\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FormData extends AbstractType {
@@ -10,9 +11,9 @@ class FormData extends AbstractType {
 		return 'formdata';
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver) {
-		$resolver->setDefaults(array(
-			'compound' => false
-		));
-	}
+    public function configureOptions(OptionsResolver $resolver) {
+        $resolver->setDefaults(array(
+            'compound' => false,
+        ));
+    }
 }

@@ -60,7 +60,7 @@ class ContentHandler
 
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $orm->save();
         }
 

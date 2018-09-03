@@ -2,7 +2,7 @@
     {% from _self import nav as nav %}
     {% if node.status == 1 %}
         <li {% if node.contains(curr) %}class="active"{% endif %}>
-            <a href="{{ node.url }}">
+            <a href="{{ node.url ?: '#' }}">
                 {% if node.extras.icon is defined %}<i class="{{ node.extras.icon }}"></i>{% endif %}
                 <span class="nav-label">{{ node.title }}</span>
                 {% if node.hasActiveChildren %}

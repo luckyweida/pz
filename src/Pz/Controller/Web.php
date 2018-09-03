@@ -3,19 +3,19 @@
 namespace Pz\Controller;
 
 
-use Pz\Router\Mo;
+use Pz\Axiom\Mo;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class Mary extends Mo
+class Web extends Mo
 {
 
     /**
-     * @route("/{page}", requirements={"page" = ".*"}, name="mary")
+     * @route("/{page}", requirements={"page" = ".*"}, name="web")
      * @return Response
      */
-    public function mary()
+    public function web()
     {
 
         return $this->render('layout.twig');

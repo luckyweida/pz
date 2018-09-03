@@ -30,8 +30,18 @@ class ModelHandler
         $className::sync($pdo);
     }
 
-    public function handle($orm)
+    public function handle(_Model $orm)
     {
+        if (!$orm->getId()) {
+            $request = Request::createFromGlobals();
+            $requestUri = rtrim($request->getPathInfo(), '/');
+            $fragments = explode('/', $requestUri);
+            if (count($fragments) >= 3 && $fragments[2] == 'admin') {
+                $orm->setModelType(1);
+                $orm->setDataType(1);
+            }
+        }
+
         $myClass = get_class($orm);
         $columns = array_keys($myClass::getFields());
         $form = $this->container->get('form.factory')->create(\Pz\Form\Builder\Model::class, $orm, array(
@@ -40,7 +50,12 @@ class ModelHandler
 
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($orm->getModelType() == 0) {
+                $orm->setNamespace('Web\\Orm');
+            } else {
+                $orm->setNamespace('Pz\\Orm');
+            }
             $this->setGenereatedFile($orm);
             $this->setCustomFile($orm);
             $orm->save();
@@ -102,7 +117,7 @@ EOD;
         $str = str_replace('{fields}', join("\n", $fields), $str);
         $str = str_replace('{methods}', join("\n", $methods), $str);
 
-        $file = $this->container->getParameter('kernel.project_dir') . '/src/' . $orm->getNamespace() . '/Generated/' . $orm->getClassName() . '.php';
+        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . $orm->getNamespace() . '/Generated/' . $orm->getClassName() . '.php';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);

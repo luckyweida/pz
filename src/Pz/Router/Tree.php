@@ -13,11 +13,10 @@ class Tree
      */
     public function __construct($nodes)
     {
-        $this->nodes = $nodes;
-
         usort($nodes, function ($node1, $node2) {
             return $node1->getRank() - $node2->getRank();
         });
+        $this->nodes = $nodes;
     }
 
     public function getNodeByUrl($url)

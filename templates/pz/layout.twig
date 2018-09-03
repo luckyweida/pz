@@ -49,21 +49,21 @@
                         <nav class="navbar-default navbar-static-side" role="navigation">
                             <div class="sidebar-collapse">
                                 <ul class="nav" id="side-menu">
-                                    {#<li class="nav-header">#}
-                                        {#<div class="dropdown profile-element">#}
-                                        {#<span>#}
-                                            {#<img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>#}
-                                        {#</span>#}
-                                            {#<a data-toggle="dropdown" class="dropdown-toggle" href="#">#}
-                                            {#<span class="clear">#}
-                                                {#<span class="block m-t-xs"> <strong class="font-bold">{{ constant('PROJECT') }}</strong></span>#}
-                                            {#</span>#}
-                                            {#</a>#}
-                                        {#</div>#}
-                                        {#<div class="logo-element">#}
-                                            {#<img style="width: 30px;" class="img-circle" src="{% if app.user.image %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>#}
-                                        {#</div>#}
-                                    {#</li>#}
+                                    <li class="nav-header">
+                                        <div class="dropdown profile-element">
+                                        <span>
+                                            <img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image is defined %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
+                                        </span>
+                                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                            <span class="clear">
+                                                <span class="block m-t-xs"> <strong class="font-bold">{{ app.user.username }}</strong></span>
+                                            </span>
+                                            </a>
+                                        </div>
+                                        <div class="logo-element">
+                                            <img style="width: 30px;" class="img-circle" src="{% if app.user.image is defined %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>
+                                        </div>
+                                    </li>
 
                                     {% for itm in root.children %}
                                         {{ nav(itm, 1, node) }}
@@ -80,7 +80,7 @@
                                     </div>
                                     <ul class="nav navbar-top-links navbar-right">
                                         {#<li><span class="m-r-sm text-muted welcome-message">{{ app.user.name }}</span></li>#}
-                                        <li><a href="/pz/secured/logout"> <i class="fa fa-sign-out"></i> Log out</a></li>
+                                        <li><a href="/pz/logout"> <i class="fa fa-sign-out"></i> Log out</a></li>
                                     </ul>
                                 </nav>
                             </div>

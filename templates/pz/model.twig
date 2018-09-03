@@ -25,20 +25,15 @@
                 <div class="ibox-content">
                     <form method="post" autocomplete="off" novalidate>
                         <div class="row show-grid form-group">
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 {{ form_label(form.title) }}
                                 {{ form_widget(form.title, {attr: {class: 'form-control'}}) }}
                                 {{ form_errors(form.title) }}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 {{ form_label(form.className) }}
                                 {{ form_widget(form.className, {attr: {class: 'form-control'}}) }}
                                 {{ form_errors(form.className) }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ form_label(form.namespace) }}
-                                {{ form_widget(form.namespace, {attr: {class: 'form-control'}}) }}
-                                {{ form_errors(form.namespace) }}
                             </div>
                             <div class="col-md-3">
                                 <div class="i-checks">
@@ -121,7 +116,7 @@
             </div>
         </div>
     </div>
-{% endblock %} 
+{% endblock %}
 
 {% block extraFooter %}
     <script id="field-source" type="text/x-handlebars-template">{% include 'pz/handlebars/pages/model/field.twig' %}</script>
@@ -152,7 +147,7 @@
                     itm: {
                         id: 'z' + new Date().getTime(),
                         column: $(this).val(),
-                        widget: $(this).find('option:selected').val().toLowerCase().indexOf('date') === -1 ? 'text' : 'date',
+                        widget: $(this).find('option:selected').val().toLowerCase().indexOf('date') === -1 ? '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextType' : '\\Pz\\Form\\Type\\DatePicker',
                         label: $(this).find('option:selected').text().toLowerCase().replace(/\b[a-z]/g, function (letter) {
                             return letter.toUpperCase();
                         }) + ':',

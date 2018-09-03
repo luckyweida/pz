@@ -34,11 +34,6 @@ class Model extends AbstractType
             'constraints' => array(
                 new Assert\NotBlank()
             )
-        ))->add('namespace', TextType::class, array(
-            'label' => 'Namespace:',
-            'constraints' => array(
-                new Assert\NotBlank()
-            )
         ))->add('modelType', ChoiceType::class, array(
             'label' => 'Model type:',
             'expanded' => true,

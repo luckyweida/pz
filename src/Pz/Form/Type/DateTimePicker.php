@@ -2,6 +2,7 @@
 namespace Pz\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class DateTimePicker extends AbstractType {
@@ -10,7 +11,7 @@ class DateTimePicker extends AbstractType {
 		return 'datetimepicker';
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver) {
+	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefaults(array(
 			'compound' => false
 		));

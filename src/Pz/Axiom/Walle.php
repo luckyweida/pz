@@ -168,8 +168,13 @@ class Walle
      */
     public static function getFields()
     {
+        $result = array();
         $rc = static::getReflectionClass();
-        return static::propertiesToFields(array_merge($rc->getParentClass()->getProperties(), $rc->getProperties()));
+        do {
+            $result = array_merge($rc->getProperties(), $result);
+            $rc = $rc->getParentClass();
+        } while ($rc);
+        return static::propertiesToFields($result);
     }
 
     /**
@@ -177,8 +182,8 @@ class Walle
      */
     public static function getParentFields()
     {
-        $rc = static::getReflectionClass();
-        return static::propertiesToFields($rc->getParentClass()->getProperties());
+        $rc = new \ReflectionClass(__CLASS__);
+        return static::propertiesToFields($rc->getProperties());
     }
 
     /**
@@ -393,4 +398,21 @@ class Walle
         $slugify = new Slugify(['trim' => false]);
         return $slugify->slugify($rc->getShortName(), '_');
     }
+
+    /**
+     * @return \PDO
+     */
+    public function getPdo(): \PDO
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * @param \PDO $pdo
+     */
+    public function setPdo(\PDO $pdo = null)
+    {
+        $this->pdo = $pdo;
+    }
+
 }
