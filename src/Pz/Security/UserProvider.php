@@ -1,6 +1,6 @@
 <?php
 
-namespace Pz\Security\User;
+namespace Pz\Security;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
