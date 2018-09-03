@@ -67,9 +67,13 @@ class Cms extends Mo
         foreach ($modelDatabase as $idx => $itm) {
             $dataType = $itm->getDataType() == 0 ? 2 : 4;
             $dataTypeText = $itm->getDataType() == 0 ? 'database' : 'admin';
-
-            $nodes[] = new Node($dataType . '-' . $itm->getId(), $itm->getTitle(), $dataType, $idx, "/pz/$dataTypeText/" . $itm->getId(), 'pz/contents.twig');
-            $nodes[] = new Node($dataType . '-' . $itm->getId() . '-1', $itm->getTitle(), $dataType . '-' . $itm->getId(), 0, "/pz/$dataTypeText/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);
+            if ($itm->getDataType() == 0) {
+                $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/contents.twig');
+                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);
+            } else if ($itm->getDataType() == 1) {
+                $nodes[] = new Node('4-' . $itm->getId(), $itm->getTitle(), 4, $idx, "/pz/admin/" . $itm->getId(), 'pz/contents.twig');
+                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);
+            }
         }
 
         return $nodes;
