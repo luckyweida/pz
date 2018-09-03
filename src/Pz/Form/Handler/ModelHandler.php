@@ -112,6 +112,7 @@ EOD;
 
 
         $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_generated.txt');
+        $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
         $str = str_replace('{namespace}', $orm->getNamespace() . '\\Generated', $str);
         $str = str_replace('{classname}', $orm->getClassName(), $str);
         $str = str_replace('{fields}', join("\n", $fields), $str);
@@ -162,6 +163,7 @@ EOD;
         $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/' . $orm->getClassName() . '.php';
         if (!file_exists($file)) {
             $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
+            $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
             $str = str_replace('{namespace}', $orm->getNamespace(), $str);
             $str = str_replace('{classname}', $orm->getClassName(), $str);
 
