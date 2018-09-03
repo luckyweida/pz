@@ -117,7 +117,7 @@ EOD;
         $str = str_replace('{fields}', join("\n", $fields), $str);
         $str = str_replace('{methods}', join("\n", $methods), $str);
 
-        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . $orm->getNamespace() . '/Generated/' . $orm->getClassName() . '.php';
+        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/Generated/' . $orm->getClassName() . '.php';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
@@ -159,7 +159,7 @@ EOD;
 
     private function setCustomFile(_Model $orm)
     {
-        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . $orm->getNamespace() . '/' . $orm->getClassName() . '.php';
+        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/' . $orm->getClassName() . '.php';
         if (!file_exists($file)) {
             $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
             $str = str_replace('{namespace}', $orm->getNamespace(), $str);
