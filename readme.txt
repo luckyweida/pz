@@ -1,1 +1,1 @@
-Eva is still not very friendly
+Eva is still not very nice
