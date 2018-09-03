@@ -159,7 +159,7 @@ EOD;
 
     private function setCustomFile(_Model $orm)
     {
-        $file = $this->container->getParameter('kernel.project_dir') . '/src/' . $orm->getNamespace() . '/' . $orm->getClassName() . '.php';
+        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . $orm->getNamespace() . '/' . $orm->getClassName() . '.php';
         if (!file_exists($file)) {
             $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
             $str = str_replace('{namespace}', $orm->getNamespace(), $str);
