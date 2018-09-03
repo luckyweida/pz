@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Pz\Orm\User;
 
+
 class UserProvider implements UserProviderInterface
 {
     public function __construct(Connection $conn)
