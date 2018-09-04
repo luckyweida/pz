@@ -9,14 +9,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User extends \Pz\Orm\Generated\User implements UserInterface, EquatableInterface, \Serializable
 {
-    public function save()
+    public function save($doubleCheck = false)
     {
         if ($this->getPasswordInput()) {
             $encoder = new MessageDigestPasswordEncoder();
             $this->setPassword($encoder->encodePassword($this->getPasswordInput(), ''));
             $this->setPasswordInput(null);
         }
-        parent::save();
+        parent::save($doubleCheck);
     }
 
     /**

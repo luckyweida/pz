@@ -10,9 +10,9 @@ class {classname} extends Walle
 {methods}
 
     /**
-     * @return string
+     * @return mixed
      */
-    function getSerializedModel(): string
+    public static function getSerializedModel()
     {
         return "{serializedModel}";
     }

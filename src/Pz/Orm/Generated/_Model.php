@@ -221,9 +221,9 @@ class _Model extends Walle
     }
 
     /**
-     * @return string
+     * @return null
      */
-    function getSerializedModel(): string
+    public static function getSerializedModel()
     {
         return null;
     }

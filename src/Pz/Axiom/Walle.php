@@ -345,7 +345,7 @@ abstract class Walle
     /**
      * @return mixed
      */
-    public function save()
+    public function save($doubleCheck = false)
     {
         $tableName = static::getTableName();
         $fields = array_keys(static::getFields());
@@ -356,15 +356,23 @@ abstract class Walle
         }
         $this->setModified(date('Y-m-d H:i:s'));
 
+        $notFound = 0;
+        if ($this->getId() && $doubleCheck) {
+            $orm = static::getById($this->getPdo(), $this->getId());
+            if (!$orm) {
+                $notFound = 1;
+            }
+        }
+
         $sql = '';
         $params = array();
-        if (!$this->getId()) {
+        if (!$this->getId() || $notFound) {
             $sql = "INSERT INTO `{$tableName}` ";
             $part1 = '(';
             $part2 = ' VALUES (';
             foreach ($fields as $field) {
                 if ($field == 'id') {
-                    continue;
+//                    continue;
                 }
 
                 $part1 .= "`$field`, ";
@@ -390,12 +398,20 @@ abstract class Walle
             $params[] = $this->id;
         }
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        if (!$this->getId()) {
-            $this->setId($this->pdo->lastInsertId());
+        try {
+//            var_dump($params, $sql);exit;
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            if (!$this->getId()) {
+                $this->setId($this->pdo->lastInsertId());
+            }
+            return $this->getId();
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());exit;
         }
-        return $this->getId();
+
+        return null;
+
     }
 
     /**
@@ -416,17 +432,23 @@ abstract class Walle
         return $slugify->slugify($rc->getShortName(), '_');
     }
 
-    public function getModel() :_Model
+    /**
+     * @return null|_Model
+     */
+    public static function getModel($pdo)
     {
-        $serializedModel = $this->getSerializedModel();
+        $serializedModel = static::getSerializedModel();
         if ($serializedModel) {
             /** @var _Model $model */
             $model = unserialize($serializedModel);
-            $model->setPdo($this->getPdo());
+            $model->setPdo($pdo);
             return $model;
         }
         return null;
     }
 
-    abstract function getSerializedModel() :string;
+    /**
+     * @return mixed
+     */
+    abstract public static function getSerializedModel();
 }
