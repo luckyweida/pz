@@ -74,6 +74,9 @@ class ModelHandler
 
     private function setGenereatedFile(_Model $orm)
     {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
         $myClass = get_class($orm);
         $fieldChoices = $myClass::getFieldChoices();
         $columnsJson = json_decode($orm->getColumnsJson());
@@ -110,7 +113,6 @@ EOD;
 EOD;
         }, $columnsJson);
 
-
         $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_generated.txt');
         $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
         $str = str_replace('{namespace}', $orm->getNamespace() . '\\Generated', $str);
@@ -118,15 +120,16 @@ EOD;
         $str = str_replace('{fields}', join("\n", $fields), $str);
         $str = str_replace('{methods}', join("\n", $methods), $str);
 
+        $orm->setPdo(null);
+        $str = str_replace('{serializedModel}', addslashes(serialize($orm)), $str);
+        $orm->setPdo($pdo);
+
         $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/Generated/' . $orm->getClassName() . '.php';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
         file_put_contents($file, $str);
-
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        $pdo = $connection->getWrappedConnection();
 
         if ($orm->getId()) {
             $db = new Db($connection);

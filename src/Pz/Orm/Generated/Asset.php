@@ -152,5 +152,9 @@ class Asset extends Walle
     {
         $this->fileLocation = $fileLocation;
     }
-    
+
+    function getSerializedModel(): string
+    {
+        return null;
+    }
 }

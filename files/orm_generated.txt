@@ -8,4 +8,12 @@ class {classname} extends Walle
 {
 {fields}
 {methods}
+
+    /**
+     * @return string
+     */
+    function getSerializedModel(): string
+    {
+        return "{serializedModel}";
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-09-03 23:03:24
+//Last updated: 2018-09-04 13:31:04
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -173,5 +173,9 @@ class User extends Walle
     {
         $this->image = $image;
     }
-    
+
+    function getSerializedModel(): string
+    {
+        return null;
+    }
 }

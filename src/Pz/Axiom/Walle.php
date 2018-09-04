@@ -3,8 +3,9 @@
 namespace Pz\Axiom;
 
 use Cocur\Slugify\Slugify;
+use Pz\Orm\_Model;
 
-class Walle
+abstract class Walle
 {
     /**
      * @var \PDO
@@ -53,6 +54,22 @@ class Walle
         $this->added = date('Y-m-d H:i:s');
         $this->modified = date('Y-m-d H:i:s');
         $this->active = 1;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getPdo(): \PDO
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * @param \PDO $pdo
+     */
+    public function setPdo(\PDO $pdo = null)
+    {
+        $this->pdo = $pdo;
     }
 
     /**
@@ -399,20 +416,17 @@ class Walle
         return $slugify->slugify($rc->getShortName(), '_');
     }
 
-    /**
-     * @return \PDO
-     */
-    public function getPdo(): \PDO
+    public function getModel() :_Model
     {
-        return $this->pdo;
+        $serializedModel = $this->getSerializedModel();
+        if ($serializedModel) {
+            /** @var _Model $model */
+            $model = unserialize($serializedModel);
+            $model->setPdo($this->getPdo());
+            return $model;
+        }
+        return null;
     }
 
-    /**
-     * @param \PDO $pdo
-     */
-    public function setPdo(\PDO $pdo = null)
-    {
-        $this->pdo = $pdo;
-    }
-
+    abstract function getSerializedModel() :string;
 }

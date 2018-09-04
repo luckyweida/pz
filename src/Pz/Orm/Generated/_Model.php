@@ -219,4 +219,12 @@ class _Model extends Walle
     {
         $this->columnsJson = $columnsJson;
     }
+
+    /**
+     * @return string
+     */
+    function getSerializedModel(): string
+    {
+        return null;
+    }
 }
