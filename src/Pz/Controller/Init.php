@@ -27,6 +27,8 @@ class Init extends Mo
         /** @var \PDO $pdo */
         $pdo = $conn->getWrappedConnection();
 
+        $pdo->beginTransaction();
+
         $dir = $this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/src/Pz/Orm';
         $files = scandir($dir);
 
@@ -54,8 +56,6 @@ class Init extends Mo
             $className::updateModel($pdo);
         }
 
-        sleep(1);
-        
         $orm = User::getByField($pdo, 'title', 'weida');
         if (!$orm) {
             $encoder = new MessageDigestPasswordEncoder();
@@ -100,6 +100,7 @@ class Init extends Mo
             $orm->save();
         }
 
+        $pdo->commit();
 
         return new Response('OK');
     }
