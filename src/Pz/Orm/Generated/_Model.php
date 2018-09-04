@@ -223,7 +223,7 @@ class _Model extends Walle
     /**
      * @return null
      */
-    public static function getSerializedModel()
+    public static function getEncodedModel()
     {
         return null;
     }

@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-09-04 20:00:15
+//Last updated: 2018-09-04 21:52:31
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -153,12 +153,4 @@ class Asset extends Walle
         $this->fileLocation = $fileLocation;
     }
     
-
-    /**
-     * @return mixed
-     */
-    public static function getSerializedModel()
-    {
-        return "O:13:\"Pz\\Orm\\_Model\":17:{s:30:\"\0Pz\\Orm\\Generated\\_Model\0title\";s:6:\"Assets\";s:34:\"\0Pz\\Orm\\Generated\\_Model\0className\";s:5:\"Asset\";s:34:\"\0Pz\\Orm\\Generated\\_Model\0namespace\";s:6:\"Pz\\Orm\";s:34:\"\0Pz\\Orm\\Generated\\_Model\0modelType\";i:1;s:33:\"\0Pz\\Orm\\Generated\\_Model\0dataType\";i:2;s:33:\"\0Pz\\Orm\\Generated\\_Model\0listType\";i:0;s:38:\"\0Pz\\Orm\\Generated\\_Model\0numberPerPage\";s:2:\"50\";s:38:\"\0Pz\\Orm\\Generated\\_Model\0defaultSortBy\";s:2:\"id\";s:37:\"\0Pz\\Orm\\Generated\\_Model\0defaultOrder\";i:1;s:36:\"\0Pz\\Orm\\Generated\\_Model\0columnsJson\";s:1242:\"[{\"id\":\"z1535960350583\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535960414591\",\"column\":\"description\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextAreaType\",\"label\":\"Description:\",\"field\":\"description\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535960420704\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\HiddenType\",\"label\":\"Is folder?\",\"field\":\"isFolder\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535960424545\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"File name:\",\"field\":\"fileName\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535960428311\",\"column\":\"extra4\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"File type:\",\"field\":\"fileType\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535960430473\",\"column\":\"extra5\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"File size:\",\"field\":\"fileSize\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535960433312\",\"column\":\"extra6\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"File location:\",\"field\":\"fileLocation\",\"required\":0,\"sql\":\"\"}]\";s:19:\"\0Pz\\Axiom\\Walle\0pdo\";N;s:18:\"\0Pz\\Axiom\\Walle\0id\";s:1:\"2\";s:20:\"\0Pz\\Axiom\\Walle\0slug\";s:6:\"assets\";s:20:\"\0Pz\\Axiom\\Walle\0rank\";s:1:\"0\";s:21:\"\0Pz\\Axiom\\Walle\0added\";s:19:\"2018-09-03 19:42:12\";s:24:\"\0Pz\\Axiom\\Walle\0modified\";s:19:\"2018-09-03 21:07:14\";s:22:\"\0Pz\\Axiom\\Walle\0active\";s:1:\"1\";}";
-    }
 }

@@ -120,11 +120,16 @@ EOD;
         $str = str_replace('{fields}', join("\n", $fields), $str);
         $str = str_replace('{methods}', join("\n", $methods), $str);
 
-        $orm->setPdo(null);
-        $str = str_replace('{serializedModel}', addslashes(serialize($orm)), $str);
-        $orm->setPdo($pdo);
+        $path = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/Generated/';
 
-        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/Generated/' . $orm->getClassName() . '.php';
+        $file = $path . 'ModelJson/' . $orm->getClassName() . '.json';
+        $dir = dirname($file);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        file_put_contents($file, _Model::encodedModel($orm));
+
+        $file = $path . $orm->getClassName() . '.php';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
@@ -163,7 +168,8 @@ EOD;
 
     private function setCustomFile(_Model $orm)
     {
-        $file = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/' . $orm->getClassName() . '.php';
+        $path = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/';
+        $file = $path . $orm->getClassName() . '.php';
         if (!file_exists($file)) {
             $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
             $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);

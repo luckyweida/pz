@@ -167,7 +167,7 @@
             renderFields();
             renderDefaultSortBy();
             $('#columns select').each(function(key, value) {
-                if ($(value).val() == 'choice' || $(value).val() == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
+                if ($(value).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType' || $(value).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson') {
                     $('#sql' + $(value).closest('tbody').find('.id').val()).show();
                 } else {
                     $('#sql' + $(value).closest('tbody').find('.id').val()).hide();
@@ -185,7 +185,7 @@
 
             //
             $(document).on('change', '#columns select', function(ev) {
-                if ($(this).val() == 'choice' || $(this).val() == '\\Eva\\Forms\\Types\\ChoiceMultiJson') {
+                if ($(this).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType' || $(this).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson') {
                     $('#sql' + $(this).closest('tbody').find('.id').val()).show();
                 } else {
                     $('#sql' + $(this).closest('tbody').find('.id').val()).hide();

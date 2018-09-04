@@ -1,0 +1,18 @@
+{
+    "id": "1",
+    "slug": "users",
+    "rank": "0",
+    "added": "2018-08-25 19:21:03",
+    "modified": "2018-09-04 21:50:27",
+    "active": "1",
+    "title": "Users",
+    "className": "User",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 1,
+    "listType": 0,
+    "numberPerPage": "50",
+    "defaultSortBy": "title",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1535180493499\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Username:\",\"field\":\"title\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535183850245\",\"column\":\"password\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\HiddenType\",\"label\":\"Password:\",\"field\":\"password\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535183844503\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\PasswordType\",\"label\":\"Password:\",\"field\":\"passwordInput\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535183141014\",\"column\":\"name\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Name:\",\"field\":\"name\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535183147451\",\"column\":\"email\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\EmailType\",\"label\":\"Email:\",\"field\":\"email\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535183830887\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Reset token:\",\"field\":\"resetToken\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535183231304\",\"column\":\"date1\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\DateTimePicker\",\"label\":\"Reset date:\",\"field\":\"resetDate\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1535183126968\",\"column\":\"image\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\AssetPicker\",\"label\":\"Photo:\",\"field\":\"image\",\"required\":0,\"sql\":\"\"}]"
+}

@@ -345,7 +345,7 @@ abstract class Walle
     /**
      * @return mixed
      */
-    public function save($doubleCheck = false)
+    public function save($doubleCheckExistence = false)
     {
         $tableName = static::getTableName();
         $fields = array_keys(static::getFields());
@@ -357,7 +357,7 @@ abstract class Walle
         $this->setModified(date('Y-m-d H:i:s'));
 
         $notFound = 0;
-        if ($this->getId() && $doubleCheck) {
+        if ($this->getId() && $doubleCheckExistence) {
             $orm = static::getById($this->getPdo(), $this->getId());
             if (!$orm) {
                 $notFound = 1;
@@ -435,20 +435,40 @@ abstract class Walle
     /**
      * @return null|_Model
      */
-    public static function getModel($pdo)
+    public static function updateModel($pdo)
     {
-        $serializedModel = static::getSerializedModel();
-        if ($serializedModel) {
-            /** @var _Model $model */
-            $model = unserialize($serializedModel);
+        $encodedModel = static::getEncodedModel();
+        if (gettype($encodedModel) == 'string') {
+            $decodedModel = json_decode($encodedModel);
+            $model = new _Model($pdo);
+            foreach ($decodedModel as $idx => $itm) {
+                $setMethod = "set" . ucfirst($idx);
+                $model->$setMethod($itm);
+            }
             $model->setPdo($pdo);
-            return $model;
+            $model->save(true);
         }
         return null;
     }
 
+    public static function encodedModel($model)
+    {
+        $fields = array_keys(_Model::getFields());
+
+        $obj = new \stdClass();
+        foreach ($fields as $field) {
+            $getMethod = "get" . ucfirst($field);
+            $obj->{$field} = $model->$getMethod();
+        }
+        return json_encode($obj, JSON_PRETTY_PRINT);
+    }
+
     /**
-     * @return mixed
+     * @return bool|string
      */
-    abstract public static function getSerializedModel();
+    public static function getEncodedModel()
+    {
+        $rc = static::getReflectionClass();
+        return file_get_contents(__DIR__ . '/../Orm/Generated/ModelJson/' . $rc->getShortName() . '.json');
+    }
 }

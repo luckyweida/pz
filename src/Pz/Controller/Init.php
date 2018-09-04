@@ -6,6 +6,7 @@ namespace Pz\Controller;
 use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
+use Pz\Orm\AssetSize;
 use Pz\Orm\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,19 +51,53 @@ class Init extends Mo
             }
 
             $className = "Pz\\Orm\\" . rtrim($file, '.php');
-            $serialisedModel = $className::getModel($pdo);
-            if ($serialisedModel) {
-                $serialisedModel->save(true);
-            }
+            $className::updateModel($pdo);
         }
 
-        $encoder = new MessageDigestPasswordEncoder();
-        $orm = new User($pdo);
-        $orm->setTitle('weida');
-        $orm->setPassword($encoder->encodePassword('123', ''));
-        $orm->setName('Weida');
-        $orm->setEmail('luckyweida@gmail.com');
-        $orm->save();
+        $orm = User::getByField($pdo, 'title', 'weida');
+        if (!$orm) {
+            $encoder = new MessageDigestPasswordEncoder();
+            $orm = new User($pdo);
+            $orm->setTitle('weida');
+            $orm->setPassword($encoder->encodePassword('123', ''));
+            $orm->setName('Weida');
+            $orm->setEmail('luckyweida@gmail.com');
+            $orm->save();
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'full');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setTitle('full');
+            $orm->setWidth(1440);
+            $orm->save();
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'high');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setTitle('high');
+            $orm->setWidth(960);
+            $orm->save();
+        }
+
+
+        $orm = AssetSize::getByField($pdo, 'title', 'medium');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setTitle('medium');
+            $orm->setWidth(480);
+            $orm->save();
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'small');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setTitle('small');
+            $orm->setWidth(240);
+            $orm->save();
+        }
+
 
         return new Response('OK');
     }

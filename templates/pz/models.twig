@@ -53,17 +53,17 @@
                 $(val).css('width', $(val).width() + 'px');
             });
 
-            {#$('#columns').sortable({#}
-                {#stop: function (event, ui) {#}
-                    {#$.ajax({#}
-                        {#type: 'POST',#}
-                        {#url: '{{ path('sort-models') }}',#}
-                        {#data: 'data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),#}
-                        {#success: function (msg) {#}
-                        {#}#}
-                    {#});#}
-                {#}#}
-            {#})#}
+            $('#columns').sortable({
+                stop: function (event, ui) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ path('ajaxModelSort') }}',
+                        data: 'data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
+                        success: function (msg) {
+                        }
+                    });
+                }
+            })
         });
     </script>
 {% endblock %}

@@ -1,10 +1,10 @@
 <?php
-//Last updated: 2018-09-04 21:53:34
+//Last updated: 2018-09-04 21:52:50
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
 
-class AssetSize extends Walle
+class PageTemplate extends Walle
 {
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -14,7 +14,7 @@ class AssetSize extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $width;
+    private $filename;
     
     /**
      * @return mixed
@@ -35,17 +35,17 @@ class AssetSize extends Walle
     /**
      * @return mixed
      */
-    public function getWidth()
+    public function getFilename()
     {
-        return $this->width;
+        return $this->filename;
     }
     
     /**
-     * @param mixed width
+     * @param mixed filename
      */
-    public function setWidth($width)
+    public function setFilename($filename)
     {
-        $this->width = $width;
+        $this->filename = $filename;
     }
     
 }

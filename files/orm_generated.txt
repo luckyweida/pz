@@ -8,12 +8,4 @@ class {classname} extends Walle
 {
 {fields}
 {methods}
-
-    /**
-     * @return mixed
-     */
-    public static function getSerializedModel()
-    {
-        return "{serializedModel}";
-    }
 }
