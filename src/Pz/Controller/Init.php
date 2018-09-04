@@ -54,6 +54,8 @@ class Init extends Mo
             $className::updateModel($pdo);
         }
 
+        sleep(1);
+        
         $orm = User::getByField($pdo, 'title', 'weida');
         if (!$orm) {
             $encoder = new MessageDigestPasswordEncoder();

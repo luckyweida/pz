@@ -469,6 +469,6 @@ abstract class Walle
     public static function getEncodedModel()
     {
         $rc = static::getReflectionClass();
-        return file_get_contents(__DIR__ . '/../Orm/Generated/ModelJson/' . $rc->getShortName() . '.json');
+        return file_get_contents( dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
     }
 }
