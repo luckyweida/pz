@@ -3,7 +3,7 @@
     "slug": "asset-sizes",
     "rank": "2",
     "added": "2018-09-03 19:44:02",
-    "modified": "2018-09-04 21:52:38",
+    "modified": "2018-09-04 22:11:02",
     "active": "1",
     "title": "Asset Sizes",
     "className": "AssetSize",
@@ -14,5 +14,5 @@
     "numberPerPage": "50",
     "defaultSortBy": "id",
     "defaultOrder": 1,
-    "columnsJson": "[{\"id\":\"z1535960623556\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title!@#%$^&*()_+=-{}[]:\\\";'<>\/\/.,:\",\"field\":\"title\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535962076537\",\"column\":\"latitude\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Width:\",\"field\":\"width\",\"required\":1,\"sql\":\"\"}]"
+    "columnsJson": "[{\"id\":\"z1535960623556\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":1,\"sql\":\"\"},{\"id\":\"z1535962076537\",\"column\":\"latitude\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Width:\",\"field\":\"width\",\"required\":1,\"sql\":\"\"}]"
 }
