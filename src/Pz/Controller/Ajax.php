@@ -16,7 +16,7 @@ class Ajax extends Mo
 {
 
     /**
-     * @route("/ajax/model/sort", name="ajaxModelSort")
+     * @route("/pz/ajax/model/sort", name="pzAjaxModelSort")
      * @return Response
      */
     public function ajaxModelSort(Connection $conn)

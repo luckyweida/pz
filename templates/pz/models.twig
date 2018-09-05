@@ -57,7 +57,7 @@
                 stop: function (event, ui) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ path('ajaxModelSort') }}',
+                        url: '{{ path('pzAjaxModelSort') }}',
                         data: 'data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
                         success: function (msg) {
                         }

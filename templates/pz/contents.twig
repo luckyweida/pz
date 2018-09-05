@@ -76,58 +76,58 @@
 {% endblock %}
 
 {% block extraFooter %}
-    {#<script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>#}
-    {#<script type="text/javascript" src="{{ constant('CDN') }}/js/jquery.nestable.js"></script>#}
-    {#<script>#}
-        {#$(function () {#}
-            {#{% if model.listType == 1 %}#}
-                {#$.each($('#columns td'), function(key, val) {#}
-                    {#$(val).css('width', $(val).outerWidth() + 'px');#}
-                {#});#}
-                {#$('#columns').sortable({#}
-                    {#stop: function (event, ui) {#}
-                        {#$.ajax({#}
-                            {#type: 'POST',#}
-                            {#url: '{{ path('sort-contents') }}',#}
-                            {#data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),#}
-                            {#success: function (msg) {#}
-                            {#}#}
-                        {#});#}
-                    {#}#}
-                {#});#}
-            {#{% elseif model.listType == 2 %}#}
-                {#$('#nestable').nestable({ group: 1 }).on('change', update);#}
-            {#{% endif %}#}
-        {#});#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
+    <script type="text/javascript" src="{{ constant('CDN') }}/js/jquery.nestable.js"></script>
+    <script>
+        $(function () {
+            {% if model.listType == 1 %}
+                $.each($('#columns td'), function(key, val) {
+                    $(val).css('width', $(val).outerWidth() + 'px');
+                });
+                $('#columns').sortable({
+                    stop: function (event, ui) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ path('sort-contents') }}',
+                            data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
+                            success: function (msg) {
+                            }
+                        });
+                    }
+                });
+            {% elseif model.listType == 2 %}
+                $('#nestable').nestable({ group: 1 }).on('change', update);
+            {% endif %}
+        });
 
-        {#function update() {#}
-            {#var root = {#}
-                {#id: 0,#}
-                {#children: $('#nestable').nestable('serialize'),#}
-            {#}#}
+        function update() {
+            var root = {
+                id: 0,
+                children: $('#nestable').nestable('serialize'),
+            }
 
-            {#_ajax = $.ajax({#}
-                {#type: 'GET',#}
-                {#url: '{{ path('nestable') }}',#}
-                {#data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),#}
-                {#success : function(msg) {#}
-                {#}#}
-            {#});#}
-        {#}#}
+            _ajax = $.ajax({
+                type: 'GET',
+                url: '{{ path('nestable') }}',
+                data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
+                success : function(msg) {
+                }
+            });
+        }
 
-        {#function toArray(node) {#}
-            {#var result = [];#}
-            {#for (var idx in node.children) {#}
-                {#var itm = node.children[idx];#}
-                {#result.push({#}
-                    {#id: itm.id,#}
-                    {#parentId: node.id,#}
-                    {#rank: idx,#}
-                {#});#}
-                {#result = result.concat(toArray(itm));#}
-            {#}#}
-            {#return result;#}
-        {#};#}
-    {#</script>#}
+        function toArray(node) {
+            var result = [];
+            for (var idx in node.children) {
+                var itm = node.children[idx];
+                result.push({
+                    id: itm.id,
+                    parentId: node.id,
+                    rank: idx,
+                });
+                result = result.concat(toArray(itm));
+            }
+            return result;
+        };
+    </script>
 {% endblock %}
 
