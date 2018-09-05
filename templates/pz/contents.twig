@@ -43,7 +43,7 @@
                                             <td>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" data-status="{{ itm.active }}" type="button" class="js-status btn-xs btn {% if itm.active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.active == 1 %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i></a>
                                                 <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
-                                                <a href="" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
+                                                <a href="/pz/admin/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
                                             </td>
                                         </tr>
@@ -77,10 +77,10 @@
 
 {% block extraFooter %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
-    <script type="text/javascript" src="{{ constant('CDN') }}/js/jquery.nestable.js"></script>
+    <script type="text/javascript" src="{{ getenv('CDN') }}/js/jquery.nestable.js"></script>
     <script>
         $(function () {
-            {% if model.listType == 1 %}
+            {% if model.listType == 0 %}
                 $.each($('#columns td'), function(key, val) {
                     $(val).css('width', $(val).outerWidth() + 'px');
                 });
@@ -88,7 +88,7 @@
                     stop: function (event, ui) {
                         $.ajax({
                             type: 'POST',
-                            url: '{{ path('sort-contents') }}',
+                            url: '{{ path('pzAjaxContentSort') }}',
                             data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
                             success: function (msg) {
                             }
@@ -106,13 +106,13 @@
                 children: $('#nestable').nestable('serialize'),
             }
 
-            _ajax = $.ajax({
-                type: 'GET',
-                url: '{{ path('nestable') }}',
-                data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
-                success : function(msg) {
-                }
-            });
+            {#_ajax = $.ajax({#}
+                {#type: 'GET',#}
+                {#url: '{{ path('nestable') }}',#}
+                {#data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),#}
+                {#success : function(msg) {#}
+                {#}#}
+            {#});#}
         }
 
         function toArray(node) {

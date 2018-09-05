@@ -36,9 +36,12 @@ class ModelHandler
             $request = Request::createFromGlobals();
             $requestUri = rtrim($request->getPathInfo(), '/');
             $fragments = explode('/', $requestUri);
-            if (count($fragments) >= 3 && $fragments[2] == 'admin') {
+            if (count($fragments) >= 5 && $fragments[4] == 'built-in') {
                 $orm->setModelType(1);
                 $orm->setDataType(1);
+            } else {
+                $orm->setModelType(0);
+                $orm->setDataType(0);
             }
         }
 
