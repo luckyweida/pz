@@ -1,0 +1,18 @@
+{
+  "name": "pozoltd/pz",
+  "minimum-stability": "stable",
+  "require": {
+    "cocur/slugify": "^3.1"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:/pozoltd/pz"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Pz\\": "/src/Pz"
+    }
+  }
+}
