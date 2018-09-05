@@ -429,7 +429,8 @@ abstract class Walle
             }
             return $this->getId();
         } catch (\Exception $ex) {
-            var_dump($ex->getMessage());exit;
+            var_dump($ex->getMessage());
+            exit;
         }
 
         return null;
@@ -491,6 +492,6 @@ abstract class Walle
     public static function getEncodedModel()
     {
         $rc = static::getReflectionClass();
-        return file_get_contents( dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
+        return file_get_contents(dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
     }
 }
