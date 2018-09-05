@@ -1,0 +1,125 @@
+{% verbatim %}
+    <div class="panel panel-default js-block js-block-{{block.id}}" data-id="{{block.id}}">
+        <div class="panel-heading">
+            <div class="left">
+                <h4>{{block.title}}</h4>
+            </div>
+            <div class="right">
+                {{#compare block.status 1 operator="=="}}<a href="#" class="js-status-toggle text-info" data-status="0" data-type="block"><i class="fa-lg fa fa-toggle-on"></i></a>{{/compare}}
+                {{#compare block.status 0 operator="=="}}<a href="#" class="js-status-toggle text-danger" data-status="1" data-type="block"><i class="fa-lg fa fa-toggle-off"></i></a>{{/compare}}
+                <a href="#" class="text-success js-edit-block"><i class="fa-lg fa fa-pencil"></i></a>
+                <a href="#" class="text-danger"><i class="fa-lg fa fa-times js-delete-block"></i></a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <div class="alert">
+                <div class="row">
+                    {{#each block.items}}
+                        {{#compare widget 0 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 1 operator='==' }}
+                            <div class="inner-box inner-fullwidth">
+                                <label>{{title}}</label>
+                                <textarea class="js-elem" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 2 operator='==' }}
+                            <div class="inner-box content-block-asset">
+                                <label>{{title}}</label>
+                                <div class="row">
+                                    <div class="col-xs-4 text-center" style="width: 40%;min-height: 110px;">
+                                        <img id="{{id}}-preview" src="/asset/files/image/{{#getByKey ../block.values id}}{{/getByKey}}/cms_file_preview" style="height: 100px; {{#ifGetByKey ../block.values id }}visibility: hidden;{{/ifGetByKey}}" >
+                                    </div>
+                                    <div class="col-xs-8 text-right" style="width: 50%;">
+                                        <p>
+                                            <button type="button" class="btn btn-primary btn-xs btn-circle js-asset-change" data-id="#{{id}}" style="margin-right: .2em;"><i class="fa fa-edit"></i></button>
+                                            <button type="button" class="btn btn-warning btn-xs btn-circle js-asset-delete" data-id="#{{id}}"><i class="fa fa-times"></i></button>
+                                        </p>
+                                    </div>
+                                </div>
+                                <input type="hidden" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 3 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 4 operator='==' }}
+                            <div class="inner-box">
+                                <label for="{{id}}">{{title}}</label>
+                                <input {{#getByKeyAndCompare ../block.values id 1}}checked{{/getByKeyAndCompare}} type="checkbox" class="js-elem" id="{{id}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 5 operator='==' }}
+                            <div class="inner-box inner-fullwidth">
+                                <label>{{title}}</label>
+                                <textarea class="js-elem js-redactor" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 6 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-elem js-date" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 7 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-elem js-datetime" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 8 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <input type="text" class="js-elem js-time" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 9 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <select class="js-elem no-chosen js-after-chosen" id="{{id}}">
+                                    <option></option>
+                                    {{#each choices}}
+                                        <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 10 operator='==' }}
+                            <div class="inner-box">
+                                <label>{{title}}</label>
+                                <select class="js-elem no-chosen js-after-chosen" id="{{id}}" multiple>
+                                    {{#each choices}}
+                                        <option {{#getByKeyAndCompare ../../block.values ../id @key}}selected{{/getByKeyAndCompare}} value="{{@key}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        {{/compare}}
+
+                        {{#compare widget 11 operator='==' }}
+                            <div class="js-elem inner-box" id="{{id}}">&nbsp;</div>
+                        {{/compare}}
+                    {{/each}}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+{% endverbatim %}

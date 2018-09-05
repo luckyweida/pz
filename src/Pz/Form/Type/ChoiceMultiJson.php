@@ -21,8 +21,8 @@ class ChoiceMultiJson extends AbstractType
         $view->vars['choices'] = array();
         foreach ($options['choices'] as $idx => $itm) {
             $view->vars['choices'][] = array(
-                'value' => $idx,
-                'label' => $itm,
+                'value' => $itm,
+                'label' => $idx,
             );
         }
     }

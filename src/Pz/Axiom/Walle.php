@@ -18,6 +18,11 @@ abstract class Walle
     private $id;
 
     /**
+     * #pz varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL
+     */
+    private $uniqid;
+
+    /**
      * #pz varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL
      */
     private $slug;
@@ -50,6 +55,7 @@ abstract class Walle
     {
         $this->pdo = $pdo;
 
+        $this->uniqid = uniqid();
         $this->rank = 0;
         $this->added = date('Y-m-d H:i:s');
         $this->modified = date('Y-m-d H:i:s');
@@ -86,6 +92,22 @@ abstract class Walle
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUniqid()
+    {
+        return $this->uniqid;
+    }
+
+    /**
+     * @param mixed $uniqid
+     */
+    public function setUniqid($uniqid)
+    {
+        $this->uniqid = $uniqid;
     }
 
     /**
@@ -407,7 +429,8 @@ abstract class Walle
             }
             return $this->getId();
         } catch (\Exception $ex) {
-            var_dump($ex->getMessage());exit;
+            var_dump($ex->getMessage());
+            exit;
         }
 
         return null;
@@ -469,6 +492,6 @@ abstract class Walle
     public static function getEncodedModel()
     {
         $rc = static::getReflectionClass();
-        return file_get_contents( dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
+        return file_get_contents(dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
     }
 }

@@ -7,6 +7,8 @@ use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
 use Pz\Orm\AssetSize;
+use Pz\Orm\PageCategory;
+use Pz\Orm\PageTemplate;
 use Pz\Orm\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,6 +58,11 @@ class Init extends Mo
             $className::updateModel($pdo);
         }
 
+        $pdo->commit();
+
+
+        $pdo->beginTransaction();
+
         $orm = User::getByField($pdo, 'title', 'weida');
         if (!$orm) {
             $encoder = new MessageDigestPasswordEncoder();
@@ -67,6 +74,17 @@ class Init extends Mo
             $orm->save();
         }
 
+        $orm = User::getByField($pdo, 'title', 'admin');
+        if (!$orm) {
+            $encoder = new MessageDigestPasswordEncoder();
+            $orm = new User($pdo);
+            $orm->setTitle('admin');
+            $orm->setPassword($encoder->encodePassword('dasiyebushuo', ''));
+            $orm->setName('Administrator');
+            $orm->setEmail('');
+            $orm->save();
+        }
+
         $orm = AssetSize::getByField($pdo, 'title', 'full');
         if (!$orm) {
             $orm = new AssetSize($pdo);
@@ -75,14 +93,13 @@ class Init extends Mo
             $orm->save();
         }
 
-        $orm = AssetSize::getByField($pdo, 'title', 'high');
+        $orm = AssetSize::getByField($pdo, 'title', 'large');
         if (!$orm) {
             $orm = new AssetSize($pdo);
-            $orm->setTitle('high');
+            $orm->setTitle('large');
             $orm->setWidth(960);
             $orm->save();
         }
-
 
         $orm = AssetSize::getByField($pdo, 'title', 'medium');
         if (!$orm) {
@@ -97,6 +114,38 @@ class Init extends Mo
             $orm = new AssetSize($pdo);
             $orm->setTitle('small');
             $orm->setWidth(240);
+            $orm->save();
+        }
+
+        $orm = PageCategory::getByField($pdo, 'title', 'Main nav');
+        if (!$orm) {
+            $orm = new PageCategory($pdo);
+            $orm->setTitle('Main nav');
+            $orm->setCode('main');
+            $orm->save();
+        }
+
+        $orm = PageCategory::getByField($pdo, 'title', 'Footer nav');
+        if (!$orm) {
+            $orm = new PageCategory($pdo);
+            $orm->setTitle('Footer nav');
+            $orm->setCode('footer');
+            $orm->save();
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'layout.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setTitle('layout.twig');
+            $orm->setFilename('layout.twig');
+            $orm->save();
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'home.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setTitle('home.twig');
+            $orm->setFilename('home.twig');
             $orm->save();
         }
 

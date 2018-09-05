@@ -17,7 +17,8 @@ class Db
      * @param $className
      * @return mixed
      */
-    public function create($className) {
+    public function create($className)
+    {
         $fullName = "Web\\Orm\\$className";
         if (!class_exists($fullName)) {
             $fullName = "Pz\\Orm\\$className";
@@ -32,7 +33,8 @@ class Db
      * @param $id
      * @return mixed
      */
-    public function getById($className, $id) {
+    public function getById($className, $id)
+    {
         return $this->data($className, array(
             'whereSql' => 'm.id = ?',
             'params' => array($id),
@@ -46,12 +48,28 @@ class Db
      * @param $value
      * @return mixed
      */
-    public function getByField($className, $field, $value) {
+    public function getByField($className, $field, $value)
+    {
         return $this->data($className, array(
             'whereSql' => "m.$field = ?",
             'params' => array($value),
             'oneOrNull' => 1,
         ));
+    }
+
+    /**
+     * @param $className
+     * @param array $options
+     * @return mixed
+     */
+    public function active($className, $options = array())
+    {
+        if (isset($options['whereSql'])) {
+            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.active = 1';
+        } else {
+            $options['whereSql'] = 'm.active = 1';
+        }
+        return static::data($className, $options);
     }
 
     /**

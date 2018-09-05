@@ -60,8 +60,8 @@
 
 
 {% block extraFooter %}
-	<script id="file" type="text/x-handlebars-template">{% include 'pz/handlebars/pages/file/file.twig' %}</script>
-	<script id="loading" type="text/x-handlebars-template">{% include 'pz/handlebars/pages/file/loading.twig' %}</script>
+	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/file.twig' %}</script>
+	<script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
 	<script id="template-upload" type="text/x-handlebars-template">
         {% verbatim %}
 			<button class="btn btn-sm btn-info" onclick="$('#fileupload').click();">

@@ -42,7 +42,7 @@
                                             <td>{{ itm.title }}</td>
                                             <td>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" data-status="{{ itm.active }}" type="button" class="js-status btn-xs btn {% if itm.active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.active == 1 %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i></a>
-                                                <a href="/" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
+                                                <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
                                                 <a href="" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
                                             </td>
