@@ -65,9 +65,9 @@ class ModelHandler
 
             $baseUrl = "/pz/admin/models/" . ($model->getModelType() == 0 ? 'customised' : 'built-in');
             $redirectUrl = "$baseUrl/sync/{$model->getId()}?returnUrl=";
-            if ($request->get('submit') == 'apply') {
+            if ($request->get('submit') == 'Apply') {
                 throw new RedirectException($redirectUrl . urlencode($request->getPathInfo()), 301);
-            } else if ($request->get('submit') == 'save') {
+            } else if ($request->get('submit') == 'Save') {
                 throw new RedirectException($redirectUrl . urlencode($baseUrl), 301);
             }
         }

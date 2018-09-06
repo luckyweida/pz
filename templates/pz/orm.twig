@@ -1,14 +1,14 @@
 {% extends 'pz/layout.twig' %}
 {% block extraBodyClass %}page-content{% endblock %}
 
-{% set returnUrl = app.request.get('returnUrl') ?: '/pz/admin/1' %}
-
 {% set model = db.byId('_Model', fragments.2) %}
 {% if orm is not defined %}
 	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className) %}
 {% endif %}
 {% set form = contentHandler.handle(model, orm) %}
 {% form_theme form 'pz/form.twig' %}
+
+{% set returnUrl = app.request.get('returnUrl') ?: '/pz/admin/' ~ model.id %}
 
 {% block extraHead %}
 	<link rel="stylesheet" type="text/css" href="{{ getenv('CDN') }}/redactor/redactor/redactor.css" />
@@ -28,7 +28,7 @@
 				</div>
 				<div class="ibox-content">
 					{% block form %}
-						<form method="POST" novalidate autocomplete="off">
+						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}">
 							{{ form_widget(form) }}
 							<div style="clear: both;"></div>
 							<div>&nbsp;</div>

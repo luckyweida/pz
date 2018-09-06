@@ -4,6 +4,7 @@ namespace Pz\Form\Handler;
 
 use Cocur\Slugify\Slugify;
 use Pz\Orm\_Model;
+use Pz\Redirect\RedirectException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -77,6 +78,11 @@ class OrmHandler
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $orm->save();
+
+            if ($request->get('submit') == 'Save') {
+                $returnUrl = $request->get('returnUrl') ?: '/pz/admin/' . $model->getId();
+                throw new RedirectException($returnUrl, 301);
+            }
         }
 
         return $form->createView();
