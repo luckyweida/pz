@@ -1,0 +1,11 @@
+<?php
+//Last updated: {time}
+namespace {namespace};
+
+use Pz\Axiom\Walle;
+
+class {classname} extends Walle
+{
+{fields}
+{methods}
+}
