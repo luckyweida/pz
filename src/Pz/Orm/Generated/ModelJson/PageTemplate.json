@@ -4,7 +4,7 @@
     "rank": "4",
     "added": "2018-09-04 20:38:56",
     "modified": "2018-09-04 21:51:15",
-    "active": "1",
+    "status": "1",
     "title": "Page Templates",
     "className": "PageTemplate",
     "namespace": "Pz\\Orm",

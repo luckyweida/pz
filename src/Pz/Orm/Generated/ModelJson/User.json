@@ -5,7 +5,7 @@
     "rank": "0",
     "added": "2018-08-25 19:21:03",
     "modified": "2018-09-05 16:25:19",
-    "active": "1",
+    "status": "1",
     "title": "Users",
     "className": "User",
     "namespace": "Pz\\Orm",

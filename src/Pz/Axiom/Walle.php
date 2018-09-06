@@ -45,7 +45,7 @@ abstract class Walle
     /**
      * #pz tinyint(1) NOT NULL DEFAULT 0
      */
-    private $active;
+    private $status;
 
     /**
      * Walle constructor.
@@ -59,7 +59,7 @@ abstract class Walle
         $this->rank = 0;
         $this->added = date('Y-m-d H:i:s');
         $this->modified = date('Y-m-d H:i:s');
-        $this->active = 1;
+        $this->status = 1;
     }
 
     /**
@@ -177,17 +177,17 @@ abstract class Walle
     /**
      * @return mixed
      */
-    public function getActive()
+    public function getStatus()
     {
-        return $this->active;
+        return $this->status;
     }
 
     /**
-     * @param mixed $active
+     * @param mixed $status
      */
-    public function setActive($active)
+    public function setStatus($status)
     {
-        $this->active = $active;
+        $this->status = $status;
     }
 
     /**

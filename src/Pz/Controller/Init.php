@@ -10,24 +10,25 @@ use Pz\Orm\AssetSize;
 use Pz\Orm\PageCategory;
 use Pz\Orm\PageTemplate;
 use Pz\Orm\User;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 
-class Init extends Mo
+class Init extends Controller
 {
 
     /**
      * @route("/init_pz", name="init")
      * @return Response
      */
-    public function init(Connection $conn)
+    public function init()
     {
-
+        $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
-        $pdo = $conn->getWrappedConnection();
+        $pdo = $connection->getWrappedConnection();
 
         $pdo->beginTransaction();
 
@@ -154,8 +155,4 @@ class Init extends Mo
         return new Response('OK');
     }
 
-    public function getNodes()
-    {
-        return array();
-    }
 }

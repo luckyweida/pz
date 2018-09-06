@@ -31,11 +31,17 @@ class Db
      */
     public function getById($className, $id)
     {
-        return $this->data($className, array(
-            'whereSql' => 'm.id = ?',
-            'params' => array($id),
-            'oneOrNull' => 1,
-        ));
+        return $this->getByField($className, 'id', $id);
+    }
+
+    /**
+     * @param $className
+     * @param $slug
+     * @return mixed
+     */
+    public function getBySlug($className, $slug)
+    {
+        return $this->getByField($className, 'slug', $slug);
     }
 
     /**
@@ -61,9 +67,9 @@ class Db
     public function active($className, $options = array())
     {
         if (isset($options['whereSql'])) {
-            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.active = 1';
+            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.status = 1';
         } else {
-            $options['whereSql'] = 'm.active = 1';
+            $options['whereSql'] = 'm.status = 1';
         }
         return static::data($className, $options);
     }

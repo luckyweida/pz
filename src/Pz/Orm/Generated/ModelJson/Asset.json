@@ -4,7 +4,7 @@
     "rank": "1",
     "added": "2018-09-03 19:42:12",
     "modified": "2018-09-04 21:50:48",
-    "active": "1",
+    "status": "1",
     "title": "Assets",
     "className": "Asset",
     "namespace": "Pz\\Orm",

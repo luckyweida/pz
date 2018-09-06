@@ -17,7 +17,6 @@ class Web extends Mo
      */
     public function web()
     {
-
         return $this->render('layout.twig');
         $request = Request::createFromGlobals();
         $requestUri = $request->getRequestUri();
@@ -30,6 +29,9 @@ class Web extends Mo
         exit;
     }
 
+    /**
+     * @return array
+     */
     public function getNodes()
     {
         return array();

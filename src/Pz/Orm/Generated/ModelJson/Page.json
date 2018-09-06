@@ -5,7 +5,7 @@
     "rank": "5",
     "added": "2018-09-04 21:12:02",
     "modified": "2018-09-05 16:01:29",
-    "active": "1",
+    "status": "1",
     "title": "Pages",
     "className": "Page",
     "namespace": "Pz\\Orm",

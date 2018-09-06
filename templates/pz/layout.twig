@@ -133,45 +133,45 @@
                         $.each($('.js-sort-column'), function (idx, itm) {
 
                             $.each($(itm).find('td'), function (key, val) {
-                                $(val).css('width', $(val).width() + 'px');
+                                $(val).css('width', $(val).outerWidth() + 'px');
                             });
 
                             $(itm).sortable({
                                 stop: function (event, ui) {
                                     $.ajax({
-                                        type: 'POST',
+                                        type: 'GET',
                                         url: '{{ path('pzAjaxColumnSort') }}',
                                         data: 'data=' + encodeURIComponent(JSON.stringify($(itm).sortable("toArray"))) + '&className=' + encodeURIComponent($(itm).data('classname')),
                                         success: function (msg) {
                                         }
                                     });
                                 }
-                            })
-                        })
+                            });
+                        });
 
-                        {#$(document).on('click', '.js-status', function() {#}
-                            {#$(this).attr('data-status', $(this).attr('data-status') == 1 ? 0 : 1);#}
-                            {#$(this).removeClass('btn-danger');#}
-                            {#$(this).removeClass('btn-info');#}
-                            {#$(this).find('i').removeClass('fa-toggle-off fa-toggle-on')#}
-                            {#if ($(this).attr('data-status') == 1) {#}
-                                {#$(this).addClass('btn-info');#}
-                                {#$(this).find('i').addClass('fa-toggle-on');#}
-                            {#} else if ($(this).attr('data-status') == 0) {#}
-                                {#$(this).addClass('btn-danger');#}
-                                {#$(this).find('i').addClass('fa-toggle-off');#}
-                            {#}#}
+                        $(document).on('click', '.js-status', function() {
+                            $(this).data('status', $(this).data('status') == 1 ? 0 : 1);
+                            $.ajax({
+                                type: 'GET',
+                                url: '{{ path('pzAjaxStatus') }}',
+                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent($(this).data('status')),
+                                success: function (msg) {
+                                }
+                            });
 
-                            {#$.ajax({#}
-                                {#type: 'GET',#}
-                                {#url: '{{ path('change-status') }}',#}
-                                {#data: 'content=' + encodeURIComponent($(this).attr('data-content'))  + '&model=' + encodeURIComponent($(this).attr('data-model')) + '&status=' + encodeURIComponent($(this).attr('data-status')),#}
-                                {#success: function (msg) {#}
-                                {#}#}
-                            {#});#}
+                            $(this).removeClass('btn-danger');
+                            $(this).removeClass('btn-info');
+                            $(this).find('i').removeClass('fa-toggle-off fa-toggle-on');
+                            if ($(this).data('status') == 1) {
+                                $(this).addClass('btn-info');
+                                $(this).find('i').addClass('fa-toggle-on');
+                            } else {
+                                $(this).addClass('btn-danger');
+                                $(this).find('i').addClass('fa-toggle-off');
+                            }
 
-                            {#return false;#}
-                        {#});#}
+                            return false;
+                        });
 
                         {#$(document).on('click', '.js-delete', function(ev) {#}
                             {#var _this = this;#}

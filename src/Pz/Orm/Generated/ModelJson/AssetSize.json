@@ -5,7 +5,7 @@
     "rank": "2",
     "added": "2018-09-03 19:44:02",
     "modified": "2018-09-05 16:25:44",
-    "active": "1",
+    "status": "1",
     "title": "Asset Sizes",
     "className": "AssetSize",
     "namespace": "Pz\\Orm",

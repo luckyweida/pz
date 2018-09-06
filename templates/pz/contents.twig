@@ -35,13 +35,13 @@
                                         <th style="width: 150px;" class="text-left">&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <tbody id="columns" {% if model.listType == 0 %}class="js-sort-column" data-classname="{{ model.className }}"{% endif %}>
+                                <tbody id="columns" {% if model.listType == 0 %}class="js-sort-column"{% endif %} data-classname="{{ model.className }}">
                                     {% for itm in contents %}
                                         <tr id="{{ itm.id }}" class="content-container">
                                             <td>{{ itm.id }}</td>
                                             <td>{{ itm.title }}</td>
                                             <td>
-                                                <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" data-status="{{ itm.active }}" type="button" class="js-status btn-xs btn {% if itm.active == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.active == 1 %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i></a>
+                                                <a href="#" data-id="{{ itm.id }}" data-status="{{ itm.status }}" type="button" class="js-status btn-xs btn {% if itm.status == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.status == 1 %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i></a>
                                                 <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
                                                 <a href="/pz/admin/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
                                                 <a href="#" data-content="{{ itm.id }}" data-model="{{ model.className }}" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
@@ -77,7 +77,7 @@
 
 {% block extraFooter %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
-    <script type="text/javascript" src="{{ constant('CDN') }}/js/jquery.nestable.js"></script>
+    <script type="text/javascript" src="{{ getenv('CDN') }}/js/jquery.nestable.js"></script>
     <script>
         $(function () {
             {% if model.listType == 2 %}

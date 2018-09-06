@@ -63,7 +63,7 @@ class Cms extends Mo
         $db = new Db($this->connection);
 
         /** @var _Model[] $modelDatabase */
-        $modelDatabase = $db->data('_Model');
+        $modelDatabase = $db->active('_Model');
         foreach ($modelDatabase as $idx => $itm) {
             $dataType = $itm->getDataType() == 0 ? 2 : 4;
             $dataTypeText = $itm->getDataType() == 0 ? 'database' : 'admin';
