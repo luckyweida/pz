@@ -5,7 +5,7 @@
 {% if orm is not defined %}
 	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className) %}
 {% endif %}
-{% set form = contentHandler.handle(model, orm) %}
+{% set form = ormHandler.handle(model, orm) %}
 {% form_theme form 'pz/form.twig' %}
 
 {% set returnUrl = app.request.get('returnUrl') ?: '/pz/admin/' ~ model.id %}
