@@ -23,6 +23,11 @@ abstract class Walle
     private $uniqid;
 
     /**
+     * #pz int(11) DEFAULT NULL
+     */
+    private $parentId;
+
+    /**
      * #pz varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL
      */
     private $slug;
@@ -110,6 +115,22 @@ abstract class Walle
         $this->uniqid = $uniqid;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @param mixed $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
+    }
+    
     /**
      * @return mixed
      */
