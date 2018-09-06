@@ -81,7 +81,8 @@
                         <div class="nestable-lists">
                             <div class="dd" id="nestable">
                                 <ol class="dd-list">
-                                    {% for itm in orms.children %}
+                                    {% set root = orms|nestable %}
+                                    {% for itm in root.children %}
                                         {{ nest(itm, 1) }}
                                     {% endfor %}
                                 </ol>
@@ -100,7 +101,7 @@
     <script>
         $(function () {
             {% if model.listType == 2 %}
-=                $('#nestable').nestable({ group: 1 }).on('change', update);
+                $('#nestable').nestable({ group: 1 }).on('change', update);
             {% endif %}
         });
 
