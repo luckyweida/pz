@@ -30,7 +30,7 @@
                                 <th style="width: 150px;" class="text-left">&nbsp;</th>
                             </tr>
                             </thead>
-                            <tbody id="columns">
+                            <tbody id="columns" class="js-sort-column" data-classname="_Model">
                             {% for itm in models %}
                                 <tr id="{{ itm.id }}" class="content-container">
                                     <td>{{ itm.id }}</td>
@@ -51,26 +51,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block extraFooter %}
-    <script>
-        $(function () {
-            $.each($('#columns td'), function (key, val) {
-                $(val).css('width', $(val).width() + 'px');
-            });
-
-            $('#columns').sortable({
-                stop: function (event, ui) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ path('pzAjaxModelSort') }}',
-                        data: 'data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
-                        success: function (msg) {
-                        }
-                    });
-                }
-            })
-        });
-    </script>
-{% endblock %}
-

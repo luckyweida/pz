@@ -35,7 +35,7 @@
                                         <th style="width: 150px;" class="text-left">&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <tbody id="columns">
+                                <tbody id="columns" {% if model.listType == 0 %}class="js-sort-column" data-classname="{{ model.className }}"{% endif %}>
                                     {% for itm in contents %}
                                         <tr id="{{ itm.id }}" class="content-container">
                                             <td>{{ itm.id }}</td>
@@ -77,26 +77,11 @@
 
 {% block extraFooter %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
-    <script type="text/javascript" src="{{ getenv('CDN') }}/js/jquery.nestable.js"></script>
+    <script type="text/javascript" src="{{ constant('CDN') }}/js/jquery.nestable.js"></script>
     <script>
         $(function () {
-            {% if model.listType == 0 %}
-                $.each($('#columns td'), function(key, val) {
-                    $(val).css('width', $(val).outerWidth() + 'px');
-                });
-                $('#columns').sortable({
-                    stop: function (event, ui) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ path('pzAjaxContentSort') }}',
-                            data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify($('#columns').sortable("toArray"))),
-                            success: function (msg) {
-                            }
-                        });
-                    }
-                });
-            {% elseif model.listType == 2 %}
-                $('#nestable').nestable({ group: 1 }).on('change', update);
+            {% if model.listType == 2 %}
+=                $('#nestable').nestable({ group: 1 }).on('change', update);
             {% endif %}
         });
 

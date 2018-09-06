@@ -19,13 +19,9 @@ class Db
      */
     public function create($className)
     {
-        $fullName = "Web\\Orm\\$className";
-        if (!class_exists($fullName)) {
-            $fullName = "Pz\\Orm\\$className";
-        }
-
+        $fullClassName = static::fullClassName($className);
         $pdo = $this->connection->getWrappedConnection();
-        return new $fullName($pdo);
+        return new $fullClassName($pdo);
     }
 
     /**
@@ -79,12 +75,21 @@ class Db
      */
     public function data($className, $options = array())
     {
-        $fullName = "Web\\Orm\\$className";
-        if (!class_exists($fullName)) {
-            $fullName = "Pz\\Orm\\$className";
-        }
-
+        $fullClassName = static::fullClassName($className);
         $pdo = $this->connection->getWrappedConnection();
-        return $fullName::data($pdo, $options);
+        return $fullClassName::data($pdo, $options);
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public static function fullClassName($className)
+    {
+        $fullClassName = "Web\\Orm\\$className";
+        if (!class_exists($fullClassName)) {
+            $fullClassName = "Pz\\Orm\\$className";
+        }
+        return $fullClassName;
     }
 }
