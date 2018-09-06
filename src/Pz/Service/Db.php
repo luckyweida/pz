@@ -26,6 +26,21 @@ class Db
 
     /**
      * @param $className
+     * @param $field
+     * @param $value
+     * @return mixed
+     */
+    public function getByField($className, $field, $value)
+    {
+        return $this->data($className, array(
+            'whereSql' => "m.$field = ?",
+            'params' => array($value),
+            'oneOrNull' => 1,
+        ));
+    }
+
+    /**
+     * @param $className
      * @param $id
      * @return mixed
      */
@@ -42,36 +57,6 @@ class Db
     public function getBySlug($className, $slug)
     {
         return $this->getByField($className, 'slug', $slug);
-    }
-
-    /**
-     * @param $className
-     * @param $field
-     * @param $value
-     * @return mixed
-     */
-    public function getByField($className, $field, $value)
-    {
-        return $this->data($className, array(
-            'whereSql' => "m.$field = ?",
-            'params' => array($value),
-            'oneOrNull' => 1,
-        ));
-    }
-
-    /**
-     * @param $className
-     * @param array $options
-     * @return mixed
-     */
-    public function active($className, $options = array())
-    {
-        if (isset($options['whereSql'])) {
-            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.status = 1';
-        } else {
-            $options['whereSql'] = 'm.status = 1';
-        }
-        return static::data($className, $options);
     }
 
     /**

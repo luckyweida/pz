@@ -65,8 +65,6 @@ class Cms extends Mo
         /** @var _Model[] $modelDatabase */
         $modelDatabase = $db->active('_Model');
         foreach ($modelDatabase as $idx => $itm) {
-            $dataType = $itm->getDataType() == 0 ? 2 : 4;
-            $dataTypeText = $itm->getDataType() == 0 ? 'database' : 'admin';
             if ($itm->getDataType() == 0) {
                 $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/contents.twig');
                 $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);

@@ -39,7 +39,7 @@
                                         <a href="#" data-id="{{ itm.id }}" data-status="{{ itm.status }}" type="button" class="js-status btn-xs btn {% if itm.status == 1 %}btn-info{% else %}btn-danger{% endif %} btn-circle btn-outline"><i class="fa {% if itm.status == 1 %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i></a>
                                         <a href="{{ app.request.pathInfo }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
                                         <a href="{{ app.request.pathInfo }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
-                                        <a href="#" data-content="{{ itm.id }}" data-model="_Model" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
+                                        <a href="#" data-id="{{ itm.id }}" class="js-delete btn-xs btn btn-xs btn-circle btn-danger"><i class="fa fa-times"></i></a>
                                     </td>
                                 </tr>
                             {% endfor %}

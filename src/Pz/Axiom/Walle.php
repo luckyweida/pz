@@ -263,11 +263,32 @@ abstract class Walle
      */
     public static function getById(\PDO $pdo, $id)
     {
-        return static::data($pdo, array(
-            'whereSql' => 'm.id = ?',
-            'params' => array($id),
-            'oneOrNull' => 1,
-        ));
+        return static::getByField($pdo, 'id', $id);
+    }
+
+    /**
+     * @param \PDO $pdo
+     * @param $slug
+     * @return array|null
+     */
+    public static function getBySlug(\PDO $pdo, $slug)
+    {
+        return static::getByField($pdo, 'slug', $slug);
+    }
+
+    /**
+     * @param $className
+     * @param array $options
+     * @return mixed
+     */
+    public static function active($pdo, $options = array())
+    {
+        if (isset($options['whereSql'])) {
+            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.status = 1';
+        } else {
+            $options['whereSql'] = 'm.status = 1';
+        }
+        return static::data($pdo, $options);
     }
 
     /**
@@ -357,10 +378,8 @@ abstract class Walle
     public function delete()
     {
         $tableName = static::getTableName();
-
-        $pdo = $this->zdb->getConnection();
         $sql = "DELETE FROM `{$tableName}` WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(array($this->getId()));
     }
 
@@ -474,6 +493,10 @@ abstract class Walle
         return null;
     }
 
+    /**
+     * @param $model
+     * @return string
+     */
     public static function encodedModel($model)
     {
         $fields = array_keys(_Model::getFields());

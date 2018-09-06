@@ -63,4 +63,27 @@ class Ajax extends Controller
         }
         return new Response('OK');
     }
+
+    /**
+     * @route("/pz/ajax/delete", name="pzAjaxDelete")
+     * @return Response
+     */
+    public function pzAjaxDelete()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $status = $request->get('status');
+        $id = $request->get('id');
+        $className = $request->get('className');
+
+        $fullClassName = Db::fullClassName($className);
+        $orm = $fullClassName::getById($pdo, $id);
+        if ($orm) {
+            $orm->delete();
+        }
+        return new Response('OK');
+    }
 }
