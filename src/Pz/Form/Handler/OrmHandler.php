@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ContentHandler
+class OrmHandler
 {
     private $container;
 

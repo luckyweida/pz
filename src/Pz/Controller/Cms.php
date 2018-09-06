@@ -45,16 +45,16 @@ class Cms extends Mo
         $model->setTitle('New ' . $model->getTitle());
         $model->setClassName('New' . $model->getClassName());
         $model->setId(null);
-        $params['orm'] = $model;
+        $params['model'] = $model;
 
         return $this->render($params['node']->getTemplate(), $params);
     }
 
     /**
-     * @route("/pz/{section}/{modelId}/copy/{contentId}", requirements={"section" = "database|admin"}, name="copyContent")
+     * @route("/pz/{section}/{modelId}/copy/{ormId}", requirements={"section" = "database|admin"}, name="copyOrm")
      * @return Response
      */
-    public function copyContent($modelId, $contentId)
+    public function copyOrm($modelId, $ormId)
     {
         $request = Request::createFromGlobals();
         $requestUri = rtrim($request->getPathInfo(), '/');
@@ -67,7 +67,7 @@ class Cms extends Mo
         /** @var _Model $model */
         $model = _Model::getById($pdo, $modelId);
         $fullClassName = Db::fullClassName($model->getClassName());
-        $orm = $fullClassName::getById($pdo, $contentId);
+        $orm = $fullClassName::getById($pdo, $ormId);
         $orm->setId(null);
         $orm->setTitle('New ' . $orm->getTitle());
         $params['orm'] = $orm;
@@ -117,11 +117,11 @@ class Cms extends Mo
         $modelDatabase = $db->active('_Model');
         foreach ($modelDatabase as $idx => $itm) {
             if ($itm->getDataType() == 0) {
-                $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/contents.twig');
-                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);
+                $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/orms.twig');
+                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', 'pz/orm.twig', 2, 1, 1);
             } else if ($itm->getDataType() == 1) {
-                $nodes[] = new Node('4-' . $itm->getId(), $itm->getTitle(), 4, $idx, "/pz/admin/" . $itm->getId(), 'pz/contents.twig');
-                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', 'pz/content.twig', 2, 1, 1);
+                $nodes[] = new Node('4-' . $itm->getId(), $itm->getTitle(), 4, $idx, "/pz/admin/" . $itm->getId(), 'pz/orms.twig');
+                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', 'pz/orm.twig', 2, 1, 1);
             }
         }
 
