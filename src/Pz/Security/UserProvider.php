@@ -3,11 +3,11 @@
 namespace Pz\Security;
 
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Pz\Orm\User;
-
 
 class UserProvider implements UserProviderInterface
 {
@@ -45,6 +45,12 @@ class UserProvider implements UserProviderInterface
         $pdo = $this->conn->getWrappedConnection();
         /** @var User $user */
         $user = User::getByField($pdo, 'title', $username);
+        if ($user->getStatus() != 1) {
+            throw new UsernameNotFoundException(
+                sprintf('User "%s" is disabled.', $username)
+            );
+        }
+
         if ($user) {
             return $user;
         }

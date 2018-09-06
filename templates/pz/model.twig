@@ -1,7 +1,9 @@
 {% extends 'pz/layout.twig' %}
 
-{% set orm = db.byId('_Model', fragments|last) ?: db.create('_Model') %}
-{% set form = modelHandler.handle(orm) %}
+{% if model is not defined %}
+    {% set model = db.byId('_Model', fragments|last) ?: db.create('_Model') %}
+{% endif %}
+{% set form = modelHandler.handle(model) %}
 
 {% block extraHead %}
     <style>
@@ -20,7 +22,7 @@
         <div class="col-lg-12 max-1000">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h1>{% if orm.id %}{{ form.title.vars.value }}{% else %}New Model{% endif %}</h1>
+                    <h1>{% if model.id %}{{ form.title.vars.value }}{% else %}New Model{% endif %}</h1>
                 </div>
                 <div class="ibox-content">
                     <form method="post" autocomplete="off" novalidate>
@@ -107,7 +109,7 @@
                                 <i class="icon"></i>
                                 <span class="txt">Apply</span>
                             </button>
-                            <a href="{{ returnUrl }}" class="btn">
+                            <a href="/pz/admin/models/{{ model.modelType == 0 ? 'customised' : 'built-in' }}" class="btn">
                                 <span class="txt">Cancel</span>
                             </a>
                         </div>
@@ -125,19 +127,19 @@
     <script>
         var _fieldSource = $("#field-source").html();
         var _columns = JSON.parse('{{ form.columnsJson.vars.value|e('js') ?: '[]' }}');
-        var _fields = {{ orm.fieldChoices|keys|json_encode|raw }};
-        var _metas = {{ orm.parentFields|keys|json_encode|raw }};
-        var _widgets = {{ orm.widgetChoices|json_encode|raw }};
+        var _fields = {{ model.fieldChoices|keys|json_encode|raw }};
+        var _metas = {{ model.parentFields|keys|json_encode|raw }};
+        var _widgets = {{ model.widgetChoices|json_encode|raw }};
 
         $(function () {
             $('#model_listType :radio').on('ifChanged', function (ev) {
-                if ($(this).val() == 2) {
+                if ($(this).val() == 1) {
                     $('.model-pagination-detail').fadeIn();
                 } else {
                     $('.model-pagination-detail').hide();
                 }
             });
-            if ($('#model_listType :radio:checked').val() == 2) {
+            if ($('#model_listType :radio:checked').val() == 1) {
                 $('.model-pagination-detail').fadeIn();
             }
 

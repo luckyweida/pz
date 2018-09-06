@@ -28,10 +28,8 @@ abstract class Mo extends Controller
         $this->tree = new Tree($this->getNodes());
     }
 
-    function getParams()
+    function getParams($requestUri)
     {
-        $request = Request::createFromGlobals();
-        $requestUri = rtrim($request->getPathInfo(), '/');
         $fragments = explode('/', trim($requestUri, '/'));
         $args = array();
         $node = $this->tree->getNodeByUrl($requestUri . '/');

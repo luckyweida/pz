@@ -27,12 +27,63 @@ class Cms extends Mo
     }
 
     /**
+     * @route("/pz/admin/models/{type}/copy/{modelId}", requirements={"type" = "customised|built-in"}, name="copyModel")
+     * @return Response
+     */
+    public function copyModel($modelId)
+    {
+        $request = Request::createFromGlobals();
+        $requestUri = rtrim($request->getPathInfo(), '/');
+        $requestUri = str_replace('/copy/', '/detail/', $requestUri);
+        $params = $this->getParams($requestUri);
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+        /** @var _Model $model */
+        $model = _Model::getById($pdo, $modelId);
+        $model->setTitle('New ' . $model->getTitle());
+        $model->setClassName('New' . $model->getClassName());
+        $model->setId(null);
+        $params['orm'] = $model;
+
+        return $this->render($params['node']->getTemplate(), $params);
+    }
+
+    /**
+     * @route("/pz/{section}/{modelId}/copy/{contentId}", requirements={"section" = "database|admin"}, name="copyContent")
+     * @return Response
+     */
+    public function copyContent($modelId, $contentId)
+    {
+        $request = Request::createFromGlobals();
+        $requestUri = rtrim($request->getPathInfo(), '/');
+        $requestUri = str_replace('/copy/', '/detail/', $requestUri);
+        $params = $this->getParams($requestUri);
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+        /** @var _Model $model */
+        $model = _Model::getById($pdo, $modelId);
+        $fullClassName = Db::fullClassName($model->getClassName());
+        $orm = $fullClassName::getById($pdo, $contentId);
+        $orm->setId(null);
+        $orm->setTitle('New ' . $orm->getTitle());
+        $params['orm'] = $orm;
+
+        return $this->render($params['node']->getTemplate(), $params);
+    }
+
+    /**
      * @route("/pz/{page}", requirements={"page" = ".*"}, name="cms")
      * @return Response
      */
     public function cms()
     {
-        $params = $this->getParams();
+        $request = Request::createFromGlobals();
+        $requestUri = rtrim($request->getPathInfo(), '/');
+        $params = $this->getParams($requestUri);
         return $this->render($params['node']->getTemplate(), $params);
     }
 

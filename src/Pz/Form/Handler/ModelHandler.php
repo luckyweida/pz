@@ -20,51 +20,51 @@ class ModelHandler
         $this->container = $container;
     }
 
-    public function sync($orm)
+    public function sync(_Model $model)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
-        /** @var Walle $className */
-        $className = $orm->getNamespace() . '\\Generated\\' . $orm->getClassName();
-        $className::sync($pdo);
+        /** @var Walle $fullClassName */
+        $fullClassName = Db::fullClassName($model->getClassName());
+        $fullClassName::sync($pdo);
     }
 
-    public function handle(_Model $orm)
+    public function handle(_Model $model)
     {
-        if (!$orm->getId()) {
+        if (!$model->getId()) {
             $request = Request::createFromGlobals();
             $requestUri = rtrim($request->getPathInfo(), '/');
             $fragments = explode('/', $requestUri);
             if (count($fragments) >= 5 && $fragments[4] == 'built-in') {
-                $orm->setModelType(1);
-                $orm->setDataType(1);
+                $model->setModelType(1);
+                $model->setDataType(1);
             } else {
-                $orm->setModelType(0);
-                $orm->setDataType(0);
+                $model->setModelType(0);
+                $model->setDataType(0);
             }
         }
 
-        $myClass = get_class($orm);
-        $columns = array_keys($myClass::getFields());
-        $form = $this->container->get('form.factory')->create(\Pz\Form\Builder\Model::class, $orm, array(
+        $columns = array_keys(_Model::getFields());
+        $form = $this->container->get('form.factory')->create(\Pz\Form\Builder\Model::class, $model, array(
             'defaultSortByOptions' => array_combine($columns, $columns),
         ));
 
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($orm->getModelType() == 0) {
-                $orm->setNamespace('Web\\Orm');
+            if ($model->getModelType() == 0) {
+                $model->setNamespace('Web\\Orm');
             } else {
-                $orm->setNamespace('Pz\\Orm');
+                $model->setNamespace('Pz\\Orm');
             }
-            $this->setGenereatedFile($orm);
-            $this->setCustomFile($orm);
-            $orm->save();
+            $this->setGenereatedFile($model);
+            $this->setCustomFile($model);
+            $model->save();
 
-            $baseUrl = "/pz/admin/models/" . ($orm->getModelType() == 0 ? 'customised' : 'built-in');
-            $redirectUrl = "$baseUrl/sync/{$orm->getId()}?returnUrl=";
+            $baseUrl = "/pz/admin/models/" . ($model->getModelType() == 0 ? 'customised' : 'built-in');
+            $redirectUrl = "$baseUrl/sync/{$model->getId()}?returnUrl=";
             if ($request->get('submit') == 'apply') {
                 throw new RedirectException($redirectUrl . urlencode($request->getPathInfo()), 301);
             } else if ($request->get('submit') == 'save') {
@@ -75,14 +75,14 @@ class ModelHandler
         return $form->createView();
     }
 
-    private function setGenereatedFile(_Model $orm)
+    private function setGenereatedFile(_Model $model)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         $pdo = $connection->getWrappedConnection();
 
-        $myClass = get_class($orm);
+        $myClass = get_class($model);
         $fieldChoices = $myClass::getFieldChoices();
-        $columnsJson = json_decode($orm->getColumnsJson());
+        $columnsJson = json_decode($model->getColumnsJson());
         $fields = array_map(function ($value) use ($fieldChoices) {
             $fieldChoice = $fieldChoices[$value->column];
             return <<<EOD
@@ -118,37 +118,37 @@ EOD;
 
         $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_generated.txt');
         $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
-        $str = str_replace('{namespace}', $orm->getNamespace() . '\\Generated', $str);
-        $str = str_replace('{classname}', $orm->getClassName(), $str);
+        $str = str_replace('{namespace}', $model->getNamespace() . '\\Generated', $str);
+        $str = str_replace('{classname}', $model->getClassName(), $str);
         $str = str_replace('{fields}', join("\n", $fields), $str);
         $str = str_replace('{methods}', join("\n", $methods), $str);
 
-        $path = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/Generated/';
+        $path = $this->container->getParameter('kernel.project_dir') . ($model->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $model->getNamespace()) . '/Generated/';
 
-        $file = $path . 'ModelJson/' . $orm->getClassName() . '.json';
+        $file = $path . 'ModelJson/' . $model->getClassName() . '.json';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
-        file_put_contents($file, _Model::encodedModel($orm));
+        file_put_contents($file, _Model::encodedModel($model));
 
-        $file = $path . $orm->getClassName() . '.php';
+        $file = $path . $model->getClassName() . '.php';
         $dir = dirname($file);
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
         file_put_contents($file, $str);
 
-        if ($orm->getId()) {
+        if ($model->getId()) {
             $db = new Db($connection);
             /** @var _Model $model */
-            $model = $db->getById('_Model', $orm->getId());
+            $model = $db->getById('_Model', $model->getId());
             if ($model) {
 
                 $slugify = new Slugify(['trim' => false]);
                 $eve = new Eve($pdo, $slugify->slugify($model->getClassName()));
-                if ($model->getClassName() != $orm->getClassName()) {
-                    $eve->rename($orm->getClassName());
+                if ($model->getClassName() != $model->getClassName()) {
+                    $eve->rename($model->getClassName());
                 }
 
                 if ($eve->exists()) {
@@ -169,15 +169,15 @@ EOD;
 
     }
 
-    private function setCustomFile(_Model $orm)
+    private function setCustomFile(_Model $model)
     {
-        $path = $this->container->getParameter('kernel.project_dir') . ($orm->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $orm->getNamespace()) . '/';
-        $file = $path . $orm->getClassName() . '.php';
+        $path = $this->container->getParameter('kernel.project_dir') . ($model->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $model->getNamespace()) . '/';
+        $file = $path . $model->getClassName() . '.php';
         if (!file_exists($file)) {
             $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
             $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
-            $str = str_replace('{namespace}', $orm->getNamespace(), $str);
-            $str = str_replace('{classname}', $orm->getClassName(), $str);
+            $str = str_replace('{namespace}', $model->getNamespace(), $str);
+            $str = str_replace('{classname}', $model->getClassName(), $str);
 
             $dir = dirname($file);
             if (!file_exists($dir)) {

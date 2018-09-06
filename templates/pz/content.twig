@@ -2,7 +2,9 @@
 {% block extraBodyClass %}page-content{% endblock %}
 
 {% set model = db.byId('_Model', fragments.2) %}
-{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className) %}
+{% if orm is not defined %}
+	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className) %}
+{% endif %}
 {% set form = contentHandler.handle(model, orm) %}
 {% form_theme form 'pz/form.twig' %}
 

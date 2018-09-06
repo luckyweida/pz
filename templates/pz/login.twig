@@ -21,7 +21,7 @@
             </div>
             {% if error %}
                 <div class="alert alert-danger">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                    {{ error.message }}
                 </div>
             {% endif %}
             <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
