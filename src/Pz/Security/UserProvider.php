@@ -45,18 +45,19 @@ class UserProvider implements UserProviderInterface
         $pdo = $this->conn->getWrappedConnection();
         /** @var User $user */
         $user = User::getByField($pdo, 'title', $username);
+
+        if (!$user) {
+            throw new UsernameNotFoundException(
+                sprintf('Username "%s" does not exist.', $username)
+            );
+        }
+
         if ($user->getStatus() != 1) {
             throw new UsernameNotFoundException(
                 sprintf('User "%s" is disabled.', $username)
             );
         }
 
-        if ($user) {
-            return $user;
-        }
-
-        throw new UsernameNotFoundException(
-            sprintf('Username "%s" does not exist.', $username)
-        );
+        return $user;
     }
 }
