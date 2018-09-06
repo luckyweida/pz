@@ -1,6 +1,8 @@
 {% extends 'pz/layout.twig' %}
 {% block extraBodyClass %}page-content{% endblock %}
 
+{% set returnUrl = app.request.get('returnUrl') ?: '/pz/admin/1' %}
+
 {% set model = db.byId('_Model', fragments.2) %}
 {% if orm is not defined %}
 	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className) %}

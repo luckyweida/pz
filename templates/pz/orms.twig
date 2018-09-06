@@ -1,4 +1,4 @@
-{% from "pz/includes/pages/nestableNav.twig" import nest as nest %}
+{% from "pz/html/nestableNav.twig" import nest as nest %}
 {% extends 'pz/layout.twig' %}
 
 {% set model = db.byId('_Model', fragments|last) %}
