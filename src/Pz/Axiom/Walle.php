@@ -130,7 +130,7 @@ abstract class Walle
     {
         $this->parentId = $parentId;
     }
-    
+
     /**
      * @return mixed
      */
