@@ -54,8 +54,8 @@ class Model extends AbstractType
             'expanded' => true,
             'choices' => array(
                 'Drag & Drop' => 0,
-                'Tree' => 1,
-                'Pagination' => 2,
+                'Pagination' => 1,
+                'Tree' => 2,
             )
         ))->add('numberPerPage', TextType::class, array(
             'label' => 'Page size:',
