@@ -64,6 +64,21 @@ class Db
      * @param array $options
      * @return mixed
      */
+    public function active($pdo, $options = array())
+    {
+        if (isset($options['whereSql'])) {
+            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.status = 1';
+        } else {
+            $options['whereSql'] = 'm.status = 1';
+        }
+        return $this->data($pdo, $options);
+    }
+
+    /**
+     * @param $className
+     * @param array $options
+     * @return mixed
+     */
     public function data($className, $options = array())
     {
         $fullClassName = static::fullClassName($className);
