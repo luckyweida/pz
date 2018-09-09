@@ -4,8 +4,15 @@
 {% set categories = db.active('PageCategory') %}
 {% set cat = app.request.get('cat') ?: categories.0.id %}
 
+{% set pageRoot = db.data('Page')|nestablePges(cat) %}
+
+
 {% block extraHead %}
     <link href="{{ getenv('CDN') }}/pz/css/nestable.css" rel="stylesheet">
+{% endblock %}
+
+{% block extraHeaderLeft %}
+    <h2>Manage <label class="label label-warning-light">Pages</label></h2>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +22,7 @@
                 <div class="ibox-title">
                     <a href="">
                         <button class="btn btn-w-m btn-info">
-                            <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add new page
+                            <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add New Page
                         </button>
                     </a>
                 </div>
@@ -45,7 +52,7 @@
                     <div class="nestable-lists">
                         <div class="dd" id="nestable">
                             <ol class="dd-list">
-                                {% for itm in root.children %}
+                                {% for itm in pageRoot.children %}
                                     {{ nest(itm, 1) }}
                                 {% endfor %}
                             </ol>

@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
 use Pz\Orm\AssetSize;
+use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Orm\PageTemplate;
 use Pz\Orm\User;
@@ -34,24 +35,20 @@ class Init extends Controller
 
         $dir = $this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/src/Pz/Orm';
         $files = scandir($dir);
-
         foreach ($files as $file) {
             if ($file == '.'
                 || $file == '..'
-                || $file == 'Generated')
-            {
+                || $file == 'Generated') {
                 continue;
             }
 
             $className = "Pz\\Orm\\" . rtrim($file, '.php');
             $className::sync($pdo);
         }
-
         foreach ($files as $file) {
             if ($file == '.'
                 || $file == '..'
-                || $file == 'Generated')
-            {
+                || $file == 'Generated') {
                 continue;
             }
 
@@ -64,95 +61,232 @@ class Init extends Controller
 
         $pdo->beginTransaction();
 
-        $orm = User::getByField($pdo, 'title', 'weida');
-        if (!$orm) {
-            $encoder = new MessageDigestPasswordEncoder();
-            $orm = new User($pdo);
-            $orm->setTitle('weida');
-            $orm->setPassword($encoder->encodePassword('123', ''));
-            $orm->setName('Weida');
-            $orm->setEmail('luckyweida@gmail.com');
-            $orm->save();
-        }
-
-        $orm = User::getByField($pdo, 'title', 'admin');
-        if (!$orm) {
-            $encoder = new MessageDigestPasswordEncoder();
-            $orm = new User($pdo);
-            $orm->setTitle('admin');
-            $orm->setPassword($encoder->encodePassword('dasiyebushuo', ''));
-            $orm->setName('Administrator');
-            $orm->setEmail('');
-            $orm->save();
-        }
-
-        $orm = AssetSize::getByField($pdo, 'title', 'full');
-        if (!$orm) {
-            $orm = new AssetSize($pdo);
-            $orm->setTitle('full');
-            $orm->setWidth(1440);
-            $orm->save();
-        }
-
-        $orm = AssetSize::getByField($pdo, 'title', 'large');
-        if (!$orm) {
-            $orm = new AssetSize($pdo);
-            $orm->setTitle('large');
-            $orm->setWidth(960);
-            $orm->save();
-        }
-
-        $orm = AssetSize::getByField($pdo, 'title', 'medium');
-        if (!$orm) {
-            $orm = new AssetSize($pdo);
-            $orm->setTitle('medium');
-            $orm->setWidth(480);
-            $orm->save();
-        }
-
-        $orm = AssetSize::getByField($pdo, 'title', 'small');
-        if (!$orm) {
-            $orm = new AssetSize($pdo);
-            $orm->setTitle('small');
-            $orm->setWidth(240);
-            $orm->save();
-        }
-
-        $orm = PageCategory::getByField($pdo, 'title', 'Main nav');
-        if (!$orm) {
-            $orm = new PageCategory($pdo);
-            $orm->setTitle('Main nav');
-            $orm->setCode('main');
-            $orm->save();
-        }
-
-        $orm = PageCategory::getByField($pdo, 'title', 'Footer nav');
-        if (!$orm) {
-            $orm = new PageCategory($pdo);
-            $orm->setTitle('Footer nav');
-            $orm->setCode('footer');
-            $orm->save();
-        }
-
-        $orm = PageTemplate::getByField($pdo, 'title', 'layout.twig');
-        if (!$orm) {
-            $orm = new PageTemplate($pdo);
-            $orm->setTitle('layout.twig');
-            $orm->setFilename('layout.twig');
-            $orm->save();
-        }
-
-        $orm = PageTemplate::getByField($pdo, 'title', 'home.twig');
-        if (!$orm) {
-            $orm = new PageTemplate($pdo);
-            $orm->setTitle('home.twig');
-            $orm->setFilename('home.twig');
-            $orm->save();
-        }
+        $this->addUsers($pdo);
+        $this->addAssetSizes($pdo);
+        $this->addPageCategories($pdo);
+        $this->addPageTemplates($pdo);
+        $this->addPages($pdo);
 
         $pdo->commit();
 
         return new Response('OK');
     }
 
+    public function addUsers($pdo)
+    {
+        $orm = User::getByField($pdo, 'title', 'weida');
+        if (!$orm) {
+            $encoder = new MessageDigestPasswordEncoder();
+            $orm = new User($pdo);
+            $orm->setId(1);
+            $orm->setTitle('weida');
+            $orm->setPassword($encoder->encodePassword('123', ''));
+            $orm->setName('Weida');
+            $orm->setEmail('luckyweida@gmail.com');
+            $orm->save(true);
+        }
+
+        $orm = User::getByField($pdo, 'title', 'admin');
+        if (!$orm) {
+            $encoder = new MessageDigestPasswordEncoder();
+            $orm = new User($pdo);
+            $orm->setId(2);
+            $orm->setTitle('admin');
+            $orm->setPassword($encoder->encodePassword('dasiyebushuo', ''));
+            $orm->setName('Administrator');
+            $orm->setEmail('pozoltd@gmail.com');
+            $orm->save(true);
+        }
+    }
+
+    public function addAssetSizes($pdo)
+    {
+        $orm = AssetSize::getByField($pdo, 'title', 'full');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setId(1);
+            $orm->setTitle('full');
+            $orm->setWidth(1440);
+            $orm->save(true);
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'large');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setId(2);
+            $orm->setTitle('large');
+            $orm->setWidth(960);
+            $orm->save(true);
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'medium');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setId(3);
+            $orm->setTitle('medium');
+            $orm->setWidth(480);
+            $orm->save(true);
+        }
+
+        $orm = AssetSize::getByField($pdo, 'title', 'small');
+        if (!$orm) {
+            $orm = new AssetSize($pdo);
+            $orm->setId(4);
+            $orm->setTitle('small');
+            $orm->setWidth(240);
+            $orm->save(true);
+        }
+    }
+
+    public function addPageCategories($pdo)
+    {
+        $orm = PageCategory::getByField($pdo, 'title', 'Main nav');
+        if (!$orm) {
+            $orm = new PageCategory($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Main nav');
+            $orm->setCode('main');
+            $orm->save(true);
+        }
+
+        $orm = PageCategory::getByField($pdo, 'title', 'Footer nav');
+        if (!$orm) {
+            $orm = new PageCategory($pdo);
+            $orm->setId(2);
+            $orm->setTitle('Footer nav');
+            $orm->setCode('footer');
+            $orm->save(true);
+        }
+    }
+
+    public function addPageTemplates($pdo)
+    {
+        $orm = PageTemplate::getByField($pdo, 'title', 'layout.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(1);
+            $orm->setTitle('layout.twig');
+            $orm->setFilename('layout.twig');
+            $orm->save(true);
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'home.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(2);
+            $orm->setTitle('home.twig');
+            $orm->setFilename('home.twig');
+            $orm->save(true);
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'about.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(3);
+            $orm->setTitle('about.twig');
+            $orm->setFilename('about.twig');
+            $orm->save(true);
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'news.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(4);
+            $orm->setTitle('news.twig');
+            $orm->setFilename('news.twig');
+            $orm->save(true);
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'news-detail.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(5);
+            $orm->setTitle('news-detail.twig');
+            $orm->setFilename('news-detail.twig');
+            $orm->setStatus(2);
+            $orm->save(true);
+        }
+
+        $orm = PageTemplate::getByField($pdo, 'title', 'contact.twig');
+        if (!$orm) {
+            $orm = new PageTemplate($pdo);
+            $orm->setId(6);
+            $orm->setTitle('contact.twig');
+            $orm->setFilename('contact.twig');
+            $orm->save(true);
+        }
+    }
+
+    public function addPages($pdo)
+    {
+        $orm = Page::getByField($pdo, 'title', 'Home');
+        if (!$orm) {
+            $orm = new Page($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Home');
+            $orm->setType(1);
+            $orm->setTemplate(2);
+            $orm->setCategory(json_encode(array(1)));
+            $orm->setUrl('/');
+            $orm->setCategoryRank(json_encode(array("cat1" => 0)));
+            $orm->setCategoryParent(json_encode(array("cat1" => 0)));
+            $orm->save(true);
+        }
+
+        $orm = Page::getByField($pdo, 'title', 'About');
+        if (!$orm) {
+            $orm = new Page($pdo);
+            $orm->setId(2);
+            $orm->setTitle('About');
+            $orm->setType(1);
+            $orm->setTemplate(3);
+            $orm->setCategory(json_encode(array(1)));
+            $orm->setUrl('/about');
+            $orm->setCategoryRank(json_encode(array("cat1" => 1)));
+            $orm->setCategoryParent(json_encode(array("cat1" => 0)));
+            $orm->save(true);
+        }
+
+        $orm = Page::getByField($pdo, 'title', 'News');
+        if (!$orm) {
+            $orm = new Page($pdo);
+            $orm->setId(3);
+            $orm->setTitle('News');
+            $orm->setType(1);
+            $orm->setTemplate(4);
+            $orm->setCategory(json_encode(array(1)));
+            $orm->setUrl('/news');
+            $orm->setCategoryRank(json_encode(array("cat1" => 2)));
+            $orm->setCategoryParent(json_encode(array("cat1" => 0)));
+            $orm->save(true);
+        }
+
+        $orm = Page::getByField($pdo, 'title', 'News detail');
+        if (!$orm) {
+            $orm = new Page($pdo);
+            $orm->setId(4);
+            $orm->setTitle('News detail');
+            $orm->setType(1);
+            $orm->setTemplate(5);
+            $orm->setCategory(json_encode(array(1)));
+            $orm->setUrl('/news/detail');
+            $orm->setCategoryRank(json_encode(array("cat1" => 0)));
+            $orm->setCategoryParent(json_encode(array("cat1" => 3)));
+            $orm->save(true);
+        }
+
+        $orm = Page::getByField($pdo, 'title', 'Contact');
+        if (!$orm) {
+            $orm = new Page($pdo);
+            $orm->setId(5);
+            $orm->setTitle('Contact');
+            $orm->setType(1);
+            $orm->setTemplate(6);
+            $orm->setCategory(json_encode(array(1)));
+            $orm->setUrl('/contact');
+            $orm->setCategoryRank(json_encode(array("cat1" => 3)));
+            $orm->setCategoryParent(json_encode(array("cat1" => 0)));
+            $orm->save(true);
+        }
+    }
 }

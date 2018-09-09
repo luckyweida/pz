@@ -97,7 +97,7 @@ class Cms extends Mo
         $nodes[] = new Node(2, 'Database', 0, 1);
         $nodes[] = new Node(3, 'Files', 0, 2, '/pz/files', 'pz/files.twig');
         $nodes[] = new Node(4, 'Admin', 0, 3);
-        $nodes[] = new Node(11, 'Page', 1, 0, '/pz/pages/detail', 'page.twig', 2, 1, 1);
+        $nodes[] = new Node(11, 'Page', 1, 0, '/pz/admin/6/detail', 'pz/orm.twig', 2, 1, 1);
         $nodes[] = new Node(41, 'Customised Models', 4, 998, '/pz/admin/models/customised', 'pz/models.twig');
         $nodes[] = new Node(411, 'Customised Model', 41, 0, '/pz/admin/models/customised/detail', 'pz/model.twig', 2, 1, 1);
         $nodes[] = new Node(42, 'Built-in Models', 4, 999, '/pz/admin/models/built-in', 'pz/models.twig');

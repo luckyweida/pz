@@ -154,7 +154,7 @@
                             $.ajax({
                                 type: 'GET',
                                 url: '{{ path('pzAjaxStatus') }}',
-                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent($(this).data('status')),
+                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent($(this).data('status')),
                                 success: function (msg) {
                                 }
                             });
@@ -188,7 +188,7 @@
                                 $.ajax({
                                     type: 'GET',
                                     url: '{{ path('pzAjaxDelete') }}',
-                                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(_this).closest('tbody').data('classname')),
+                                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')),
                                     success: function (msg) {
                                         swal({
                                             title: "Deleted",

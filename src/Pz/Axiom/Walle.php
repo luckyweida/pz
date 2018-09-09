@@ -202,6 +202,16 @@ abstract class Walle
         $eve->sync(static::getFields());
     }
 
+
+    /**
+     * @return array|null
+     */
+    public function getModel() {
+        $rc = static::getReflectionClass();
+        return _Model::getByField($this->getPdo(), 'className', $rc->getShortName());
+    }
+
+
     /**
      * @return array
      */
