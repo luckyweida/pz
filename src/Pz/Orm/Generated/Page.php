@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-09-05 16:01:48
+//Last updated: 2018-09-10 20:45:18
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -44,16 +44,6 @@ class Page extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $categoryRank;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
-    private $categoryParent;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
     private $pageTitle;
     
     /**
@@ -70,6 +60,21 @@ class Page extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $maxParams;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $categoryRank;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $categoryParent;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $categoryClosed;
     
     /**
      * @return mixed
@@ -186,38 +191,6 @@ class Page extends Walle
     /**
      * @return mixed
      */
-    public function getCategoryRank()
-    {
-        return $this->categoryRank;
-    }
-    
-    /**
-     * @param mixed categoryRank
-     */
-    public function setCategoryRank($categoryRank)
-    {
-        $this->categoryRank = $categoryRank;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getCategoryParent()
-    {
-        return $this->categoryParent;
-    }
-    
-    /**
-     * @param mixed categoryParent
-     */
-    public function setCategoryParent($categoryParent)
-    {
-        $this->categoryParent = $categoryParent;
-    }
-    
-    /**
-     * @return mixed
-     */
     public function getPageTitle()
     {
         return $this->pageTitle;
@@ -277,6 +250,54 @@ class Page extends Walle
     public function setMaxParams($maxParams)
     {
         $this->maxParams = $maxParams;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCategoryRank()
+    {
+        return $this->categoryRank;
+    }
+    
+    /**
+     * @param mixed categoryRank
+     */
+    public function setCategoryRank($categoryRank)
+    {
+        $this->categoryRank = $categoryRank;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCategoryParent()
+    {
+        return $this->categoryParent;
+    }
+    
+    /**
+     * @param mixed categoryParent
+     */
+    public function setCategoryParent($categoryParent)
+    {
+        $this->categoryParent = $categoryParent;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCategoryClosed()
+    {
+        return $this->categoryClosed;
+    }
+    
+    /**
+     * @param mixed categoryClosed
+     */
+    public function setCategoryClosed($categoryClosed)
+    {
+        $this->categoryClosed = $categoryClosed;
     }
     
 }

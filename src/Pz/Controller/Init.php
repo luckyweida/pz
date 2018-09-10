@@ -203,7 +203,6 @@ class Init extends Controller
             $orm->setId(5);
             $orm->setTitle('news-detail.twig');
             $orm->setFilename('news-detail.twig');
-            $orm->setStatus(2);
             $orm->save(true);
         }
 

@@ -19,15 +19,16 @@
                     icon: 'fa-eye'
                 }
             ] %}
+            {% set status = node.status >= classes|length ? 0 : node.status %}
             <a href="#"
                data-id="{{ node.id }}"
                data-classname="{{ node.extras.model.className }}"
-               data-status="{{ node.status }}"
-               class="js-status isactive btn btn-xs btn-circle {{ classes[node.status]['color'] }}">
+               data-status="{{ status }}"
+               class="js-status isactive btn btn-xs btn-circle {{ classes[status]['color'] }}">
                 {% for itm in classes %}
                     <input type="hidden" class="js-status-opt" data-color="{{ itm.color }}" data-icon="{{ itm.icon }}" value="{{ loop.index0 }}">
                 {% endfor %}
-                <i class="fa {{ classes[node.status]['icon'] }}"></i>
+                <i class="fa {{ classes[status]['icon'] }}"></i>
             </a>
             <a href="/pz/{{ node.extras.model.dataType == 0 ? 'database' : 'admin' }}/{{ node.extras.model.id }}/detail/{{ node.id }}?returnUrl={{ app.request.uri|url_encode }}" class="edit btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
             <a href="/pz/{{ node.extras.model.dataType == 0 ? 'database' : 'admin' }}/{{ node.extras.model.id }}/copy/{{ node.id }}?returnUrl={{ app.request.uri|url_encode }}" class="copy btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>

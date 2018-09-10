@@ -73,15 +73,16 @@
                                                         icon: 'fa-check'
                                                     },
                                                 ] %}
+                                                {% set status = itm.status >= classes|length ? 0 : itm.status %}
                                                 <a href="#"
                                                    data-id="{{ itm.id }}"
-                                                   data-status="{{ itm.status }}"
-                                                   class="js-status btn-xs btn btn-circle {{ classes[itm.status]['color'] }}">
+                                                   data-status="{{ status }}"
+                                                   class="js-status btn-xs btn btn-circle {{ classes[status]['color'] }}">
 
                                                     {% for itm in classes %}
                                                         <input type="hidden" class="js-status-opt" data-color="{{ itm.color }}" data-icon="{{ itm.icon }}" value="{{ loop.index0 }}">
                                                     {% endfor %}
-                                                    <i class="fa {{ classes[itm.status]['icon'] }}"></i>
+                                                    <i class="fa {{ classes[status]['icon'] }}"></i>
                                                 </a>
                                                 <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
                                                 <a href="/pz/admin/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
