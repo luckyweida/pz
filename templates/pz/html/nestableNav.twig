@@ -1,12 +1,39 @@
 {% macro nest(node, depth) %}
+    {% set nextStatus = (node.status + 1) % 3 %}
+    {% set currentClasses = [] %}
+    {% set nextClasses = [] %}
+
+    {% if node.status == 0 %}
+        {% set currentClasses = ['btn-danger', 'fa-toggle-off'] %}
+    {% elseif node.status == 1 %}
+        {% set currentClasses = ['btn-primary', 'fa-toggle-on'] %}
+    {% elseif node.status == 2 %}
+        {% set currentClasses = ['btn-success', 'fa-eye'] %}
+    {% endif %}
+
+    {% if nextStatus == 0 %}
+        {% set nextClasses = ['btn-danger', 'fa-toggle-off'] %}
+    {% elseif nextStatus == 1 %}
+        {% set nextClasses = ['btn-primary', 'fa-toggle-on'] %}
+    {% elseif nextStatus == 2 %}
+        {% set nextClasses = ['btn-success', 'fa-eye'] %}
+    {% endif %}
+
     {% from _self import nest as nest %}
     <li class="dd-item dd3-item content-container" data-id="{{ node.id }}">
         <div class="dd-handle dd3-handle"></div>
         <div class="dd-handle dd3-handle"></div>
         <div class="dd3-content">
             <span>{{ node.title }}</span>
-            <a href="#" data-id="{{ node.id }}" data-classname="{{ node.extras.model.className }}" data-status="{{ node.status }}" class="js-status isactive btn btn-xs btn-circle {{ node.status ? 'btn-primary' : 'btn-danger' }} btn-outline">
-                <i class="fa {{ node.status ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
+            <a href="#" data-id="{{ node.id }}"
+               data-classname="{{ node.extras.model.className }}"
+               data-status="{{ node.status }}"
+               data-next-status="{{ nextStatus }}"
+               data-next-color="{{ nextClasses.0 }}"
+               data-next-icon="{{ nextClasses.1 }}"
+               class="js-status isactive btn btn-xs btn-circle btn-outline {{ currentClasses.0 }}">
+
+                <i class="fa {{ currentClasses.1 }}"></i>
             </a>
             <a href="/pz/{{ node.extras.model.dataType == 0 ? 'database' : 'admin' }}/{{ node.extras.model.id }}/detail/{{ node.id }}?returnUrl={{ app.request.uri|url_encode }}" class="edit btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
             <a href="/pz/{{ node.extras.model.dataType == 0 ? 'database' : 'admin' }}/{{ node.extras.model.id }}/copy/{{ node.id }}?returnUrl={{ app.request.uri|url_encode }}" class="copy btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>

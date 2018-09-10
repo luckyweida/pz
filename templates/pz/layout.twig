@@ -150,25 +150,16 @@
                         });
 
                         $(document).on('click', '.js-status', function() {
-                            $(this).data('status', $(this).data('status') == 1 ? 0 : 1);
                             $.ajax({
                                 type: 'GET',
                                 url: '{{ path('pzAjaxStatus') }}',
-                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent($(this).data('status')),
+                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent($(this).data('next-status')),
                                 success: function (msg) {
+                                    location.reload()
                                 }
                             });
 
-                            $(this).removeClass('btn-danger');
-                            $(this).removeClass('btn-info');
-                            $(this).find('i').removeClass('fa-toggle-off fa-toggle-on');
-                            if ($(this).data('status') == 1) {
-                                $(this).addClass('btn-info');
-                                $(this).find('i').addClass('fa-toggle-on');
-                            } else {
-                                $(this).addClass('btn-danger');
-                                $(this).find('i').addClass('fa-toggle-off');
-                            }
+
 
                             return false;
                         });
