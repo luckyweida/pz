@@ -287,6 +287,21 @@ abstract class Walle
     }
 
     /**
+     * @param $pdo
+     * @param array $options
+     * @return array|null
+     */
+    public static function active($pdo, $options = array())
+    {
+        if (isset($options['whereSql'])) {
+            $options['whereSql'] .= ($options['whereSql'] ? ' AND ' : '') . 'm.status = 1';
+        } else {
+            $options['whereSql'] = 'm.status = 1';
+        }
+        return static::data($pdo, $options);
+    }
+
+    /**
      * @param \PDO $pdo
      * @param array $options
      * @return array|null

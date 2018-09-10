@@ -44,4 +44,24 @@ class Tree
         return $node;
     }
 
+    public static function getChildrenAndSelfAsArray($root, $needleId)
+    {
+        return static::_getChildrenAndSelfAsArray($root, $needleId, 0);
+    }
+
+    private static function _getChildrenAndSelfAsArray(Node $node, $needleId, $added)
+    {
+        $result = array();
+        if ($node->getId() == $needleId || $added) {
+            $added = 1;
+            $result[] = $node;
+        }
+        foreach ($node->getChildren() as $itm) {
+            $r = static::_getChildrenAndSelfAsArray($itm, $needleId, $added);
+            if ($added || count($r) > 0) {
+                $result = array_merge($result, $r);
+            }
+        }
+        return $result;
+    }
 }

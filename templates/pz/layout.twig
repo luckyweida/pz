@@ -188,7 +188,7 @@
                                 $.ajax({
                                     type: 'GET',
                                     url: '{{ path('pzAjaxDelete') }}',
-                                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')),
+                                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(_this).data('classname') ? $(_this).data('classname') : $(_this).closest('tbody').data('classname')),
                                     success: function (msg) {
                                         swal({
                                             title: "Deleted",

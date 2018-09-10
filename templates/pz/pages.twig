@@ -2,7 +2,7 @@
 
 {% from "pz/html/nestableNav.twig" import nest as nest %}
 {% set categories = db.active('PageCategory') %}
-{% set cat = app.request.get('cat') ?: categories.0.id %}
+{% set cat = app.request.get('cat') or app.request.get('cat') is same as('0') ? app.request.get('cat') : categories.0.id %}
 
 {% set pageRoot = db.data('Page')|nestablePges(cat) %}
 
@@ -40,9 +40,9 @@
                             </label>
                         {% endfor %}
 
-                        <input data-id="-1"  id="itm-1" type="radio" name="category" {{ -1 == cat ? 'checked="checked"' : '' }} />
-                        <label data-id="-1" for="itm-1">
-                            <div class="other dd content--1" data-id="-1" >
+                        <input data-id="0"  id="itm0" type="radio" name="category" {{ 0 == cat ? 'checked="checked"' : '' }} />
+                        <label data-id="0" for="itm0">
+                            <div class="other dd content--1" data-id="0" >
                                 <div class="dd-empty"></div>
                             </div>
                             <div class="item-title">Uncategorised <span class="number"></span></div>
@@ -93,7 +93,7 @@
                 $('label.dd').css('cursor', 'wait');
                 $('label.dd').attr('disabled', 'disabled');
                 $('#nestable').html('Loading...');
-                location.href = '?cat=' + $(this).attr('data-id');
+                location.href = '?cat=' + $(this).data('id');
             });
 
 // 		$('.add-child').on('click', function() {
@@ -107,13 +107,12 @@
 
         function countCat() {
             $.ajax({
-                type: 'POST',
-                url: '',
-                data: 'action=countCat',
+                type: 'GET',
+                url: '{{ path('pzAjaxCatCount') }}',
                 success : function(msg) {
-                    var reuslt = JSON.parse(msg);
+                    var reuslt = msg;
                     $.each($('.other'), function(key, value) {
-                        var count = reuslt['cat' + $(value).attr('data-id')] ?  reuslt['cat' + $(value).attr('data-id')] : 0;
+                        var count = reuslt['cat' + $(value).data('id')] ?  reuslt['cat' + $(value).data('id')] : 0;
                         $(value).parent().find('span.number').html('(' + count + ')');
                     });
                 }
@@ -127,11 +126,11 @@
             $.each($('.other'), function(key, value) {
                 var items = $(value).nestable('serialize');
                 if (items.length > 0) {
-                    if ('{{ cat }}' != $(value).attr('data-id')) {
+                    if ('{{ cat }}' != $(value).data('id')) {
                         $.ajax({
                             type: 'GET',
-                            url: '',
-                            data: 'oldCat={{ cat }}&newCat=' + $(value).attr('data-id') + '&id=' + items[0].id,
+                            url: '{{ path('pzAjaxPageChange') }}',
+                            data: 'oldCat={{ cat }}&newCat=' + $(value).data('id') + '&id=' + items[0].id,
                             success : function(msg) {
                                 $(value).html('<div class="dd-empty"></div>');
                                 countCat();
@@ -151,16 +150,17 @@
                     id: 0,
                     children: $('#nestable').nestable('serialize'),
                 }
+                var data = toArray(root);
 
                 _ajax = $.ajax({
-                    type: 'POST',
-                    url: '',
-                    data: 'cat={{ cat }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),
+                    type: 'GET',
+                    url: '{{ path('pzAjaxPagesSort') }}',
+                    data: 'cat={{ cat }}&data=' + encodeURIComponent(JSON.stringify(data)),
                     success : function(msg) {
                     }
                 });
             }
-        }
+        };
 
         function toArray(node) {
             var result = [];

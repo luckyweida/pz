@@ -60,7 +60,7 @@ class Db
     }
 
     /**
-     * @param $className
+     * @param $pdo
      * @param array $options
      * @return mixed
      */

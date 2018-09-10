@@ -11,6 +11,10 @@ use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
 {
+
+    /**
+     * @return array
+     */
     public function getFunctions(): array
     {
         return array(
@@ -18,6 +22,9 @@ class Extension extends AbstractExtension
         );
     }
 
+    /**
+     * @return array
+     */
     public function getFilters()
     {
         return array(
@@ -27,7 +34,11 @@ class Extension extends AbstractExtension
 
     }
 
-    public function nestable($orms)
+    /**
+     * @param $orms
+     * @return Node
+     */
+    public static function nestable($orms)
     {
         $nodes = array();
         foreach ($orms as $orm) {
@@ -39,39 +50,40 @@ class Extension extends AbstractExtension
 
 
     /**
-     * @param Page[] $orms
+     * @param Page[] $pages
      * @param $cat
      * @return Node
      */
-    public function nestablePges($orms, $cat)
+    public static function nestablePges($pages, $cat)
     {
         $nodes = array();
-        foreach ($orms as $orm) {
-            $category = json_decode($orm->getCategory());
-            if (!in_array($cat, $category)) {
+        foreach ($pages as $page) {
+            $category = json_decode($page->getCategory());
+            if (!in_array($cat, $category) && !($cat == 0 && count($category) == 0)) {
                 continue;
             }
-            $categoryParent = (array)json_decode($orm->getCategoryParent());
-            $categoryRank = (array)json_decode($orm->getCategoryRank());
+            $categoryParent = (array)json_decode($page->getCategoryParent());
+            $categoryRank = (array)json_decode($page->getCategoryRank());
 
             $categoryParentValue = isset($categoryParent["cat$cat"]) ? $categoryParent["cat$cat"] : 0;
             $categoryRankValue = isset($categoryRank["cat$cat"]) ? $categoryRank["cat$cat"] : 0;
 
             $node = new Node(
-                $orm->getId(),
-                $orm->getTitle(),
+                $page->getId(),
+                $page->getTitle(),
                 $categoryParentValue,
                 $categoryRankValue,
-                $orm->getUrl(),
-                $orm->objPageTempalte()->getId(),
-                $orm->getStatus(),
-                $orm->getAllowExtra(),
-                $orm->getMaxParams()
+                $page->getUrl(),
+                $page->objPageTempalte()->getId(),
+                $page->getStatus(),
+                $page->getAllowExtra(),
+                $page->getMaxParams()
             );
 
 
             $node->setExtras(array(
-                'model' => $orm->getModel(),
+                'orm' => $page,
+                'model' => $page->getModel(),
             ));
 
             $nodes[] = $node;
