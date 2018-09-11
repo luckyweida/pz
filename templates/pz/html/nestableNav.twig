@@ -1,6 +1,6 @@
 {% macro nest(node, depth) %}
     {% from _self import nest as nest %}
-    <li class="dd-item dd3-item content-container" data-id="{{ node.id }}">
+    <li class="dd-item dd3-item content-container {% if node.extras.closed == 1 %}dd-collapsed{% endif %}" data-id="{{ node.id }}">
         <div class="dd-handle dd3-handle"></div>
         <div class="dd-handle dd3-handle"></div>
         <div class="dd3-content">
@@ -25,6 +25,7 @@
                data-classname="{{ node.extras.model.className }}"
                data-status="{{ status }}"
                class="js-status isactive btn btn-xs btn-circle {{ classes[status]['color'] }}">
+
                 {% for itm in classes %}
                     <input type="hidden" class="js-status-opt" data-color="{{ itm.color }}" data-icon="{{ itm.icon }}" value="{{ loop.index0 }}">
                 {% endfor %}

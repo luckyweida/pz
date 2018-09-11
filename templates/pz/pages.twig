@@ -72,10 +72,12 @@
         var _ajax;
 
         $(function() {
+            //init
             $('#nestable').nestable({ group: 1 }).on('change', update);
 
+            //...
             $('.other').nestable({ group: 1 });
-            $('.other').mouseout(function() {
+            $(document).on('mouseout', '.other', function() {
                 setTimeout(function() {
                     $.each($('.other'), function(key, value) {
                         if ($(value).children().length == 0) {
@@ -85,21 +87,40 @@
                 }, 1500);
             });
 
-            $('.dd-empty').on('click', function() {
+            $.each($('.dd-item'), function (idx, itm) {
+                if ($(itm).hasClass('dd-collapsed')) {
+                    $(itm).find('button[data-action="collapse"]').hide();
+                    $(itm).find('button[data-action="expand"]').show();
+                } else {
+                    $(itm).find('button[data-action="collapse"]').show();
+                    $(itm).find('button[data-action="expand"]').hide();
+                }
+            });
+
+            //what?
+            $(document).on('click', '.dd-empty', function() {
                 $('#' + $(this).parent().attr('for')).click();
             });
 
-            $('[name=category]').on('click', function() {
+            //category
+            $(document).on('click', '[name=category]', function() {
                 $('label.dd').css('cursor', 'wait');
                 $('label.dd').attr('disabled', 'disabled');
                 $('#nestable').html('Loading...');
                 location.href = '?cat=' + $(this).data('id');
             });
 
-// 		$('.add-child').on('click', function() {
-// 			$('.addForm').attr('action', $('.addForm').attr('action') + '&parentId=' + $(this).parent().parent().attr('data-id'));
-// 			$('.addForm').submit();
-// 		});
+            //closed
+            $(document).on('click', '.dd-item button', function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ path('pzAjaxPageClosed') }}',
+                    data: 'id=' + $(this).parent().data('id') + '&closed=' + ($(this).parent().hasClass('dd-collapsed') ? 1 : 0) + '&cat={{ cat }}',
+                    success : function(msg) {
+
+                    }
+                });
+            });
 
             countCat();
         });

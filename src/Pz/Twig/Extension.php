@@ -64,9 +64,11 @@ class Extension extends AbstractExtension
             }
             $categoryParent = (array)json_decode($page->getCategoryParent());
             $categoryRank = (array)json_decode($page->getCategoryRank());
+            $categoryClosed = (array)json_decode($page->getCategoryClosed());
 
             $categoryParentValue = isset($categoryParent["cat$cat"]) ? $categoryParent["cat$cat"] : 0;
             $categoryRankValue = isset($categoryRank["cat$cat"]) ? $categoryRank["cat$cat"] : 0;
+            $categoryClosedValue = isset($categoryClosed["cat$cat"]) ? $categoryClosed["cat$cat"] : 0;
 
             $node = new Node(
                 $page->getId(),
@@ -84,10 +86,10 @@ class Extension extends AbstractExtension
             $node->setExtras(array(
                 'orm' => $page,
                 'model' => $page->getModel(),
+                'closed' => $categoryClosedValue,
             ));
 
             $nodes[] = $node;
-
         }
 
         $tree = new Tree($nodes);

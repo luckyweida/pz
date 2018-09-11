@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -208,6 +209,35 @@ class Ajax extends Controller
             $orm->setCategoryParent(json_encode($categoryParent));
             $orm->save();
         }
+
+        return new Response('OK');
+    }
+
+    /**
+     * @route("/pz/ajax/page/closed", name="pzAjaxPageClosed")
+     * @return Response
+     */
+    public function pzAjaxPageClosed()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+        $cat = $request->get('cat');
+        $closed = $request->get('closed') ?: 0;
+
+        /** @var Page $orm */
+        $orm = Page::getById($pdo, $id);
+        if (!$orm) {
+            throw new NotFoundHttpException();
+        }
+
+        $categoryClosed = $orm->getCategoryClosed() ? (array)json_decode($orm->getCategoryClosed()) : array();
+        $categoryClosed["cat{$cat}"] = $closed;
+        $orm->setCategoryClosed(json_encode($categoryClosed));
+        $orm->save();
 
         return new Response('OK');
     }
