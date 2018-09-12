@@ -6,11 +6,6 @@
 
 {% set pageRoot = db.data('Page')|nestablePges(cat) %}
 
-
-{% block extraHead %}
-    <link href="{{ getenv('CDN') }}/pz/css/nestable.css" rel="stylesheet">
-{% endblock %}
-
 {% block extraHeaderLeft %}
     <h2>Manage <label class="label label-warning-light">Pages</label></h2>
 {% endblock %}
