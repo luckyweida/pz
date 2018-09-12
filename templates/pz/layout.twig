@@ -11,9 +11,9 @@
                 {#<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>#}
 
 
-                <style>
-                    @import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Titillium+Web');
-                </style>
+                <noscript id="deferred-styles">
+                    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Titillium+Web" rel="stylesheet">
+                </noscript>
 
                 {% block asset %}
                     <link rel="stylesheet" href="{{ asset('build/cms-main.css') }}" as="style" rel="preload">
@@ -84,6 +84,19 @@
                     </div>
                 {% endblock %}
 
+                <script>
+                    var loadDeferredStyles = function() {
+                        var addStylesNode = document.getElementById("deferred-styles");
+                        var replacement = document.createElement("div");
+                        replacement.innerHTML = addStylesNode.textContent;
+                        document.body.appendChild(replacement)
+                        addStylesNode.parentElement.removeChild(addStylesNode);
+                    };
+                    var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                    if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+                    else window.addEventListener('load', loadDeferredStyles);
+                </script>
                 {% block extraFooter %}{% endblock %}
             </body>
         {% endblock %}
