@@ -1,6 +1,9 @@
 {% from "pz/html/nestableNav.twig" import nest as nest %}
 {% extends 'pz/layout.twig' %}
 
+{% block js %}
+    <script src="{{ asset('build/cms-orms.js') }}"></script>
+{% endblock %}
 
 {% set model = db.byId('_Model', fragments|last) %}
 
@@ -116,42 +119,7 @@
 {% endblock %}
 
 {% block extraFooter %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Nestable/2012-10-15/jquery.nestable.min.js"></script>
     <script>
-        $(function () {
-            {% if model.listType == 2 %}
-                $('#nestable').nestable({ group: 1 }).on('change', update);
-            {% endif %}
-        });
-
-        function update() {
-            var root = {
-                id: 0,
-                children: $('#nestable').nestable('serialize'),
-            }
-
-            {#_ajax = $.ajax({#}
-                {#type: 'GET',#}
-                {#url: '{{ path('nestable') }}',#}
-                {#data: 'model={{ model.className }}&data=' + encodeURIComponent(JSON.stringify(toArray(root))),#}
-                {#success : function(msg) {#}
-                {#}#}
-            {#});#}
-        }
-
-        function toArray(node) {
-            var result = [];
-            for (var idx in node.children) {
-                var itm = node.children[idx];
-                result.push({
-                    id: itm.id,
-                    parentId: node.id,
-                    rank: idx,
-                });
-                result = result.concat(toArray(itm));
-            }
-            return result;
-        };
+        window._listType = '{{ model.listType }}';
     </script>
 {% endblock %}
-

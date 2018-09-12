@@ -1,5 +1,9 @@
 {% extends 'pz/layout.twig' %}
 
+{% block js %}
+    <script src="{{ asset('build/cms-model-sync.js') }}"></script>
+{% endblock %}
+
 {% set orm = db.byId('_Model', args.0) ?: db.create('_Model') %}
 
 {% block extraHead %}
@@ -34,8 +38,6 @@
 
 {% block extraFooter %}
     <script>
-        $(function () {
-            location.href = '{{ app.request.get('returnUrl') }}'
-        });
+        window._returnUrl = '{{ app.request.get('returnUrl') }}';
     </script>
 {% endblock %}

@@ -20,31 +20,25 @@
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">
 
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">
 
                 <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
-
-                <script src="{{ getenv('CDN') }}/inspinia/js/jquery-2.1.1.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/bootstrap.min.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/plugins/metisMenu/jquery.metisMenu.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/inspinia.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/plugins/pace/pace.min.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
-                <script src="{{ getenv('CDN') }}/inspinia/js/plugins/validate/jquery.validate.min.js"></script>
-
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js" type="text/javascript"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js"></script>
-
                 <link href="{{ getenv('CDN') }}/pz/css/style.css" rel="stylesheet">
-                <script src="{{ getenv('CDN') }}/pz/js/function.min.js" type="text/javascript"></script>
+
+
+
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.min.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js" type="text/javascript"></script>#}
+                {#<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.4/js.cookie.min.js"></script>#}
+                {#<script src="{{ getenv('CDN') }}/pz/js/function.min.js" type="text/javascript"></script>#}
+
+                {% block js %}
+                    <script src="{{ asset('build/cms-main.js') }}"></script>
+                {% endblock %}
+
                 {% block extraHead %}{% endblock %}
             </head>
         {% endblock %}
@@ -117,109 +111,6 @@
                     </div>
                 {% endblock %}
 
-                <script>
-                    $(function() {
-                        $('.navbar-minimalize').off();
-                        $(document).on('click', '.navbar-minimalize', function(ev) {
-                            $('body').toggleClass('mini-navbar');
-                            if ($('body').hasClass('mini-navbar')) {
-                                Cookies.set('miniNavbar', 1);
-                            } else {
-                                Cookies.remove('miniNavbar');
-                            }
-                            return false;
-                        });
-
-                        $.each($('.js-sort-column'), function (idx, itm) {
-
-                            $.each($(itm).find('td'), function (key, val) {
-                                $(val).css('width', $(val).outerWidth() + 'px');
-                            });
-
-                            $(itm).sortable({
-                                stop: function (event, ui) {
-                                    $.ajax({
-                                        type: 'GET',
-                                        url: '{{ path('pzAjaxColumnSort') }}',
-                                        data: 'data=' + encodeURIComponent(JSON.stringify($(itm).sortable("toArray"))) + '&className=' + encodeURIComponent($(itm).data('classname')),
-                                        success: function (msg) {
-                                        }
-                                    });
-                                }
-                            });
-                        });
-
-                        $(document).on('click', '.js-status', function() {
-                            var result = [];
-                            $.each($(this).find('.js-status-opt'), function (idx, itm) {
-                                result.push({
-                                    color: $(itm).data('color'),
-                                    icon: $(itm).data('icon'),
-                                });
-                            });
-
-                            var status = $(this).data('status');
-                            var nextStatus = (status + 1) % result.length;
-                            $(this).data('status', nextStatus);
-
-                            $.ajax({
-                                type: 'GET',
-                                url: '{{ path('pzAjaxStatus') }}',
-                                data: 'id=' + encodeURIComponent($(this).data('id'))  + '&className=' + encodeURIComponent($(this).data('classname') ? $(this).data('classname') : $(this).closest('tbody').data('classname')) + '&status=' + encodeURIComponent(nextStatus),
-                                success: function (msg) {
-                                }
-                            });
-
-
-                            $(this).attr('class', 'js-status isactive btn btn-xs btn-circle ' + result[nextStatus].color);
-                            $(this).find('i').attr('class', 'fa ' + result[nextStatus].icon);
-                            return false;
-                        });
-
-                        $(document).on('click', '.js-delete', function(ev) {
-                            var _this = this;
-                            swal({
-                                title: "Are you sure?",
-                                text: "You will not be able to recover this data!",
-                                type: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#DD6B55",
-                                confirmButtonText: "Yes, delete it!",
-                                closeOnConfirm: false,
-                                showLoaderOnConfirm: true,
-                            }, function () {
-                                $.ajax({
-                                    type: 'GET',
-                                    url: '{{ path('pzAjaxDelete') }}',
-                                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(_this).data('classname') ? $(_this).data('classname') : $(_this).closest('tbody').data('classname')),
-                                    success: function (msg) {
-                                        swal({
-                                            title: "Deleted",
-                                            text: "Your data has been deleted.",
-                                            type: 'success',
-                                            timer: 1000,
-                                            showConfirmButton: false
-                                        });
-                                        setTimeout(function () {
-                                            if ($(_this).closest('.dd-item').length) {
-                                                if ($(_this).closest('.dd-list').find('.dd-item').length == 1) {
-                                                    $(_this).closest('.dd-list').remove();
-                                                } else {
-                                                    $(_this).closest('.dd-item').remove();
-                                                }
-                                            } else {
-                                                $(_this).closest('.content-container').remove();
-                                            }
-                                        }, 800)
-                                    }
-                                });
-
-                            });
-                            return false;
-                        });
-
-                    });
-                </script>
                 {% block extraFooter %}{% endblock %}
             </body>
         {% endblock %}
