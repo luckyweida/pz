@@ -2,8 +2,8 @@
 
 
 {% block asset %}
-    <link rel="stylesheet" href="{{ asset('build/cms-model.css') }}">
-    <script src="{{ asset('build/cms-model.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/cms-model.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-model.js') }}" async defer></script>
 {% endblock %}
 
 {% if model is not defined %}

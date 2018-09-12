@@ -2,8 +2,8 @@
 {% extends 'pz/layout.twig' %}
 
 {% block asset %}
-    <link rel="stylesheet" href="{{ asset('build/cms-orms.css') }}">
-    <script src="{{ asset('build/cms-orms.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('build/cms-orms.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-orms.js') }}" async defer></script>
 {% endblock %}
 
 

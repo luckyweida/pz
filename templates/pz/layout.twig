@@ -8,15 +8,15 @@
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>{{ getenv('PROJECT') }}</title>
-                <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+                {#<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>#}
 
 
-
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Titillium+Web" rel="stylesheet">
 
 
                 {% block asset %}
-                    <link rel="stylesheet" href="{{ asset('build/cms-main.css') }}">
-                    <script src="{{ asset('build/cms-main.js') }}"></script>
+                    <link rel="stylesheet" href="{{ asset('build/cms-main.css') }}" as="style" rel="preload">
+                    <script src="{{ asset('build/cms-main.js') }}" async defer></script>
                 {% endblock %}
 
                 {#<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">#}
