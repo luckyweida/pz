@@ -11,10 +11,7 @@
 {% endblock %}
 
 {% block asset %}
-    {#<link rel="stylesheet" href="{{ asset('build/cms-pages.css') }}" as="style" rel="preload">#}
-    <style>
-        {{ css('build/cms-pages.css') }}
-    </style>
+    <link rel="stylesheet" href="{{ asset('build/cms-pages.css') }}" as="style" rel="preload">
     <script src="{{ asset('build/cms-pages.js') }}" async defer></script>
 {% endblock %}
 
