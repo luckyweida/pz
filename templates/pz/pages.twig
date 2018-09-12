@@ -15,9 +15,11 @@
     <h2>Manage <label class="label label-warning-light">Pages</label></h2>
 {% endblock %}
 
-{% block js %}
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-pages.css') }}">
     <script src="{{ asset('build/cms-pages.js') }}"></script>
 {% endblock %}
+
 
 {% block content %}
     <div class="row">

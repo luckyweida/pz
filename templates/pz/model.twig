@@ -1,7 +1,8 @@
 {% extends 'pz/layout.twig' %}
 
 
-{% block js %}
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-model.css') }}">
     <script src="{{ asset('build/cms-model.js') }}"></script>
 {% endblock %}
 

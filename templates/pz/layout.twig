@@ -10,25 +10,23 @@
                 <title>{{ getenv('PROJECT') }}</title>
                 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
 
+
+
+
+
+                {% block asset %}
+                    <link rel="stylesheet" href="{{ asset('build/cms-main.css') }}">
+                    <script src="{{ asset('build/cms-main.js') }}"></script>
+                {% endblock %}
+
                 <link href="{{ getenv('CDN') }}/inspinia/css/bootstrap.min.css" rel="stylesheet">
                 <link href="{{ getenv('CDN') }}/inspinia/css/animate.css" rel="stylesheet">
                 <link href="{{ getenv('CDN') }}/inspinia/css/style.css" rel="stylesheet">
                 <link href="{{ getenv('CDN') }}/inspinia/css/plugins/iCheck/custom.css" rel="stylesheet">
-                <link href="{{ getenv('CDN') }}/pz/css/chosen.css" rel="stylesheet">
 
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">
-
-
-                <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
-                <link href="{{ getenv('CDN') }}/pz/css/style.css" rel="stylesheet">
-
-
-
-                {% block js %}
-                    <script src="{{ asset('build/cms-main.js') }}"></script>
-                {% endblock %}
 
                 {% block extraHead %}{% endblock %}
             </head>

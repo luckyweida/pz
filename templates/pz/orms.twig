@@ -1,9 +1,11 @@
 {% from "pz/html/nestableNav.twig" import nest as nest %}
 {% extends 'pz/layout.twig' %}
 
-{% block js %}
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-orms.css') }}">
     <script src="{{ asset('build/cms-orms.js') }}"></script>
 {% endblock %}
+
 
 {% set model = db.byId('_Model', fragments|last) %}
 
