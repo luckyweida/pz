@@ -5,12 +5,28 @@ namespace Pz\Twig;
 use Pz\Orm\Page;
 use Pz\Router\Node;
 use Pz\Router\Tree;
+use Symfony\Component\DependencyInjection\Container;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class Extension extends AbstractExtension
 {
+    /**
+     * @var Container
+     */
+    private $container;
+
+
+
+    /**
+     * Extension constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @return array
@@ -19,6 +35,7 @@ class Extension extends AbstractExtension
     {
         return array(
             new TwigFunction('getenv', 'getenv'),
+            new TwigFunction('css', array($this, 'css')),
         );
     }
 
@@ -32,6 +49,14 @@ class Extension extends AbstractExtension
             'nestablePges' => new TwigFilter('nestablePges', array($this, 'nestablePges')),
         );
 
+    }
+
+
+    public function css($path)
+    {
+//        while (@ob_end_clean());
+//        var_dump($this->container->getParameter('kernel.project_dir') . '/public/' . $path);exit;
+        return file_get_contents($this->container->getParameter('kernel.project_dir') . '/public/' . $path);
     }
 
     /**
