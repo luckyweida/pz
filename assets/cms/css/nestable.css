@@ -1,0 +1,274 @@
+.page-category input {
+	border: 0;
+	clip: rect(0, 0, 0, 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px
+}
+
+.page-category label {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 -4px 0 0;
+	color: #1c84c6;
+	cursor: pointer;
+	border: 1px solid #e5e5e5;
+	transition: all .1s ease-in-out;
+	text-align: left;
+	padding: .5em;
+	min-width: 13em
+}
+
+.page-category label .item-title {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 -4px 0 0;
+	vertical-align: middle;
+	padding-right: 1em;
+	overflow: hidden;
+	height: 1.7em
+}
+
+.page-category label:hover {
+	background: #f9f9f9
+}
+
+.page-category .number {
+	color: #999;
+	font-weight: normal;
+	margin: 0 0 0 .5em;
+	font-size: .9em
+}
+
+.page-category input:checked+label {
+	background: #1c84c6;
+	color: #fff
+}
+
+.page-category input:checked+label .number {
+	color: #9bc9ef;
+	padding-right: 5px
+}
+
+.page-category .dd {
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 -4px 0 0;
+	vertical-align: middle;
+	height: 3em;
+	width: 3em;
+	margin: 0 .5em 0 0;
+	background: rgba(34, 129, 207, 0.2);
+	overflow: hidden !important;
+	border: 1px dashed #70b1e7
+}
+
+.page-category .dd-placeholder,.page-category .dd-empty {
+	background: none;
+	min-height: 0
+}
+
+.page-category .dd-empty {
+	border: none;
+	text-align: center;
+	padding: 1em 1.5em
+}
+
+.page-category .other .dd-empty {
+	min-width: 100px
+}
+
+.page-category .other .dd-placeholder,.page-category .other .dd-list {
+	display: none
+}
+
+.nestable-lists * {
+	padding-left: 0 !important;
+}
+
+.nestable-lists {
+	max-width: 950px;
+	width: 100%;
+	margin: 5px 0;
+	border: none !important;
+	padding: 10px 0 !important;
+}
+
+.dd,.dd-dragel {
+	position: relative
+}
+
+.dd-dragel {
+	margin-top: 40px !important;
+}
+
+.dd button,.dd-dragel button {
+	position: absolute;
+	left: 0;
+	height: 100%;
+	z-index: 1;
+	padding: 0;
+	text-indent: -5000px;
+	overflow: hidden;
+	width: 3em;
+	top: 0;
+	border-radius: 0;
+	border: none;
+	background: #fcfcfc url('../images/nestable/icon-nestable-active.png') no-repeat 1em 1.1em;
+	box-shadow: none;
+	margin: 0 !important;
+}
+
+.dd .isactive,.dd-dragel .isactive,
+.dd .delete,.dd-dragel .delete,
+.dd .copy,.dd-dragel .copy,
+.dd .edit,.dd-dragel .edit {
+	position: absolute;
+	right: .5em;
+	top: .6em;
+	z-index: 1;
+	width: 2.3em;
+	height: 2.3em;
+	line-height: .8em;
+}
+
+.dd .isactive,.dd-dragel .isactive {
+	right: 8em;
+}
+
+.dd .copy,.dd-dragel .copy {
+	right: 3em;
+}
+
+.dd .edit,.dd-dragel .edit {
+	right: 5.5em;
+}
+
+.dd-list {
+	margin: 0;
+	list-style-type: none;
+	padding: 0
+}
+
+.dd-item > button[data-action="collapse"]::before {
+	content: "";
+}
+.dd-item > button::before {
+	content: "";
+}
+
+.dd-item {
+	border-bottom: 1px solid #e5e5e5;
+	padding: .6em 0 .6em 1em; 
+	transition : background-color .1s ease-in-out 0s;
+	position: relative;
+	background: #f5f5f5 !important;
+	transition: background-color .1s ease-in-out 0s;
+	line-height: 25px;
+}
+
+.dd-item .child-num {
+	color: #999;
+	margin-left: .6em;
+	font-weight: normal;
+	font-size: .85em
+}
+
+.dd3-content span {
+	margin-left: 4em;
+	position: relative;
+	z-index: 1;
+	font-weight: bold;
+	color: #888;
+}
+
+.dd-handle {
+	display: block;
+	z-index: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	cursor: move;
+	border: none !important;
+	margin: 0 !important;
+}
+
+.dd-collapsed {
+	transition: background-color .1s ease-in-out 0s;
+	background: #fff
+}
+
+.dd-collapsed button {
+	background-color: #fff;
+	background-image: url('../images/nestable/icon-nestable.png')
+}
+
+.dd-collapsed button:hover {
+	background-color: #fff
+}
+
+.dd-collapsed:hover {
+	background: #f6f6f6
+}
+
+.dd-list .dd-list {
+	border: 1px solid #e5e5e5;
+	margin: 1em 1em 1em 4em
+}
+
+.dd-list .dd-list span {
+	margin-left: 4em
+}
+
+.dd-list .dd-list .child-num {
+	margin-left: .6em
+}
+
+.dd-list .dd-list li:last-child {
+	border: none
+}
+
+.dd-list .dd-list .dd-handle {
+	background: #fff !important;
+}
+
+.dd-placeholder,.dd-empty {
+	display: block;
+	position: relative;
+	border: 1px dashed #7ab3e2;
+	min-height: 3em;
+	background-color: #f6f6f6;
+	background: #e3f1fd;
+	margin: 0 !important;
+}
+
+.dd-dragel {
+	position: absolute;
+	pointer-events: none;
+	z-index: 9999;
+	display: block;
+	border: 1px solid #bbb;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15)
+}
+
+.dd-dragel>.dd3-item>.dd3-content {
+	margin: 0
+}
+
+.error {
+	background: #e92814;
+	border-radius: 4px;
+	color: #fff;
+	display: block;
+	line-height: normal;
+	overflow: hidden;
+	padding: 4px 9px;
+	margin: 0 0 1em;
+	text-align: center;
+	width: auto
+}

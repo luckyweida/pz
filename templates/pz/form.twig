@@ -23,26 +23,26 @@
 {% block datepicker_widget -%}
     <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d') : '' }}"/>
     <script>
-        $(function () {
-            $('#{{ id }}').datetimepicker({
-                timepicker: false,
-                format: 'Y-m-d',
-                scrollInput: false,
-            });
-        });
+        {#$(function () {#}
+            {#$('#{{ id }}').datetimepicker({#}
+                {#timepicker: false,#}
+                {#format: 'Y-m-d',#}
+                {#scrollInput: false,#}
+            {#});#}
+        {#});#}
     </script>
 {%- endblock datepicker_widget %}
 
 {% block datetimepicker_widget -%}
     <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d H:i:s') : '' }}"/>
     <script>
-        $(function () {
-            $('#{{ id }}').datetimepicker({
-                step: 5,
-                format: 'Y-m-d H:i',
-                scrollInput: false,
-            });
-        });
+        {#$(function () {#}
+            {#$('#{{ id }}').datetimepicker({#}
+                {#step: 5,#}
+                {#format: 'Y-m-d H:i',#}
+                {#scrollInput: false,#}
+            {#});#}
+        {#});#}
     </script>
 {%- endblock datetimepicker_widget %}
 
@@ -54,11 +54,11 @@
         {% endfor %}
     </select>
     <script>
-        $(function() {
-            $(document).on('change', '#{{ id }}_select', function() {
-                $('#{{ id }}').val(JSON.stringify($(this).val()));
-            });
-        });
+        {#$(function() {#}
+            {#$(document).on('change', '#{{ id }}_select', function() {#}
+                {#$('#{{ id }}').val(JSON.stringify($(this).val()));#}
+            {#});#}
+        {#});#}
     </script>
 {%- endblock choice_multi_json_widget %}
 
