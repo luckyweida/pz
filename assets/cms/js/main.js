@@ -10,7 +10,7 @@ require('../css/font-awesome/css/font-awesome.css');
 require('../css/chosen.css');
 require('../css/style.css');
 
-const $ = require("../../inspinia/js/jquery-2.1.1.js");
+const $ = require("jquery");
 window.$ = $;
 window.jQuery = $
 
