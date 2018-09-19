@@ -1,5 +1,5 @@
 "use strict";
-require('../css/nestable.css');
+require('../../pz/css/nestable.css');
 
 require("./main.js");
 require('nestable');

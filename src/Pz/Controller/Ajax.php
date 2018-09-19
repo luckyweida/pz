@@ -241,4 +241,23 @@ class Ajax extends Controller
 
         return new Response('OK');
     }
+
+    /**
+     * @route("/pz/ajax/files", name="pzAjaxFiles")
+     * @return Response
+     */
+    public function pzAjaxFiles()
+    {
+        return new JsonResponse(json_decode('{"currentFolder":{"id":"-1","parentId":"-2","rank":"1","visible":1,"title":"Accommodation","twig":null,"url":"\/pz\/files\/?currentFolderId=-1","icon":null,"allowExtra":false,"maxParams":0},"keyword":"","path":[{"id":-1,"parentId":-2,"rank":0,"visible":1,"title":"Home","twig":"\/pz\/files\/?currentFolderId=-1","url":null,"icon":null,"allowExtra":false,"maxParams":0}],"files":[{"zdb":{},"title":"IMG_2391.JPG","description":"","isFolder":"0","fileName":"IMG_2391.JPG","fileType":"image\/jpeg","fileSize":"2522153","fileLocation":"126.JPG","__slug":"img-2391-jpg","__modelClass":"Asset","__rank":"-1","__parentId":"125","__added":"2 weeks ago","__modified":"2018-09-02 00:02:05","__active":"1","id":"126","track":"b6836a547950c06916fce106e9c97fe2"}]}'));
+
+    }
+
+    /**
+     * @route("/pz/ajax/folders", name="pzAjaxFolders")
+     * @return Response
+     */
+    public function pzAjaxFolders()
+    {
+        return new JsonResponse(json_decode('{"id":-1,"parentId":-2,"text":"Home","state":{"opened":true,"selected":false},"rank":0,"children":[]}'));
+    }
 }

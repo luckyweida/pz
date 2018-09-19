@@ -6,9 +6,9 @@ require('../../inspinia/css/style.css');
 require('../../inspinia/css/plugins/iCheck/custom.css');
 require('../../inspinia/css/plugins/sweetalert/sweetalert.css');
 
-require('../css/font-awesome/css/font-awesome.css');
-require('../css/chosen.css');
-require('../css/style.css');
+require('../../font-awesome/css/font-awesome.css');
+require('../../pz/css/chosen.css');
+require('../../pz/css/style.css');
 
 const $ = require("jquery");
 window.$ = $;

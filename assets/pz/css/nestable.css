@@ -117,7 +117,7 @@
 	top: 0;
 	border-radius: 0;
 	border: none;
-	background: #fcfcfc url('../images/nestable/icon-nestable-active.png') no-repeat 1em 1.1em;
+	background: #fff url('../images/nestable/icon-nestable-active.png') no-repeat 1em 1.1em;
 	box-shadow: none;
 	margin: 0 !important;
 }
@@ -162,7 +162,7 @@
 
 .dd-item {
 	border-bottom: 1px solid #e5e5e5;
-	padding: .6em 0 .6em 1em; 
+	padding: .6em 0 .6em 1em;
 	transition : background-color .1s ease-in-out 0s;
 	position: relative;
 	background: #f5f5f5 !important;

@@ -9,7 +9,9 @@ require('../../redactor/redactor/redactor.js');
 require('../../redactor/plugins/table.js');
 require('../../redactor/plugins/video.js');
 
-require('../../inspinia/js/plugins/jsTree/jstree.min.js');
+var jstree = require('jstree/dist/jstree.js');
+window.jstree = jstree;
+
 require('../../inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js');
 
 require('blueimp-file-upload/js/jquery.iframe-transport.js');

@@ -1,12 +1,13 @@
 {% extends 'pz/layout.twig' %}
 {% block extraBodyClass %}page-files{% endblock %}
 
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-files.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-files.js') }}" async defer></script>
+{% endblock %}
+
 {% set currentFolderId = app.request.get('currentFolderId') ?: -1 %}
 {% set keyword = app.request.get('keyword') %}
-
-{% block extraHead %}
-    <link href="{{ getenv('CDN') }}/inspinia/css/plugins/jsTree/style.min.css" rel="stylesheet">
-{% endblock %}
 
 {% block extraHeaderLeft %}
     <h2>Manage <label class="label label-warning-light">Files</label></h2>
@@ -58,20 +59,19 @@
 {% endblock %}
 
 {% block extraFooter %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>
-    <script src="{{ getenv('CDN') }}/inspinia/js/plugins/jsTree/jstree.min.js"></script>
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>#}
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>#}
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>#}
+    {#<script src="{{ getenv('CDN') }}/inspinia/js/plugins/jsTree/jstree.min.js"></script>#}
 
     <script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/file.twig' %}</script>
     <script id="file-nav" type="text/x-handlebars-template">{% include 'pz/javascript/file-nav.twig' %}</script>
     <script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
 
-    <script src="{{ getenv('CDN') }}/pz/js/files.js"></script>
+    {#<script src="{{ getenv('CDN') }}/pz/js/files.js"></script>#}
     <script>
-        $(function () {
-            fileManager.init('{{ currentFolderId }}', '{{ keyword }}');
-        });
+        window._currentFolderId = '{{ currentFolderId }}';
+        window._keyword = '{{ keyword }}';
     </script>
 {% endblock %}
 
