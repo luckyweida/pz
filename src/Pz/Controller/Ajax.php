@@ -5,8 +5,10 @@ namespace Pz\Controller;
 
 use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
+use Pz\Orm\Asset;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
+use Pz\Router\Node;
 use Pz\Router\Tree;
 use Pz\Service\Db;
 use Pz\Twig\Extension;
@@ -249,7 +251,38 @@ class Ajax extends Controller
     public function pzAjaxFiles()
     {
         return new JsonResponse(json_decode('{"currentFolder":{"id":"-1","parentId":"-2","rank":"1","visible":1,"title":"Accommodation","twig":null,"url":"\/pz\/files\/?currentFolderId=-1","icon":null,"allowExtra":false,"maxParams":0},"keyword":"","path":[{"id":-1,"parentId":-2,"rank":0,"visible":1,"title":"Home","twig":"\/pz\/files\/?currentFolderId=-1","url":null,"icon":null,"allowExtra":false,"maxParams":0}],"files":[{"zdb":{},"title":"IMG_2391.JPG","description":"","isFolder":"0","fileName":"IMG_2391.JPG","fileType":"image\/jpeg","fileSize":"2522153","fileLocation":"126.JPG","__slug":"img-2391-jpg","__modelClass":"Asset","__rank":"-1","__parentId":"125","__added":"2 weeks ago","__modified":"2018-09-02 00:02:05","__active":"1","id":"126","track":"b6836a547950c06916fce106e9c97fe2"}]}'));
+    }
 
+    /**
+     * @route("/pz/ajax/files/add/folder", name="pzAjaxAddFolder")
+     * @return Response
+     */
+    public function pzAjaxAddFolder()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $title = $request->get('title');
+        $parentId = $request->get('parentId');
+
+        $rank = Asset::data($pdo, array(
+            'select' => 'MAX(m.rank) AS max',
+            'orm' => 0,
+            'whereSql' => 'm.parentId = ?',
+            'params' => array($request->get('__parentId')),
+            'oneOrNull' => 1,
+        ));
+        $max = ($rank['max'] ?: 0) + 1;
+
+        $orm = new Asset($pdo);
+        $orm->setTitle($title);
+        $orm->setParentId($parentId);
+        $orm->setRank($max);
+        $orm->setIsFolder(1);
+        $orm->save();
+        return new Response('OK');
     }
 
     /**
@@ -258,6 +291,90 @@ class Ajax extends Controller
      */
     public function pzAjaxFolders()
     {
-        return new JsonResponse(json_decode('{"id":-1,"parentId":-2,"text":"Home","state":{"opened":true,"selected":false},"rank":0,"children":[]}'));
+        $folderOpenMaxLimit = 10;
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $currentFolderId = $request->get('currentFolderId');
+
+        $childrenCount = array();
+        $nodes = array();
+
+        /** @var Asset[] $data */
+        $data = Asset::data($pdo, array('whereSql' => 'm.isFolder = 1'));
+        foreach ($data as $itm) {
+            if (!isset($childrenCount[$itm->getParentId()])) {
+                $childrenCount[$itm->getParentId()] = 0;
+            }
+            $childrenCount[$itm->getParentId()]++;
+
+            $node = new Node($itm->getId(), $itm->getTitle() ?: 'Home', $itm->getParentId() ?: 0, $itm->getRank());
+            $node->setText($itm->getTitle());
+            $node->setState(array('opened' => true, 'selected' => $currentFolderId == $itm->getId()));
+            $nodes[] = $node;
+        }
+
+        /** @var Node[] $nodes */
+        foreach ($nodes as &$itm) {
+            if (isset($childrenCount[$itm->getId()]) && $childrenCount[$itm->getId()] >= $folderOpenMaxLimit && $itm->getId() != $currentFolderId) {
+                $itm->setStateValue('opened', false);
+            }
+        }
+        $tree = new Tree($nodes);
+
+        $root = $tree->getRoot();
+        $root->setText('Home');
+        $root->setState(array('opened' => true, 'selected' => false));
+        if ($currentFolderId === 0) {
+            $root->setStateValue('selected', 1);
+        }
+        return new JsonResponse($root);
+    }
+
+    /**
+     * @route("/pz/ajax/folders/update", name="pzAjaxFoldersUpdate")
+     * @return Response
+     */
+    public function pzAjaxFoldersUpdate()
+    {
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $data = json_decode($request->get('data'));
+        foreach ($data as $itm) {
+            /** @var Asset $orm */
+            $orm = Asset::getById($pdo, $itm->id);
+            $orm->setParentId($itm->parentId);
+            $orm->setRank($itm->rank);
+            $orm->save();
+        }
+        return new Response('OK');
+    }
+
+    /**
+     * @route("/pz/ajax/file/move", name="pzAjaxFileMove")
+     * @return Response
+     */
+    public function pzAjaxFileMove()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $data = json_decode($request->get('data'));
+
+        /** @var Asset $orm */
+        $orm = Asset::getById($pdo, $request->get('id'));
+        $orm->setParentId($request->get('parentId'));
+        $orm->save();
+        return new Response('OK');
+
     }
 }

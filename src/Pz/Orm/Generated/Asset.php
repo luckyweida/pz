@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-09-11 20:59:27
+//Last updated: 2018-09-19 20:47:13
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -40,6 +40,11 @@ class Asset extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $fileLocation;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $parentId;
     
     /**
      * @return mixed
@@ -151,6 +156,22 @@ class Asset extends Walle
     public function setFileLocation($fileLocation)
     {
         $this->fileLocation = $fileLocation;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+    
+    /**
+     * @param mixed parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
     }
     
 }

@@ -3,6 +3,8 @@
 require("./main.js");
 
 $(function() {
+    window._fieldSource = $("#field-source").html();
+
     $('#model_listType :radio').on('ifChanged', function (ev) {
         if ($(this).val() == 1) {
             $('.model-pagination-detail').fadeIn();

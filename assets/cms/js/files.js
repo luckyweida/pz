@@ -1,9 +1,12 @@
 "use strict";
-require('fancybox/dist/css/jquery.fancybox.css');
+require("./main.js");
+
+
 require('../../redactor/redactor/redactor.css');
 require('../../inspinia/css/plugins/jsTree/style.min.css');
+require('jquery.fancybox/source/jquery.fancybox.css');
+require('animate.css/animate.css');
 
-require("./main.js");
 
 require('../../redactor/redactor/redactor.js');
 require('../../redactor/plugins/table.js');
@@ -16,14 +19,14 @@ require('../../inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js');
 
 require('blueimp-file-upload/js/jquery.iframe-transport.js');
 require('blueimp-file-upload/js/jquery.fileupload.js');
-require('fancybox');
+// require('jquery.fancybox');
 
 var fileManager = {}
 
 fileManager.init = function (currentFolderId, keyword) {
     fileManager.fileTemplate = Handlebars.compile($("#file").html());
     fileManager.fileNavTemplate = Handlebars.compile($("#file-nav").html());
-    fileManager.currentFolderId = -1;
+    fileManager.currentFolderId = 0;
     fileManager.keyword = -1;
     fileManager.files = [];
     fileManager.currentFileId = null;
@@ -37,7 +40,7 @@ fileManager.init = function (currentFolderId, keyword) {
 
     $(document).on('click', '.jstree-anchor', function () {
         fileManager.currentFolderId = $(this).parent().attr('id');
-        history.pushState(null, null, '/pz/secured/files/?currentFolderId=' + fileManager.currentFolderId);
+        history.pushState(null, null, '/pz/files/?currentFolderId=' + fileManager.currentFolderId);
         fileManager.getFiles();
         return false;
     });
@@ -61,13 +64,12 @@ fileManager.init = function (currentFolderId, keyword) {
                 }
                 fileManager._renderFiles();
                 $.ajax({
-                    type: 'POST',
-                    url: '/pz/secured/files/move-file',
-                    data: '__parentId=' + targetFolderId + '&id=' + fileManager.currentFileId,
+                    type: 'GET',
+                    url: '/pz/ajax/file/move',
+                    data: 'parentId=' + targetFolderId + '&id=' + fileManager.currentFileId,
                     success: function (data) {
                     }
                 });
-
             }
         }
         fileManager.currentFileId = null;
@@ -152,7 +154,7 @@ fileManager.init = function (currentFolderId, keyword) {
 fileManager.getFolders = function () {
     $('#js-folders').html('<div>Loading...</div>');
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: '/pz/ajax/folders',
         data: 'currentFolderId=' + fileManager.currentFolderId,
         success: function (data) {
@@ -194,14 +196,14 @@ fileManager.renderFolders = function (root) {
             if (itm.parent != '#') {
                 data.push({
                     id: itm.id,
-                    __parentId: itm.parent,
-                    __rank: idx,
+                    parentId: itm.parent,
+                    rank: idx,
                 });
             }
         }
         $.ajax({
-            type: 'POST',
-            url: '/pz/secured/files/update-folders',
+            type: 'GET',
+            url: '/pz/ajax/folders/update',
             data: 'data=' + encodeURIComponent(JSON.stringify(data)),
             success: function (data) {
             }
@@ -269,11 +271,11 @@ fileManager.renderFiles = function (data) {
         ev.preventDefault();
         if ($(this).valid()) {
             $.ajax({
-                type: 'POST',
-                url: '/pz/secured/files/add-folder',
+                type: 'GET',
+                url: '/pz/ajax/files/add/folder',
                 data: {
                     title: $('#js-add-dialog form input[name=name]').val(),
-                    __parentId: fileManager.currentFolderId,
+                    parentId: fileManager.currentFolderId,
                 },
                 success: function (data) {
                     $('#js-add-dialog form input[name=name]').val('');

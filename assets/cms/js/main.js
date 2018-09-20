@@ -18,7 +18,6 @@ require('jquery-ui');
 require('jquery-ui/ui/widgets/sortable');
 require('jquery-ui/ui/disable-selection');
 
-require('bootstrap');
 require('metismenu');
 require('pace');
 require('icheck');
@@ -35,6 +34,7 @@ window.Cookies = Cookies;
 var Handlebars = require('handlebars');
 window.Handlebars = Handlebars;
 
+require('../../inspinia/js/bootstrap.js');
 require('../../inspinia/js/inspinia.js');
 require('./function.js');
 

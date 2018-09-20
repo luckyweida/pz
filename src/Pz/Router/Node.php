@@ -3,7 +3,7 @@
 namespace Pz\Router;
 
 
-class Node
+class Node implements \JsonSerializable
 {
     /**
      * @var string
@@ -49,6 +49,14 @@ class Node
      * @var array
      */
     private $children = array();
+    /**
+     * @var string|null
+     */
+    private $text;
+    /**
+     * @var array
+     */
+    private $state = array();
 
     /**
      * Node constructor.
@@ -267,6 +275,51 @@ class Node
         $this->children[] = $child;
     }
 
+    /**
+     * @return null|string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @param null|string $text
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * @return array
+     */
+    public function getState(): array
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param array $state
+     */
+    public function setState(array $state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * @param $idx
+     * @param $value
+     */
+    public function setStateValue($idx, $value)
+    {
+        $this->state[$idx] = $value;
+    }
+
+    /**
+     * @param $node
+     * @return int
+     */
     public function contains($node)
     {
         if (!$node) {
@@ -275,6 +328,11 @@ class Node
         return static::_contains($this, $node);
     }
 
+    /**
+     * @param $parent
+     * @param $child
+     * @return int
+     */
     private static function _contains($parent, $child)
     {
         if ($parent->getId() == $child->getId()) {
@@ -288,6 +346,9 @@ class Node
         return 0;
     }
 
+    /**
+     * @return int
+     */
     public function hasActiveChildren()
     {
         foreach ($this->getChildren() as $itm) {
@@ -296,5 +357,31 @@ class Node
             }
         }
         return 0;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        $obj = new \stdClass();
+        $obj->id = $this->getId();
+        $obj->title = $this->getTitle();
+        $obj->parentId = $this->getParentId();
+        $obj->rank = $this->getRank();
+        $obj->url = $this->getUrl();
+        $obj->template = $this->getTemplate();
+        $obj->status = $this->getStatus();
+        $obj->allowExtra = $this->getAllowExtra();
+        $obj->maxParams = $this->getMaxParams();
+        $obj->extras = $this->getExtras();
+        $obj->children = $this->getChildren();
+        $obj->text = $this->getText();
+        $obj->state = $this->getState();
+        return $obj;
     }
 }

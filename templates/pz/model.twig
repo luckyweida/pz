@@ -129,7 +129,6 @@
 {% block extraFooter %}
     <script id="field-source" type="text/x-handlebars-template">{% include 'pz/javascript/model-field.twig' %}</script>
     <script>
-        window._fieldSource = $("#field-source").html();
         window._columns = JSON.parse('{{ form.columnsJson.vars.value|e('js') ?: '[]' }}');
         window._fields = {{ model.fieldChoices|keys|json_encode|raw }};
         window._metas = {{ model.parentFields|keys|json_encode|raw }};
