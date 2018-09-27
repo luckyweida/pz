@@ -4,8 +4,13 @@ namespace Pz\Orm;
 
 class Page extends \Pz\Orm\Generated\Page
 {
+    /**
+     * @return PageTemplate|null
+     */
     public function objPageTempalte()
     {
-        return PageTemplate::getById($this->getPdo(), $this->getTemplate());
+        /** @var PageTemplate $pageTemplate */
+        $pageTemplate = PageTemplate::getById($this->getPdo(), $this->getTemplate());
+        return $pageTemplate;
     }
 }

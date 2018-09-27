@@ -4,6 +4,8 @@ namespace Pz\Controller;
 
 
 use Pz\Axiom\Mo;
+use Pz\Orm\Page;
+use Pz\Router\Node;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,16 +19,10 @@ class Web extends Mo
      */
     public function web()
     {
-        return $this->render('layout.twig');
         $request = Request::createFromGlobals();
-        $requestUri = $request->getRequestUri();
-        if ($requestUri == '/pz') {
-            return $this->redirect('/pz/dashboard');
-        }
-
-        var_dump($request->getRequestUri());
-        var_dump('web');
-        exit;
+        $requestUri = rtrim($request->getPathInfo(), '/');
+        $params = $this->getParams($requestUri);
+        return $this->render($params['node']->getTemplate(), $params);
     }
 
     /**
@@ -34,6 +30,19 @@ class Web extends Mo
      */
     public function getNodes()
     {
-        return array();
+        $nodes = array();
+
+        /** @var \PDO $pdo */
+        $pdo = $this->connection->getWrappedConnection();
+
+        /** @var Page[] $pages */
+        $pages = Page::data($pdo, array(
+            'whereSql' => 'm.status = 1',
+        ));
+        foreach ($pages as $itm) {
+            $nodes[] = new Node($itm->getId(), $itm->getTitle(), 0, $itm->getRank(), $itm->getUrl(), $itm->objPageTempalte()->getFilename(), $itm->getStatus(), $itm->getAllowExtra(), $itm->getMaxParams());
+        }
+
+        return $nodes;
     }
 }

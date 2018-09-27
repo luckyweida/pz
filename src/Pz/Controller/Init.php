@@ -161,57 +161,57 @@ class Init extends Controller
 
     public function addPageTemplates($pdo)
     {
-        $orm = PageTemplate::getByField($pdo, 'title', 'layout.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'layout.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(1);
-            $orm->setTitle('layout.twig');
-            $orm->setFilename('layout.twig');
+            $orm->setTitle('layout.html.twig');
+            $orm->setFilename('layout.html.twig');
             $orm->save(true);
         }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'home.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'home.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(2);
-            $orm->setTitle('home.twig');
-            $orm->setFilename('home.twig');
+            $orm->setTitle('home.html.twig');
+            $orm->setFilename('home.html.twig');
             $orm->save(true);
         }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'about.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'about.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(3);
-            $orm->setTitle('about.twig');
-            $orm->setFilename('about.twig');
+            $orm->setTitle('about.html.twig');
+            $orm->setFilename('about.html.twig');
             $orm->save(true);
         }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'news.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'news.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(4);
-            $orm->setTitle('news.twig');
-            $orm->setFilename('news.twig');
+            $orm->setTitle('news.html.twig');
+            $orm->setFilename('news.html.twig');
             $orm->save(true);
         }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'news-detail.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'news-detail.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(5);
-            $orm->setTitle('news-detail.twig');
-            $orm->setFilename('news-detail.twig');
+            $orm->setTitle('news-detail.html.twig');
+            $orm->setFilename('news-detail.html.twig');
             $orm->save(true);
         }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'contact.twig');
+        $orm = PageTemplate::getByField($pdo, 'title', 'contact.html.twig');
         if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(6);
-            $orm->setTitle('contact.twig');
-            $orm->setFilename('contact.twig');
+            $orm->setTitle('contact.html.twig');
+            $orm->setFilename('contact.html.twig');
             $orm->save(true);
         }
     }
