@@ -48,18 +48,11 @@
 
 {% block choice_multi_json_widget -%}
     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
-    <select id="{{ id }}_select" multiple>
+    <select id="{{ id }}_select" class="js-choice_multi_json" multiple>
         {% for choice in choices %}
             <option value="{{ choice.value }}" {% if '"' ~ choice.value ~ '"' in value %}selected{% endif %}>{{ choice.label }}</option>
         {% endfor %}
     </select>
-    <script>
-        {#$(function() {#}
-            {#$(document).on('change', '#{{ id }}_select', function() {#}
-                {#$('#{{ id }}').val(JSON.stringify($(this).val()));#}
-            {#});#}
-        {#});#}
-    </script>
 {%- endblock choice_multi_json_widget %}
 
 {% block wysiwyg_widget -%}

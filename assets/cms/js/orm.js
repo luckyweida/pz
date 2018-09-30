@@ -104,6 +104,10 @@ $(function() {
     $('select:not(.no-chosen)').chosen({
         allow_single_deselect: true
     });
+
+    $(document).on('change', '.js-choice_multi_json', function() {
+        $(this).prev('input').val(JSON.stringify($(this).val()));
+    });
 });
 
 function folderpicker() {
