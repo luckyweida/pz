@@ -61,6 +61,10 @@ class OrmHandler
                     $opts['choices'][$val->value] = $val->key;
                 }
                 $opts['required'] = false;
+            } else if ($itm->widget == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType') {
+                $getMethod = 'get' . ucfirst($itm->field);
+                $setMethod = 'set' . ucfirst($itm->field);
+                $orm->$setMethod($orm->$getMethod() ? true : false);
             }
 
             if ($itm->required == 1) {

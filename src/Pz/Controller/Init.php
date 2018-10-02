@@ -225,7 +225,7 @@ class Init extends Controller
             $orm->setTitle('Home');
             $orm->setType(1);
             $orm->setTemplate(2);
-            $orm->setCategory(json_encode(array(1)));
+            $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/');
             $orm->setCategoryRank(json_encode(array("cat1" => 0)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
@@ -239,7 +239,7 @@ class Init extends Controller
             $orm->setTitle('About');
             $orm->setType(1);
             $orm->setTemplate(3);
-            $orm->setCategory(json_encode(array(1)));
+            $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/about');
             $orm->setCategoryRank(json_encode(array("cat1" => 1)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
@@ -253,7 +253,7 @@ class Init extends Controller
             $orm->setTitle('News');
             $orm->setType(1);
             $orm->setTemplate(4);
-            $orm->setCategory(json_encode(array(1)));
+            $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/news');
             $orm->setCategoryRank(json_encode(array("cat1" => 2)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
@@ -267,10 +267,11 @@ class Init extends Controller
             $orm->setTitle('News detail');
             $orm->setType(1);
             $orm->setTemplate(5);
-            $orm->setCategory(json_encode(array(1)));
+            $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/news/detail');
             $orm->setCategoryRank(json_encode(array("cat1" => 0)));
             $orm->setCategoryParent(json_encode(array("cat1" => 3)));
+            $orm->setStatus(2);
             $orm->save(true);
         }
 
@@ -281,7 +282,7 @@ class Init extends Controller
             $orm->setTitle('Contact');
             $orm->setType(1);
             $orm->setTemplate(6);
-            $orm->setCategory(json_encode(array(1)));
+            $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/contact');
             $orm->setCategoryRank(json_encode(array("cat1" => 3)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
