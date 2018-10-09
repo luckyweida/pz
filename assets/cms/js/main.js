@@ -119,38 +119,34 @@ $(function() {
         }).
         then((willDelete) => {
             if (willDelete) {
-                delFunc(_this);
+                $.ajax({
+                    type: 'GET',
+                    url: '/pz/ajax/delete',
+                    data: 'id=' + encodeURIComponent($(_this).data('id')) + '&className=' + encodeURIComponent($(_this).data('classname') ? $(_this).data('classname') : $(_this).closest('tbody').data('classname')),
+                    success: function (msg) {
+                        swal({
+                            title: "Deleted",
+                            text: "Your data has been deleted.",
+                            icon: 'success',
+                            timer: 1000,
+                            buttons: false
+                        });
+
+                        setTimeout(function () {
+                            if ($(_this).closest('.dd-item').length) {
+                                if ($(_this).closest('.dd-list').find('.dd-item').length == 1) {
+                                    $(_this).closest('.dd-list').remove();
+                                } else {
+                                    $(_this).closest('.dd-item').remove();
+                                }
+                            } else {
+                                $(_this).closest('.content-container').remove();
+                            }
+                        }, 800)
+                    }
+                });
             }
         });
         return false;
     });
 });
-
-function delFunc(elem) {
-    $.ajax({
-        type: 'GET',
-        url: '/pz/ajax/delete',
-        data: 'id=' + encodeURIComponent($(elem).data('id')) + '&className=' + encodeURIComponent($(elem).data('classname') ? $(elem).data('classname') : $(elem).closest('tbody').data('classname')),
-        success: function (msg) {
-            swal({
-                title: "Deleted",
-                text: "Your data has been deleted.",
-                icon: 'success',
-                timer: 1000,
-                buttons: false
-            });
-
-            setTimeout(function () {
-                if ($(elem).closest('.dd-item').length) {
-                    if ($(elem).closest('.dd-list').find('.dd-item').length == 1) {
-                        $(elem).closest('.dd-list').remove();
-                    } else {
-                        $(elem).closest('.dd-item').remove();
-                    }
-                } else {
-                    $(elem).closest('.content-container').remove();
-                }
-            }, 800)
-        }
-    });
-};

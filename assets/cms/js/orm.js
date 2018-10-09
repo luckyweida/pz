@@ -1,5 +1,5 @@
 "use strict";
-require('@fancyapps/fancybox/dist/jquery.fancybox.css');
+require('fancybox/dist/css/jquery.fancybox.css');
 require('../../redactor/redactor/redactor.css');
 require('../../inspinia/css/plugins/jsTree/style.min.css');
 
@@ -16,10 +16,11 @@ require('../../inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js');
 
 require('blueimp-file-upload/js/jquery.iframe-transport.js');
 require('blueimp-file-upload/js/jquery.fileupload.js');
-require('@fancyapps/fancybox');
+require('fancybox/dist/js/jquery.fancybox.js');
+
 
 $(function() {
-    window._parentId = -1;
+    window._parentId = 0;
     window._folders = [];
     window._files = [];
     window._ancestors = [];
@@ -35,7 +36,7 @@ $(function() {
             {
                 window._redactor = this;
                 window._callback = function() {
-                    window._redactor.file.insert.call(window._redactor, '<a href="/asset/files/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
+                    window._redactor.file.insert.call(window._redactor, '<a href="/assets/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
                 };
                 filepicker();
             }
@@ -53,26 +54,39 @@ $(function() {
             {
                 window._redactor = this;
                 window._callback = function() {
-                    window._redactor.image.insert.call(window._redactor, '<img src="/asset/files/image/' + $(this).closest('.file-box').data('id') + '/general" alt="' + $(this).closest('.file-box').data('title') + '">');
+                    window._redactor.image.insert.call(window._redactor, '<img src="/assets/image/' + $(this).closest('.file-box').data('id') + '/large" alt="' + $(this).closest('.file-box').data('title') + '">');
                 };
                 filepicker();
             }
         };
     };
 
+    $(document).on('click', ".js-fancybox", function () {
+        $.fancybox.open([
+            {
+                href : $(this).attr('href'),
+                type : 'image',
+            },
+        ], {
+            padding : 0
+        });
+        return false;
+    });
+
     $(document).on('click', '.assetpicker .js-asset-change', function(ev) {
         var _this = this;
         window._callback = function () {
             $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-            $($(_this).data('id') + '-preview').css('visibility', 'visible');
-            $($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
+            $($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
+            $($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
         };
         filepicker();
     });
 
     $(document).on('click', '.assetpicker .js-asset-delete', function(ev) {
         $($(this).data('id')).val('');
-        $($(this).data('id') + '-preview').css('visibility', 'hidden');
+        $($(this).data('id') + '-preview').attr('href', '/assets/image/0/large');
+        $($(this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
     });
 
     $(document).on('click', '.assetfolderpicker .change', function(ev) {
@@ -139,7 +153,7 @@ function folderpicker() {
 function folders(parentId) {
 
     $.ajax({
-        url: '/pz/asset/json/' + parentId + '/',
+        url: '/pz/ajax/folders?currentFolderId=' + parentId,
         dataType: 'json',
         beforeSend: function() {
             $('#popup-container .content').fadeOut(400, function() {
@@ -206,9 +220,9 @@ function filepicker() {
         {
             href : '#popup-container',
             type : 'inline',
-            minWidth: 850,
+            minWidth: 900,
             minHeight: 600,
-            maxWidth: 850,
+            maxWidth: 900,
             maxHeight: 600,
         },
     ], {
@@ -217,13 +231,13 @@ function filepicker() {
     var template = Handlebars.compile($("#loading").html())
     $('#js-folders').html('<div class="jstree">' + template() + '</div>');
     $.ajax({
-        type: 'POST',
-        url: '/pz/secured/files/folders',
+        type: 'GET',
+        url: '/pz/ajax/folders',
         data: 'currentFolderId=' + window._parentId,
         success: function (data) {
             $('#js-folders .jstree').jstree({
                 core: {
-                    data: [data],
+                    data: [data.root],
                 },
                 plugins: ['types'],
                 types: {
@@ -247,11 +261,11 @@ function getFiles() {
     var template = Handlebars.compile($("#template-upload").html());
     $('#popup-container .js-upload').html(template());
     $('#fileupload').fileupload({
-        url: '/pz/secured/files/upload',
+        url: '/pz/ajax/files/upload',
         dataType: 'json',
         sequentialUploads: true,
         formData: {
-            _parentId: window._parentId,
+            parentId: window._parentId,
         },
         add: function (e, data) {
             var uploadErrors = [];
@@ -282,9 +296,12 @@ function getFiles() {
 
     var template = Handlebars.compile($("#loading").html())
     $('#js-files').html('<div>' + template() + '</div>');
-    $.ajax({
-        type: 'POST',
-        url: '/pz/secured/files/files',
+    if (typeof window._ajax != 'undefined') {
+        window._ajax.abort();
+    }
+    window._ajax = $.ajax({
+        type: 'GET',
+        url: '/pz/ajax/files',
         data: 'currentFolderId=' + window._parentId + '&keyword=',
         success: function (data) {
             $('#js-files').html('<div></div>');

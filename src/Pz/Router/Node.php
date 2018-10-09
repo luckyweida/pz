@@ -22,11 +22,11 @@ class Node implements \JsonSerializable
      */
     private $rank;
     /**
-     * @var string
+     * @var string|null
      */
     private $url;
     /**
-     * @var string
+     * @var string|null
      */
     private $template;
     /**
@@ -148,33 +148,33 @@ class Node implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getUrl(): string
+    public function getUrl()
     {
         return $this->url;
     }
 
     /**
-     * @param string $url
+     * @param null|string $url
      */
-    public function setUrl(string $url)
+    public function setUrl($url)
     {
         $this->url = $url;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getTemplate(): string
+    public function getTemplate()
     {
         return $this->template;
     }
 
     /**
-     * @param string $template
+     * @param null|string $template
      */
-    public function setTemplate(string $template)
+    public function setTemplate($template)
     {
         $this->template = $template;
     }
@@ -326,6 +326,29 @@ class Node implements \JsonSerializable
             return 0;
         }
         return static::_contains($this, $node);
+    }
+
+    public function path($needleId)
+    {
+        return static::_path($this, $needleId);
+    }
+
+    private static function _path(Node $node, $needleId)
+    {
+        $n = clone $node;
+        $n->setChildren(array());
+        $result = array($n);
+
+        if ($node->getId() == $needleId) {
+            return $result;
+        }
+        foreach ($node->getChildren() as $itm) {
+            $r = static::_path($itm, $needleId);
+            if ($r !== false) {
+                return array_merge($result, $r);
+            }
+        }
+        return false;
     }
 
     /**

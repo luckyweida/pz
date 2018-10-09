@@ -5,20 +5,16 @@
                 {{#each path}}
                     {{#compare id ../currentFolder.id operator="!="}}
                         <li>
-                            <a href="{{url}}">{{title}}</a>
+                            <a href="{{url}}" data-id="{{id}}" title="{{title}}">{{title}}</a>
                         </li>
                     {{/compare}}
                     {{#compare id ../currentFolder.id operator="=="}}
                         <li class="active">
-                            <strong>{{title}}</strong>
+                            <strong title="{{title}}">{{title}}</strong>
                         </li>
                     {{/compare}}
                 {{/each}}
             </ol>
-        {{/compare}}
-
-        {{#compare '' keyword operator="!="}}
-            {{length files}} results found
         {{/compare}}
     </div>
 

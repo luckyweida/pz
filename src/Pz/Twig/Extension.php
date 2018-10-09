@@ -51,7 +51,6 @@ class Extension extends AbstractExtension
 
     }
 
-
     public function css($path)
     {
 //        while (@ob_end_clean());

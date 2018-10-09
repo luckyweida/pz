@@ -250,7 +250,65 @@ class Ajax extends Controller
      */
     public function pzAjaxFiles()
     {
-        return new JsonResponse(json_decode('{"currentFolder":{"id":"-1","parentId":"-2","rank":"1","visible":1,"title":"Accommodation","twig":null,"url":"\/pz\/files\/?currentFolderId=-1","icon":null,"allowExtra":false,"maxParams":0},"keyword":"","path":[{"id":-1,"parentId":-2,"rank":0,"visible":1,"title":"Home","twig":"\/pz\/files\/?currentFolderId=-1","url":null,"icon":null,"allowExtra":false,"maxParams":0}],"files":[{"zdb":{},"title":"IMG_2391.JPG","description":"","isFolder":"0","fileName":"IMG_2391.JPG","fileType":"image\/jpeg","fileSize":"2522153","fileLocation":"126.JPG","__slug":"img-2391-jpg","__modelClass":"Asset","__rank":"-1","__parentId":"125","__added":"2 weeks ago","__modified":"2018-09-02 00:02:05","__active":"1","id":"126","track":"b6836a547950c06916fce106e9c97fe2"}]}'));
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+
+        $currentFolderId = $request->get('currentFolderId') ?: 0;
+        $keyword = $request->get('keyword');
+
+        if ($keyword) {
+            $data = Asset::data($pdo, array(
+                'whereSql' => 'm.isFolder = 0 AND m.title LIKE ?',
+                'params' => array("%$keyword%"),
+            ));
+        } else {
+            $data = Asset::data($pdo, array(
+                'whereSql' => 'm.isFolder = 0 AND m.parentId = ?',
+                'params' => array($currentFolderId),
+            ));
+        }
+
+        return new JsonResponse(array(
+            'keyword' => $keyword,
+            'files' => $data,
+        ));
+    }
+
+    /**
+     * @route("/pz/ajax/folders", name="pzAjaxFolders")
+     * @return Response
+     */
+    public function pzAjaxFolders()
+    {
+        $request = Request::createFromGlobals();
+        $currentFolderId = $request->get('currentFolderId') ?: 0;
+
+        $root = $this->getFolderRoot($currentFolderId);
+
+        return new JsonResponse(array(
+            'root' => $root,
+        ));
+    }
+
+    /**
+     * @route("/pz/ajax/folder/nav", name="pzAjaxFolderNav")
+     * @return Response
+     */
+    public function pzAjaxFolderNav()
+    {
+        $request = Request::createFromGlobals();
+        $currentFolderId = $request->get('currentFolderId') ?: 0;
+
+        $root = $this->getFolderRoot($currentFolderId);
+        $path = $root->path($currentFolderId);
+
+        return new JsonResponse(array(
+            'currentFolder' => end($path),
+            'path' => $path,
+        ));
     }
 
     /**
@@ -286,52 +344,26 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/folders", name="pzAjaxFolders")
+     * @route("/pz/ajax/files/edit/folder", name="pzAjaxEditFolder")
      * @return Response
      */
-    public function pzAjaxFolders()
+    public function pzAjaxEditFolder()
     {
-        $folderOpenMaxLimit = 10;
-
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
         $request = Request::createFromGlobals();
-        $currentFolderId = $request->get('currentFolderId');
 
-        $childrenCount = array();
-        $nodes = array();
-
-        /** @var Asset[] $data */
-        $data = Asset::data($pdo, array('whereSql' => 'm.isFolder = 1'));
-        foreach ($data as $itm) {
-            if (!isset($childrenCount[$itm->getParentId()])) {
-                $childrenCount[$itm->getParentId()] = 0;
-            }
-            $childrenCount[$itm->getParentId()]++;
-
-            $node = new Node($itm->getId(), $itm->getTitle() ?: 'Home', $itm->getParentId() ?: 0, $itm->getRank());
-            $node->setText($itm->getTitle());
-            $node->setState(array('opened' => true, 'selected' => $currentFolderId == $itm->getId()));
-            $nodes[] = $node;
+        /** @var Asset $orm */
+        $orm = Asset::getById($pdo, $request->get('id'));
+        if (!$orm) {
+            throw new NotFoundHttpException();
         }
 
-        /** @var Node[] $nodes */
-        foreach ($nodes as &$itm) {
-            if (isset($childrenCount[$itm->getId()]) && $childrenCount[$itm->getId()] >= $folderOpenMaxLimit && $itm->getId() != $currentFolderId) {
-                $itm->setStateValue('opened', false);
-            }
-        }
-        $tree = new Tree($nodes);
-
-        $root = $tree->getRoot();
-        $root->setText('Home');
-        $root->setState(array('opened' => true, 'selected' => false));
-        if ($currentFolderId === 0) {
-            $root->setStateValue('selected', 1);
-        }
-        return new JsonResponse($root);
+        $orm->setTitle($request->get('title'));
+        $orm->save();
+        return new Response('OK');
     }
 
     /**
@@ -376,5 +408,179 @@ class Ajax extends Controller
         $orm->save();
         return new Response('OK');
 
+    }
+
+    /**
+     * @route("/pz/ajax/files/delete/folder", name="pzAjaxDeleteFolder")
+     * @return Response
+     */
+    public function pzAjaxDeleteFolder()
+    {
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $orm = Asset::getById($pdo, $id);
+        if ($orm) {
+            $this->deleteFolder($pdo, $orm);
+        }
+
+        return new Response('OK');
+    }
+
+    /**
+     * @route("/pz/ajax/files/delete/file", name="pzAjaxDeleteFile")
+     * @return Response
+     */
+    public function pzAjaxDeleteFile()
+    {
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        /** @var Asset $orm */
+        $orm = Asset::getById($pdo, $id);
+        if (!$orm) {
+            throw new NotFoundHttpException();
+        }
+        if (file_exists($this->container->getParameter('kernel.project_dir') . '/uploads/' . $orm->getFileLocation())) {
+            unlink($this->container->getParameter('kernel.project_dir') . '/uploads/' . $orm->getFileLocation());
+        }
+        $orm->delete();
+        return new Response('OK');
+    }
+
+    /**
+     * @route("/pz/ajax/files/upload", name="pzAjaxUpload")
+     * @return Response
+     */
+    public function pzAjaxUpload()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+
+        $files = $request->files->get('files');
+        if ($files && is_array($files) && count($files) > 0) {
+            $originalName = $files[0]->getClientOriginalName();
+            $ext = pathinfo($originalName, PATHINFO_EXTENSION);
+
+            $rank = Asset::data($pdo, array(
+                'select' => 'MIN(m.rank) AS min',
+                'orm' => 0,
+                'whereSql' => 'm.parentId = ?',
+                'params' => array($request->get('parentId')),
+                'oneOrNull' => 1,
+            ));
+            $min = $rank['min'] - 1;
+
+            $orm = new Asset($pdo);
+            $orm->setIsFolder(0);
+            $orm->setParentId($request->get('parentId'));
+            $orm->setRank($min);
+            $orm->setTitle($originalName);
+            $orm->setFileName($originalName);
+            $orm->save();
+
+            require_once $this->container->getParameter('kernel.project_dir') . '/vendor/blueimp/jquery-file-upload/server/php/UploadHandler.php';
+            $uploader = new \UploadHandler(array(
+                'upload_dir' => $this->container->getParameter('kernel.project_dir') . '/uploads/',
+                'image_versions' => array()
+            ), false);
+            $_SERVER['HTTP_CONTENT_DISPOSITION'] = $orm->getId();
+            $result = $uploader->post(false);
+
+            $orm->setFileLocation($orm->getId() . '.' . $ext);
+            $orm->setFileType($result['files'][0]->type);
+            $orm->setFileSize($result['files'][0]->size);
+            $orm->save();
+
+            if (file_exists($this->container->getParameter('kernel.project_dir') . '/uploads/' . $result['files'][0]->name)) {
+                rename($this->container->getParameter('kernel.project_dir') . '/uploads/' . $result['files'][0]->name, dirname($_SERVER['SCRIPT_FILENAME']) . '/../uploads/' . $orm->getId() . '.' . $ext);
+            }
+
+            return new JsonResponse($orm);
+        }
+        return new Response(json_encode(array(
+            'failed'
+        )));
+    }
+
+    /**
+     * @param \PDO $pdo
+     * @param Asset $orm
+     */
+    private function deleteFolder(\PDO $pdo, Asset $orm)
+    {
+        /** @var Asset[] $children */
+        $children = Asset::data($pdo, array(
+            'whereSql' => 'm.parentId = ?',
+            'params' => array($orm->getId())
+        ));
+        foreach ($children as $itm) {
+            $this->deleteFolder($pdo, $itm);
+        }
+        if (!$orm->getIsFolder()) {
+            if (file_exists($this->container->getParameter('kernel.project_dir') . '/uploads/' . $orm->getFileLocation())) {
+                unlink($this->container->getParameter('kernel.project_dir') . '/uploads/' . $orm->getFileLocation());
+            }
+        }
+        $orm->delete();
+    }
+
+    /**
+     *
+     */
+    private function getFolderRoot($currentFolderId)
+    {
+        $folderOpenMaxLimit = 10;
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $baseurl = '/pz/files?currentFolderId=';
+        $childrenCount = array();
+        $nodes = array();
+
+        /** @var Asset[] $data */
+        $data = Asset::data($pdo, array('whereSql' => 'm.isFolder = 1'));
+        foreach ($data as $itm) {
+            if (!isset($childrenCount[$itm->getParentId()])) {
+                $childrenCount[$itm->getParentId()] = 0;
+            }
+            $childrenCount[$itm->getParentId()]++;
+
+            $node = new Node($itm->getId(), $itm->getTitle() ?: 'Home', $itm->getParentId() ?: 0, $itm->getRank(), $baseurl . $itm->getId());
+            $node->setText($itm->getTitle());
+            $node->setState(array('opened' => true, 'selected' => $currentFolderId == $itm->getId()));
+            $nodes[] = $node;
+        }
+
+        /** @var Node[] $nodes */
+        foreach ($nodes as &$itm) {
+            if (isset($childrenCount[$itm->getId()]) && $childrenCount[$itm->getId()] >= $folderOpenMaxLimit && $itm->getId() != $currentFolderId) {
+                $itm->setStateValue('opened', false);
+            }
+        }
+        $tree = new Tree($nodes);
+
+        $root = $tree->getRoot();
+        $root->setTitle('Home');
+        $root->setText('Home');
+        $root->setUrl($baseurl . 0);
+        $root->setState(array('opened' => true, 'selected' => false));
+        if ($currentFolderId === 0) {
+            $root->setStateValue('selected', 1);
+        }
+        return $root;
     }
 }

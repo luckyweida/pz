@@ -4,8 +4,8 @@ var fileManager = {}
 fileManager.init = function (currentFolderId, keyword) {
     fileManager.fileTemplate = Handlebars.compile($("#file").html());
     fileManager.fileNavTemplate = Handlebars.compile($("#file-nav").html());
-    fileManager.currentFolderId = -1;
-    fileManager.keyword = -1;
+    fileManager.currentFolderId = 0;
+    fileManager.keyword = 0;
     fileManager.files = [];
     fileManager.currentFileId = null;
 

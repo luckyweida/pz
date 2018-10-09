@@ -3,6 +3,43 @@ html,
 body {
   height: auto !important;
 }
+body .jstree-node > a {
+  /* 100% - (the width of the presentation node : the line - the left padding of the <a> node - the right padding of the <a> node)*/
+  width: calc(71%);
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+body .pz-nav li {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body .file-box {
+  position: relative;
+  background: #f3f3f4;
+  border: 1px solid #f3f3f4;
+  margin: .5em;
+}
+body .file-box .pz-file-delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 9;
+  margin-right: -15px;
+  margin-top: -15px;
+}
+body .file-box .file {
+  margin: 0;
+}
+body .file-box .file img {
+  width: 100%;
+}
+body .file-box .file .file-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 body .max-1000 {
   max-width: 1000px;
 }
@@ -159,28 +196,11 @@ body .table-middle td {
   min-height: 10em;
   resize: vertical;
 }
-.page-content .box.assetpicker,
-.page-content .box.assetfolderpicker,
-.page-content .content-block-asset {
-  background: #eee;
-  border: 1px solid #ddd;
-  padding: 1em 2em;
-  border-radius: 3px;
-}
-.page-content .box.assetfolderpicker .text-center {
-  background: #ddd;
-  border: 1px solid #fff;
-  margin-left: 1em;
-  height: 50px;
-  font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
-  border-radius: 3px;
-}
-.page-content .box.assetfolderpicker .text-center h4 {
-  margin-top: 1.2em;
-}
-.page-content .box.assetpicker .text-right,
-.page-content .box.assetfolderpicker .text-right {
-  float: right;
+.page-content .wrapper-content form .box.assetpicker .image-holder {
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
 }
 .page-content .box.formdata ul {
   list-style-type: none;
@@ -238,26 +258,4 @@ body .table-middle td {
 }
 .page-files .pz-main .ui-sortable-placeholder {
   background: lightyellow !important;
-}
-.page-files .pz-main .file-box {
-  position: relative;
-  background: #f3f3f4;
-  border: 1px solid #f3f3f4;
-  margin: .5em;
-}
-.page-files .pz-main .file-box .pz-file-delete {
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 9;
-  margin-right: -15px;
-  margin-top: -15px;
-}
-.page-files .pz-main .file-box .file {
-  margin: 0;
-}
-.page-files .pz-main .file-box .file .file-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

@@ -6,7 +6,7 @@
     <script src="{{ asset('build/cms-files.js') }}" async defer></script>
 {% endblock %}
 
-{% set currentFolderId = app.request.get('currentFolderId') ?: -1 %}
+{% set currentFolderId = app.request.get('currentFolderId') ?: 0 %}
 {% set keyword = app.request.get('keyword') %}
 
 {% block extraHeaderLeft %}
@@ -34,7 +34,7 @@
                                 <div id="js-folders"></div>
                             {% else %}
                                 <div>Search results for <span class="label label-info">{{ keyword }}</span></div>
-                                <small><a href="/pz/files/">&lt; browse folders</a></small>
+                                <small><a href="/pz/files/">&#10096; Browse folders</a></small>
                             {% endif %}
                             <div class="clearfix"></div>
                         </div>

@@ -36,16 +36,16 @@
                                     <li class="nav-header">
                                         <div class="dropdown profile-element">
                                         <span>
-                                            {#<img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image is defined %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>#}
+                                            <img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image %}/assets/image/{{ app.user.image }}/small{% else %}{{ getenv('CDN') }}https://api.adorable.io/avatars/84/abott@adorable{% endif %}"/>
                                         </span>
                                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                             <span class="clear">
-                                                <span class="block m-t-xs"> <strong class="font-bold">{{ app.user.username }}</strong></span>
+                                                <span class="block m-t-xs"> <strong class="font-bold">Hey, {{ app.user.username }}</strong></span>
                                             </span>
                                             </a>
                                         </div>
                                         <div class="logo-element">
-                                            {#<img style="width: 30px;" class="img-circle" src="{% if app.user.image is defined %}/pz/secured/files/image/{{ app.user.image }}/cms_file_preview{% else %}{{ getenv('CDN') }}/inspinia/profile_small.jpg{% endif %}"/>#}
+                                            <img style="width: 30px;" class="img-circle" src="{% if app.user.image %}/assets/image/{{ app.user.image }}/small{% else %}{{ getenv('CDN') }}https://api.adorable.io/avatars/84/abott@adorable{% endif %}"/>
                                         </div>
                                     </li>
 
@@ -77,7 +77,7 @@
                                     {% block extraHeaderRight %}{% endblock %}
                                 </div>
                             </div>
-                            <div class="wrapper wrapper-content animated fadeInRight">
+                            <div class="wrapper wrapper-content animated fadeIn">
                                 {% block content %}{% endblock %}
                             </div>
                         </div>

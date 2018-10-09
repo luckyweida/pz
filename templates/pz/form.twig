@@ -60,19 +60,16 @@
 {%- endblock wysiwyg_widget -%}
 
 {% block assetpicker_widget -%}
-    <div class="widget style1" style="padding: 0; margin: 0;">
-        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
-        <div class="row">
-            <div class="col-xs-4 text-center" style="width: auto;min-height: 110px;">
-                <img id="{{ id }}-preview" src="/asset/files/image/{{ value }}/cms_file_preview" style="height: 100px; {% if not value %}visibility: hidden;{% endif %}">
-            </div>
-            <div class="col-xs-8 text-right" style="width: auto;">
-                <p>
-                    <button type="button" class="btn btn-primary btn-xs btn-circle js-asset-change" data-id="#{{ id }}" style="margin-right: .2em;"><i class="fa fa-edit"></i></button>
-                    <button type="button" class="btn btn-warning btn-xs btn-circle js-asset-delete" data-id="#{{ id }}"><i class="fa fa-times"></i></button>
-                </p>
-
-            </div>
+    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
+    <div class="row">
+        <div class="col-lg-6 text-center">
+            <a class="js-fancybox" id="{{ id }}-preview" href="/assets/image/{{ value ?: 0 }}/large">
+                <div class="image-holder" style="background: url('/assets/image/{{ value ?: 0 }}/small') no-repeat center center; height: 100px;"></div>
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <button type="button" class="btn btn-primary btn-sm btn-block js-asset-change" data-id="#{{ id }}"><i class="fa fa-upload"></i> Upload</button>
+            <button type="button" class="btn btn-danger btn-outline btn-sm btn-block js-asset-delete" data-id="#{{ id }}"><i class="fa fa-times"></i> Clear</button>
         </div>
     </div>
 {%- endblock assetpicker_widget -%}
