@@ -116,12 +116,17 @@ class Cms extends Mo
         /** @var _Model[] $modelDatabase */
         $modelDatabase = $db->active('_Model');
         foreach ($modelDatabase as $idx => $itm) {
+            $ormTwigFile = 'pz/orm.twig';
+            if ($itm->getClassName() == 'FragmentBlock') {
+                $ormTwigFile = 'pz/orm-fragmentblock.twig';
+            }
+
             if ($itm->getDataType() == 0) {
                 $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/orms.twig');
-                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', 'pz/orm.twig', 2, 1, 1);
+                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
             } else if ($itm->getDataType() == 1) {
                 $nodes[] = new Node('4-' . $itm->getId(), $itm->getTitle(), 4, $idx, "/pz/admin/" . $itm->getId(), 'pz/orms.twig');
-                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', 'pz/orm.twig', 2, 1, 1);
+                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
             }
         }
 

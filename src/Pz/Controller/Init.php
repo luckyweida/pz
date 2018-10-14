@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
 use Pz\Orm\AssetSize;
+use Pz\Orm\FragmentTag;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Orm\PageTemplate;
@@ -66,6 +67,7 @@ class Init extends Controller
         $this->addPageCategories($pdo);
         $this->addPageTemplates($pdo);
         $this->addPages($pdo);
+        $this->addFragmentTags($pdo);
 
         $pdo->commit();
 
@@ -286,6 +288,25 @@ class Init extends Controller
             $orm->setUrl('/contact');
             $orm->setCategoryRank(json_encode(array("cat1" => 3)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
+            $orm->save(true);
+        }
+    }
+
+    public function addFragmentTags($pdo)
+    {
+        $orm = FragmentTag::getByField($pdo, 'title', 'Page');
+        if (!$orm) {
+            $orm = new FragmentTag($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Page');
+            $orm->save(true);
+        }
+
+        $orm = FragmentTag::getByField($pdo, 'title', 'CMS');
+        if (!$orm) {
+            $orm = new FragmentTag($pdo);
+            $orm->setId(2);
+            $orm->setTitle('CMS');
             $orm->save(true);
         }
     }

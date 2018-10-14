@@ -131,7 +131,7 @@ class _Model extends \Pz\Orm\Generated\_Model
             'Email' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\EmailType',
             'Password' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\PasswordType',
             'Text' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextType',
-            'Textarea' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextAreaType',
+            'Textarea' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextareaType',
             'Hidden' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType',
         );
     }

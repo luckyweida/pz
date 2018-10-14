@@ -13,6 +13,23 @@ body {
     overflow: hidden;
   }
 
+  #side-menu {
+    .nav-label {
+      //width: 95px;
+      height: 17.15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    > li:hover {
+      ul {
+        .nav-label {
+          display: block !important;
+        }
+      }
+    }
+  }
+
   .pz-nav li {
     max-width: 200px;
     white-space: nowrap;
