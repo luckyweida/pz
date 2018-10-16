@@ -20,6 +20,363 @@ require('fancybox/dist/js/jquery.fancybox.js');
 
 
 $(function() {
+    $.each($('.js-fragment-container'), function (idx, itm) {
+        var id = $(itm).data('id');
+
+        var blocks = JSON.parse($(itm).find('.js-blocks').val());
+        var value = JSON.parse($(itm).find('.js-value').val());
+        var tags = JSON.parse($(itm).find('.js-tags').val());
+
+        var template_section = Handlebars.compile($(`#${id}_section`).html());
+        var template_block = Handlebars.compile($(`#${id}_block`).html());
+        var template_modal_section = Handlebars.compile($(`#${id}_modal_section`).html());
+        var template_modal_block = Handlebars.compile($(`#${id}_modal_block`).html());
+        var template_sidebar = Handlebars.compile($(`#${id}_sidebar`).html());
+
+        $(`.js-blocks-${id}`).sortable({
+            connectWith: `.js-blocks-${id}`,
+            handle: ".panel-heading",
+        }).disableSelection();
+
+        $(`#${id}-modal-section`).on('shown.bs.modal', function () {
+            $(`#${id}-modal-section select.js-after-chosen`).chosen({
+                allow_single_deselect: true
+            });
+        });
+
+        // $(document).on('click', `#${id}_wrap .js-section .js-down`, function () {
+        //     var id = $(this).closest('.js-section').data('id');
+        //     for (var idx in value) {
+        //         var itm = value[idx];
+        //         if (itm.id == id && idx < (value.length - 1)) {
+        //             idx = parseInt(idx, 10);
+        //             value[idx] = JSON.parse(JSON.stringify(value[idx + 1]));
+        //             value[idx + 1] = JSON.parse(JSON.stringify(itm));
+        //             break;
+        //         }
+        //     }
+        //     render();
+        //     assemble();
+        //     return false;
+        // });
+
+        // $(document).on('click', '#${id}_wrap .js-section .js-up', function () {
+        //     var id = $(this).closest('.js-section').data('id');
+        //     for (var idx in value) {
+        //         var itm = value[idx];
+        //         if (itm.id == id && idx > 0) {
+        //             idx = parseInt(idx, 10);
+        //             value[idx] = JSON.parse(JSON.stringify(value[idx - 1]));
+        //             value[idx - 1] = JSON.parse(JSON.stringify(itm));
+        //             break;
+        //         }
+        //     }
+        //     render();
+        //     assemble();
+        //     return false;
+        // });
+
+        $(document).on('click', `#${id}-add-section`, function () {
+            $(`#${id}-modal-section`).html(template_modal_section({
+                section: {
+                    id: Math.random().toString(36).substr(2, 9),
+                    title: 'Content',
+                    attr: 'content',
+                    status: 1,
+                    tags: [],
+                    blocks: [],
+                },
+                optionTags: [],
+            }));
+            $(`#${id}-modal-section`).modal();
+        });
+
+
+        $(document).on('click', `#${id}_wrap .js-save-section`, function () {
+            var section = {
+                id: $(`#${id}-modal-section [name=id]`).val(),
+                title: $(`#${id}-modal-section [name=name]`).val(),
+                attr: $(`#${id}-modal-section [name=attr]`).val(),
+                status: $(`#${id}-modal-section [name=status]`).val(),
+                tags: typeof $(`#${id}-modal-section [name=tags]`).val() == 'object' ? $(`#${id}-modal-section [name=tags]`).val() : [],
+                blocks: [],
+            };
+            var existSection = getById([], section.id)
+            if (!existSection) {
+                value.push(section);
+            } else {
+                existSection.title = section.title;
+                existSection.attr = section.attr;
+                existSection.tags = section.tags;
+            }
+            $(`#${id}`).val(cleanString(value));
+            $(`#${id}-modal-section`).modal('hide');
+            render();
+        });
+
+        // $(document).on('click', '#${id}_wrap .js-edit-section', function () {
+        //     var id = $(this).closest('.js-section').data('id');
+        //     var section = getById(value, id);
+        //     $("#${id}-modal-section").html(template_modal_section({
+        //         section: section,
+        //         optionTags: _${id}_tags,
+        // }));
+        //     $("#${id}-modal-section").modal();
+        //     return false;
+        // });
+        //
+
+        //
+        // $(document).on('click', '#${id}_container .js-delete-section', function () {
+        //     var secId = $(this).closest('.js-section').data('id');
+        //
+        //     for (var idx in value) {
+        //         var itm = value[idx];
+        //         if (itm.id == secId) {
+        //             value.splice(idx, 1)
+        //         }
+        //     }
+        //     render();
+        //     assemble();
+        //     return false;
+        // });
+        //
+        // $(document).on('click', '#${id}_container .js-status-toggle', function () {
+        //     var type = $(this).data('type');
+        //     if (type == 'section') {
+        //         var obj = getById(value, $(this).closest('.js-section').data('id'));
+        //     } else {
+        //         var blocks = [];
+        //         for (var idx in value) {
+        //             var itm = value[idx];
+        //             blocks = blocks.concat(itm.blocks);
+        //         }
+        //         var obj = getById(blocks, $(this).closest('.js-block').data('id'));
+        //     }
+        //
+        //     obj.status = $(this).data('status');
+        //     render();
+        //     assemble();
+        //     return false;
+        // });
+        //
+        // $(document).on('change', '.js-section-${id} .js-add-block', function () {
+        //     var blockOption = getById(blocks, $(this).val());
+        //     var block = {
+        //         id: Math.random().toString(36).substr(2, 9),
+        //         title: blockOption.title,
+        //         status: 1,
+        //         block: blockOption.id,
+        //         twig: blockOption.twig,
+        //         items: blockOption.items,
+        //         values: {},
+        //     };
+        //     var section = getById(value, $(this).closest('.js-section').data('id'));
+        //     $("#${id}-modal-block").html(template_modal_block({
+        //         block: block,
+        //         section: section,
+        //     }));
+        //     $("#${id}-modal-block").modal();
+        //     $(this).val('');
+        // });
+        //
+        // $(document).on('click', '#${id}_wrap .js-edit-block', function () {
+        //     var blocks = [];
+        //     for (var idx in value) {
+        //         var itm = value[idx];
+        //         blocks = blocks.concat(itm.blocks);
+        //     }
+        //     var block = getById(blocks, $(this).closest('.js-block').data('id'));
+        //     var section = getById(value, $(this).closest('.js-section').data('id'));
+        //     $("#${id}-modal-block").html(template_modal_block({
+        //         block: block,
+        //         section: section,
+        //     }));
+        //     $("#${id}-modal-block").modal();
+        //     $(this).val('');
+        // });
+        //
+        // $(document).on('click', '#${id}_wrap .js-save-block', function () {
+        //     var blockOption = getById(blocks, $('#${id}-modal-block [name=blockId]').val());
+        //
+        //     var block = {
+        //         id: $('#${id}-modal-block [name=id]').val(),
+        //         title: $('#${id}-modal-block [name=name]').val(),
+        //         status: $('#${id}-modal-block [name=status]').val(),
+        //         block: $('#${id}-modal-block [name=blockId]').val(),
+        //         twig: $('#${id}-modal-block [name=twig]').val(),
+        //         items: blockOption.items,
+        //         values: {},
+        //     };
+        //
+        //     var section = getById(value, $('#${id}-modal-block [name=sectionId]').val());
+        //
+        //     var blocks = [];
+        //     for (var idx in value) {
+        //         var itm = value[idx];
+        //         blocks = blocks.concat(itm.blocks);
+        //     }
+        //     var existBlock = getById(blocks, $('#${id}-modal-block [name=id]').val());
+        //     if (!existBlock) {
+        //         section.blocks.push(block);
+        //     } else {
+        //         existBlock.title = block.title
+        //     }
+        //     $('#${id}').val(cleanString(value));
+        //     $('#${id}-modal-block').modal('hide');
+        //     render();
+        // });
+        //
+        // $(document).on('click', '#${id}_container .js-delete-block', function () {
+        //     var secId = $(this).closest('.js-section').data('id');
+        //     var blkId = $(this).closest('.js-block').data('id');
+        //
+        //     var section = getById(value, secId);
+        //     for (var idx in section.blocks) {
+        //         var itm = section.blocks[idx];
+        //         if (itm.id == blkId) {
+        //             section.blocks.splice(idx, 1)
+        //         }
+        //     }
+        //     render();
+        //     assemble();
+        //     return false;
+        // });
+
+
+        var render = function () {
+            render_content();
+            render_sidebar();
+        };
+
+        var render_content = function () {
+            $(`#${id}_container`).empty();
+
+            for (var idx in value) {
+                var itm = value[idx];
+                $(`#${id}_container`).append(template_section({
+                    id: `${id}`,
+                    blockOptions: blocks,
+                    section: itm,
+                    idx: idx,
+                    total: value.length - 1,
+                }));
+
+                for (var idxBlk in itm.blocks) {
+                    var block = itm.blocks[idxBlk];
+                    $(`.js-section-${id}-${itm.id} .js-blocks`).append(template_block({
+                        id: `${id}`,
+                        block: block,
+                        idx: idxBlk,
+                    }));
+                }
+
+                if (!itm.blocks.length) {
+                    $('.js-section-${id}-' + itm.id + ' .js-blocks .js-no-blocks').fadeIn();
+                }
+            }
+
+            // $('#${id}_container').sortable({
+            //     handle: '.panel-heading',
+            //     items: '.panel-default',
+            //     stop: function (event, ui) {
+            //         assemble${id}();
+            //         render${id}();
+            //     },
+            //     placeholder: {
+            //         element: function (currentItem) {
+            //             return $('<div class="panel panel-default js-block" colspan="3" style="background: lightyellow; height: ' + $(currentItem).height() + 'px">&nbsp;</div>')[0];
+            //         },
+            //         update: function (container, p) {
+            //             return;
+            //         }
+            //     }
+            // });
+            //
+            // $('#${id}_container select.js-after-chosen').chosen({
+            //     allow_single_deselect: true
+            // });
+            //
+            // $('#${id}_container .js-date').datetimepicker({
+            //     timepicker: false,
+            //     format: 'Y-m-d',
+            //     scrollInput: false,
+            // });
+            //
+            // $('#${id}_container .js-datetime').datetimepicker({
+            //     timepicker: true,
+            //     format: 'Y-m-d H:i',
+            //     scrollInput: false,
+            //     step: 5,
+            // });
+            //
+            // $('#${id}_container .js-time').datetimepicker({
+            //     timepicker: true,
+            //     datepicker: false,
+            //     format: 'H:i',
+            //     scrollInput: false,
+            //     step: 5,
+            // });
+            //
+            // $('#${id}_container .js-redactor').redactor({
+            //     plugins: ['filePicker', 'imagePicker', 'video', 'table'],
+            //     minHeight: 300,
+            //     changeCallback: function() {
+            //         assemble${id}();
+            //     },
+            // });
+            //
+            // $('#${id}_container .js-asset-delete').click(function(ev) {
+            //     $($(this).data('id')).val('');
+            //     $($(this).data('id') + '-preview').css('visibility', 'hidden');
+            //     assemble${id}();
+            // });
+            //
+            // $('#${id}_container .js-asset-change').click(function(ev) {
+            //     var _this = this;
+            //     window._callback = function () {
+            //         $(_this).closest('.inner-box').find($(_this).data('id')).val($(this).closest('.file-box').data('id'));
+            //         $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').css('visibility', 'visible');
+            //         $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
+            //         assemble${id}();
+            //     };
+            //     filepicker();
+            // });
+            //
+            // $('.js-elem').change(function () {
+            //     assemble${id}();
+            // });
+            //
+            // $('.js-cbi-item').on('keyup', function () {
+            //     assemble${id}();
+            // });
+        };
+
+        var render_sidebar = function () {
+
+        };
+
+        var assemble = function () {
+
+        };
+
+        var getById = function (data, id) {
+            for (var idx in data) {
+                var itm = data[idx];
+                if (itm.id == id) {
+                    return itm;
+                }
+            }
+            return null;
+        };
+
+        var cleanString = function (str) {
+
+        };
+
+        render();
+    });
+
     window._parentId = 0;
     window._folders = [];
     window._files = [];

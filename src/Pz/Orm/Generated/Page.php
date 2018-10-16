@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-10-09 19:19:44
+//Last updated: 2018-10-16 21:40:59
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -75,6 +75,11 @@ class Page extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $categoryClosed;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $pinterest;
     
     /**
      * @return mixed
@@ -298,6 +303,22 @@ class Page extends Walle
     public function setCategoryClosed($categoryClosed)
     {
         $this->categoryClosed = $categoryClosed;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPinterest()
+    {
+        return $this->pinterest;
+    }
+    
+    /**
+     * @param mixed pinterest
+     */
+    public function setPinterest($pinterest)
+    {
+        $this->pinterest = $pinterest;
     }
     
 }

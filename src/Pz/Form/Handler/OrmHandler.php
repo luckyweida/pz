@@ -48,7 +48,12 @@ class OrmHandler
                 $slugify = new Slugify(['trim' => false]);
                 preg_match('/\bfrom\b\s*(\w+)/i', $itm->sql, $matches);
                 if (count($matches) == 2) {
-                    $tablename = $slugify->slugify($matches[1]);
+                    if (substr($matches[1], 0, 1) == '_') {
+                        $tablename = $matches[1];
+                    } else {
+                        $tablename = $slugify->slugify($matches[1]);
+                    }
+
                     $itm->sql = str_replace($matches[0], "FROM $tablename", $itm->sql);
                 }
 

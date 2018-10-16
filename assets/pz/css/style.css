@@ -9,14 +9,12 @@ body .jstree-node > a {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-body #side-menu .nav-label {
-  height: 17.15px;
+body #side-menu > li ul .nav-label {
+  display: block !important;
+  max-height: 19px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-body #side-menu > li:hover ul .nav-label {
-  display: block !important;
 }
 body .pz-nav li {
   max-width: 200px;

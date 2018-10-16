@@ -119,6 +119,8 @@ class Cms extends Mo
             $ormTwigFile = 'pz/orm.twig';
             if ($itm->getClassName() == 'FragmentBlock') {
                 $ormTwigFile = 'pz/orm-fragmentblock.twig';
+            } elseif ($itm->getClassName() == 'FragmentDefault') {
+                $ormTwigFile = 'pz/orm-fragmentdefault.twig';
             }
 
             if ($itm->getDataType() == 0) {

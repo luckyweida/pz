@@ -14,19 +14,25 @@ body {
   }
 
   #side-menu {
-    .nav-label {
-      //width: 95px;
-      height: 17.15px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    > li:hover {
+    > li {
       ul {
         .nav-label {
+          //width: 95px;
           display: block !important;
+          max-height: 19px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
+      //&:hover {
+      //  ul {
+      //    .nav-label {
+      //      display: block !important;
+      //      max-height: 17.15px;
+      //    }
+      //  }
+      //}
     }
   }
 

@@ -5,7 +5,7 @@ namespace Pz\Axiom;
 use Cocur\Slugify\Slugify;
 use Pz\Orm\_Model;
 
-abstract class Walle
+abstract class Walle implements \JsonSerializable
 {
     /**
      * @var \PDO
@@ -526,5 +526,24 @@ abstract class Walle
     {
         $rc = static::getReflectionClass();
         return file_get_contents(dirname($rc->getFileName()) . '/Generated/ModelJson/' . $rc->getShortName() . '.json');
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        $fields = array_keys(static::getFields());
+
+        $obj = new \stdClass();
+        foreach ($fields as $field) {
+            $getMethod = "get" . ucfirst($field);
+            $obj->{$field} = $this->$getMethod();
+        }
+        return $obj;
     }
 }

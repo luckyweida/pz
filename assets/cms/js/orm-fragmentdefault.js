@@ -5,28 +5,27 @@ $(function() {
     window._template = Handlebars.compile($("#row").html());;
     $('#add').click(function () {
         try {
-            var data = JSON.parse($('#form_items').val());
+            var data = JSON.parse($('#form_content').val());
         } catch (ex) {
             var data = [];
         }
         data.push({
-            widget: 0,
-            id: 'id',
-            title: 'Titie:',
-            sql: '',
+            id: 'content',
+            title: 'Content:',
+            tags: [],
         });
-        $('#form_items').val(JSON.stringify(data));
+        $('#form_content').val(JSON.stringify(data));
         render();
     });
 
     $(document).on('click', '.js-remove', function () {
         try {
-            var data = JSON.parse($('#form_items').val());
+            var data = JSON.parse($('#form_content').val());
         } catch (ex) {
             var data = [];
         }
         data.splice($(this).closest('tbody.js-row').data('idx'), 1);
-        $('#form_items').val(JSON.stringify(data));
+        $('#form_content').val(JSON.stringify(data));
         render();
     });
     render();
@@ -34,11 +33,11 @@ $(function() {
 
 function render() {
     $("#content-block-container tbody").remove();
-    var data = JSON.parse($('#form_items').val());
+    var data = $('#form_content').val() ? JSON.parse($('#form_content').val()) : [];
     for (var idx in data) {
         var itm = data[idx];
         $("#content-block-container").append(_template({
-            widgets: window._blockWidgets,
+            tags: window._blockWidgets,
             data: itm,
             idx: idx,
         }));
@@ -46,7 +45,7 @@ function render() {
     $('#content-block-container').sortable({
         items: 'tbody',
         stop: function(event, ui) {
-            assembleform_items();
+            assembleform_content();
         },
         placeholder: {
             element: function(currentItem) {
@@ -57,27 +56,29 @@ function render() {
             }
         }
     });
-    $('.js-cbi-widget').on('change', function () {
-        assembleform_items();
-        render();
-    });
+
+    $('.js-cbi-tags').chosen();
+
     $('.js-cbi-item').on('keyup', function () {
-        assembleform_items();
+        assembleform_content();
+    });
+    $('.js-cbi-tags').on('change', function () {
+        assembleform_content();
+        render();
     });
     $.each($('#content-block-container td'), function (key, value) {
         $(value).css('width', $(value).outerWidth() + 'px');
     });
 };
 
-function assembleform_items() {
+function assembleform_content() {
     var data = [];
     $.each($('#content-block-container tbody.js-row'), function (idx, itm) {
         data.push({
-            widget: $(itm).find('.js-cbi-widget').val(),
             id: $(itm).find('.js-cbi-id').val(),
             title: $(itm).find('.js-cbi-title').val(),
-            sql: $(itm).find('.js-cbi-sql').val(),
+            tags: $(itm).find('.js-cbi-tags').val(),
         });
     });
-    $('#form_items').val(JSON.stringify(data));
+    $('#form_content').val(JSON.stringify(data));
 };
