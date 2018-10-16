@@ -1,0 +1,104 @@
+{% from "pz/html/megaNav.twig" import nav as nav %}
+
+{% block html %}
+    <!DOCTYPE html>
+    <html>
+        {% block head %}
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>{{ getenv('PROJECT') }}</title>
+                <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+
+
+                <noscript id="deferred-styles">
+                    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto|Titillium+Web" rel="stylesheet">
+                </noscript>
+
+                {% block asset %}
+                    <link rel="stylesheet" href="{{ asset('build/cms-main.css') }}" as="style" rel="preload">
+                    <script src="{{ asset('build/cms-main.js') }}" async defer></script>
+                {% endblock %}
+
+                {#<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.4.5/jquery.datetimepicker.min.css" rel="stylesheet">#}
+
+                {% block extraHead %}{% endblock %}
+            </head>
+        {% endblock %}
+
+        {% block body %}
+            <body class="pace-done {% block extraBodyClass %}{% endblock %} {% if app.request.cookies.get('miniNavbar') == 1 %}mini-navbar{% endif %}">
+                {% block wrapper %}
+                    <div id="wrapper">
+                        <nav class="navbar-default navbar-static-side" role="navigation">
+                            <div class="sidebar-collapse">
+                                <ul class="nav" id="side-menu">
+                                    <li class="nav-header">
+                                        <div class="dropdown profile-element">
+                                        <span>
+                                            <img style="height: 48px; width: 48px;" class="img-circle" src="{% if app.user.image %}/assets/image/{{ app.user.image }}/small{% else %}{{ getenv('CDN') }}https://api.adorable.io/avatars/84/abott@adorable{% endif %}"/>
+                                        </span>
+                                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                            <span class="clear">
+                                                <span class="block m-t-xs"> <strong class="font-bold">Hey, {{ app.user.username }}</strong></span>
+                                            </span>
+                                            </a>
+                                        </div>
+                                        <div class="logo-element">
+                                            <img style="width: 30px;" class="img-circle" src="{% if app.user.image %}/assets/image/{{ app.user.image }}/small{% else %}{{ getenv('CDN') }}https://api.adorable.io/avatars/84/abott@adorable{% endif %}"/>
+                                        </div>
+                                    </li>
+
+                                    {% for itm in root.children %}
+                                        {{ nav(itm, 1, node) }}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </nav>
+
+                        <div id="page-wrapper" class="gray-bg">
+                            <div class="row border-bottom">
+                                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                                    <div class="navbar-header">
+                                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i> </a>
+                                    </div>
+                                    <ul class="nav navbar-top-links navbar-right">
+                                        {#<li><span class="m-r-sm text-muted welcome-message">{{ app.user.name }}</span></li>#}
+                                        <li><a href="/pz/logout"> <i class="fa fa-sign-out"></i> Log out</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+
+                            <div class="row wrapper border-bottom white-bg page-heading">
+                                <div class="col-lg-10">
+                                    {% block extraHeaderLeft %}{% endblock %}
+                                </div>
+                                <div class="col-lg-2">
+                                    {% block extraHeaderRight %}{% endblock %}
+                                </div>
+                            </div>
+                            <div class="wrapper wrapper-content animated fadeIn">
+                                {% block content %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+
+                <script>
+                    var loadDeferredStyles = function() {
+                        var addStylesNode = document.getElementById("deferred-styles");
+                        var replacement = document.createElement("div");
+                        replacement.innerHTML = addStylesNode.textContent;
+                        document.body.appendChild(replacement)
+                        addStylesNode.parentElement.removeChild(addStylesNode);
+                    };
+                    var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                    if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+                    else window.addEventListener('load', loadDeferredStyles);
+                </script>
+                {% block extraFooter %}{% endblock %}
+            </body>
+        {% endblock %}
+    </html>
+{% endblock %}

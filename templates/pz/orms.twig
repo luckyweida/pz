@@ -1,0 +1,127 @@
+{% from "pz/html/nestableNav.twig" import nest as nest %}
+{% extends 'pz/layout.twig' %}
+
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-orms.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-orms.js') }}" async defer></script>
+{% endblock %}
+
+
+{% set model = db.byId('_Model', fragments|last) %}
+
+{% set totalPages = 0 %}
+{% set pageNum = app.request.get('pageNum') ?: 1 %}
+{% set url = '/pz/admin/' ~ model.id %}
+
+{% set orms = [] %}
+{% if model.listType == 0 %}
+    {% set orms = db.data(model.className) %}
+{% elseif model.listType == 1 %}
+    {% set orms = db.data(model.className, {
+        page: pageNum,
+        limit: model.numberPerPage,
+        sort: model.defaultSortBy,
+        order: model.defaultOrder == 0 ? 'ASC' : 'DESC',
+    }) %}
+    {% set totalPages = db.data(model.className, {
+        count: 1,
+    }) %}
+    {% set totalPages = (totalPages.count / model.numberPerPage)|round(1, 'ceil')|number_format  %}
+{% elseif model.listType == 2 %}
+    {% set orms = db.data(model.className) %}
+{% endif %}
+
+{% block extraHead %}
+    <link href="{{ getenv('CDN') }}/pz/css/nestable.css" rel="stylesheet">
+{% endblock %}
+
+{% block extraHeaderLeft %}
+    <h2>Manage <label class="label label-warning-light">{{ model.title }}</label></h2>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 max-1000">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h1>{{ model.title }}</h1>
+                </div>
+                <div class="ibox-content">
+                    <a href="/pz/{{ model.dataType == 0 ? 'database' : 'admin' }}/{{ model.id }}/detail">
+                        <button class="btn btn-success">
+                            <span class="txt">Add new</span>
+                        </button>
+                    </a>
+                    {% if model.listType != 2 %}
+                        {% if orms|length > 0 %}
+                            <table class="table table-striped table-bordered table-hover table-middle">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;" class="text-left">ID</th>
+                                        <th class="text-left">Title</th>
+                                        <th style="width: 150px;" class="text-left">&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="columns" {% if model.listType == 0 %}class="js-sort-column"{% endif %} data-classname="{{ model.className }}">
+                                    {% for itm in orms %}
+                                        <tr id="{{ itm.id }}" class="content-container">
+                                            <td>{{ itm.id }}</td>
+                                            <td>{{ itm.title }}</td>
+                                            <td>
+                                                {% set classes = [
+                                                    {
+                                                        color: 'btn-danger',
+                                                        icon: 'fa-ban'
+                                                    },
+                                                    {
+                                                        color: 'btn-primary',
+                                                        icon: 'fa-check'
+                                                    },
+                                                ] %}
+                                                {% set status = itm.status >= classes|length ? 0 : itm.status %}
+                                                <a href="#"
+                                                   data-id="{{ itm.id }}"
+                                                   data-status="{{ status }}"
+                                                   class="js-status btn-xs btn btn-circle {{ classes[status]['color'] }}">
+
+                                                    {% for itm in classes %}
+                                                        <input type="hidden" class="js-status-opt" data-color="{{ itm.color }}" data-icon="{{ itm.icon }}" value="{{ loop.index0 }}">
+                                                    {% endfor %}
+                                                    <i class="fa {{ classes[status]['icon'] }}"></i>
+                                                </a>
+                                                <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
+                                                <a href="/pz/admin/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
+                                                <a href="#" data-id="{{ itm.id }}" class="js-delete btn-xs btn btn-xs btn-circle btn-outline btn-danger"><i class="fa fa-times"></i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            {% if totalPages > 1 %}
+                                {% include 'pz/html/pagination.twig' %}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <div class="nestable-lists">
+                            <div class="dd" id="nestable">
+                                <ol class="dd-list">
+                                    {% set root = orms|nestable %}
+                                    {% for itm in root.children %}
+                                        {{ nest(itm, 1) }}
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        <div>
+    </div>
+{% endblock %}
+
+{% block extraFooter %}
+    <script>
+        window._listType = '{{ model.listType }}';
+    </script>
+{% endblock %}

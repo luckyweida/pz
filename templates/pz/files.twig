@@ -1,0 +1,77 @@
+{% extends 'pz/layout.twig' %}
+{% block extraBodyClass %}page-files{% endblock %}
+
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-files.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-files.js') }}" async defer></script>
+{% endblock %}
+
+{% set currentFolderId = app.request.get('currentFolderId') ?: 0 %}
+{% set keyword = app.request.get('keyword') %}
+
+{% block extraHeaderLeft %}
+    <h2>Manage <label class="label label-warning-light">Files</label></h2>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="pz-sidebar">
+                            <form novalidate method="get" autocomplete="off">
+                                <div class="input-group">
+                                    <input type="text" class="form-control js-search pz-search" name="keyword">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+
+                            <div class="hr-line-dashed"></div>
+                            {% if not keyword %}
+                                <div id="js-folders"></div>
+                            {% else %}
+                                <div>Search results for <span class="label label-info">{{ keyword }}</span></div>
+                                <small><a href="/pz/files/">&#10096; Browse folders</a></small>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9 pz-main">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-title" id="js-files-nav"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12" id="js-files"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraFooter %}
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>#}
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>#}
+    {#<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>#}
+    {#<script src="{{ getenv('CDN') }}/inspinia/js/plugins/jsTree/jstree.min.js"></script>#}
+
+    <script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/file.twig' %}</script>
+    <script id="file-nav" type="text/x-handlebars-template">{% include 'pz/javascript/file-nav.twig' %}</script>
+    <script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
+
+    {#<script src="{{ getenv('CDN') }}/pz/js/files.js"></script>#}
+    <script>
+        window._currentFolderId = '{{ currentFolderId }}';
+        window._keyword = '{{ keyword }}';
+    </script>
+{% endblock %}
+

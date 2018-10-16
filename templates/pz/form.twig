@@ -1,0 +1,97 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block form_row %}
+    {% spaceless %}
+        <div class="box {{ block_prefixes[block_prefixes|length - 2] }}">
+            {{ form_label(form) }}
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="formValidationErrors">
+            {%- for error in errors -%}
+                <li class="formValidationError">{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{% block datepicker_widget -%}
+    <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d') : '' }}"/>
+    <script>
+        {#$(function () {#}
+            {#$('#{{ id }}').datetimepicker({#}
+                {#timepicker: false,#}
+                {#format: 'Y-m-d',#}
+                {#scrollInput: false,#}
+            {#});#}
+        {#});#}
+    </script>
+{%- endblock datepicker_widget %}
+
+{% block datetimepicker_widget -%}
+    <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d H:i:s') : '' }}"/>
+    <script>
+        {#$(function () {#}
+            {#$('#{{ id }}').datetimepicker({#}
+                {#step: 5,#}
+                {#format: 'Y-m-d H:i',#}
+                {#scrollInput: false,#}
+            {#});#}
+        {#});#}
+    </script>
+{%- endblock datetimepicker_widget %}
+
+{% block choice_multi_json_widget -%}
+    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
+    <select id="{{ id }}_select" class="js-choice_multi_json" multiple>
+        {% for choice in choices %}
+            <option value="{{ choice.value }}" {% if '"' ~ choice.value ~ '"' in value %}selected{% endif %}>{{ choice.label }}</option>
+        {% endfor %}
+    </select>
+{%- endblock choice_multi_json_widget %}
+
+{% block wysiwyg_widget -%}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
+{%- endblock wysiwyg_widget -%}
+
+{% block assetpicker_widget -%}
+    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
+    <div class="row">
+        <div class="col-lg-6 text-center">
+            <a class="js-fancybox" id="{{ id }}-preview" href="/assets/image/{{ value ?: 0 }}/large">
+                <div class="image-holder" style="background: url('/assets/image/{{ value ?: 0 }}/small') no-repeat center center; height: 100px;"></div>
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <button type="button" class="btn btn-primary btn-sm btn-block js-asset-change" data-id="#{{ id }}"><i class="fa fa-upload"></i> Upload</button>
+            <button type="button" class="btn btn-danger btn-outline btn-sm btn-block js-asset-delete" data-id="#{{ id }}"><i class="fa fa-times"></i> Clear</button>
+        </div>
+    </div>
+{%- endblock assetpicker_widget -%}
+
+{% block assetfolderpicker_widget -%}
+    <div class="widget style1" style="padding: 0; margin: 0;">
+        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
+        <div class="row">
+            <div class="col-xs-4 text-center" style="width: auto;">
+                {% set folder = app.db.byId('Asset', value) %}
+                <h4><i class="fa fa-folder"></i>&nbsp;<span id="{{ id }}-title">{{ folder ? folder.title : 'Choose...' }}</span></h4>
+            </div>
+            <div class="col-xs-8 text-right" style="width: auto;">
+                <p>
+                    <button type="button" class="btn btn-default btn-sm btn-circle change" style="margin-right: .2em;" data-id="#{{ id }}"><i class="fa fa-edit"></i></button>
+                    <button type="button" class="btn btn-warning btn-sm btn-circle delete" data-id="#{{ id }}"><i class="fa fa-times"></i></button>
+                </p>
+
+            </div>
+        </div>
+    </div>
+{%- endblock assetfolderpicker_widget -%}
+
+
+{% use 'pz/html/content-block.twig' %}

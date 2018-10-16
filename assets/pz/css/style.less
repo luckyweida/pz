@@ -1,0 +1,361 @@
+@import url(//fonts.googleapis.com/css?family=Titillium+Web:400,400italic,600,700);
+
+html,
+body {
+  height: auto !important;
+}
+
+body {
+  .jstree-node > a {
+    /* 100% - (the width of the presentation node : the line - the left padding of the <a> node - the right padding of the <a> node)*/
+    width: calc(100% - (24px + 1px + 4px));
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  #side-menu {
+    > li {
+      ul {
+        .nav-label {
+          //width: 95px;
+          display: block !important;
+          max-height: 19px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      //&:hover {
+      //  ul {
+      //    .nav-label {
+      //      display: block !important;
+      //      max-height: 17.15px;
+      //    }
+      //  }
+      //}
+    }
+  }
+
+  .pz-nav li {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-box {
+    position: relative;
+    background: #f3f3f4;
+    border: 1px solid #f3f3f4;
+    margin: .5em;
+    .pz-file-delete {
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 9;
+      margin-right: -15px;
+      margin-top: -15px;
+    }
+    .file {
+      margin: 0;
+      img {
+        width: 100%;
+      }
+      .file-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .max-1000 {
+    max-width: 1000px;
+  }
+
+  .ibox-content input[type=text],
+  .ibox-content input[type=email],
+  .ibox-content input[type=password],
+  .ibox-content textarea,
+  .ibox-content select {
+    font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+  }
+
+  .ibox-content input[type=text],
+  .ibox-content input[type=email],
+  .ibox-content input[type=password] {
+    height: 45px;
+    padding: 0.6em 1em !important;
+  }
+
+  .chosen-drop input[type=text] {
+    height: 35px !important;
+  }
+
+  .ibox-content input[type=text],
+  .ibox-content input[type=email],
+  .ibox-content input[type=password],
+  .ibox-content textarea {
+    font-size: 115%;
+    padding: 0.6em 1em !important;
+  }
+
+  .ibox-content input[type=text]:focus,
+  .ibox-content input[type=email]:focus,
+  .ibox-content input[type=password]:focus,
+  .ibox-content textarea:focus,
+  .ibox-content select:focus {
+    background: #faf5df;
+    border-color: #e3d38e
+  }
+
+  .redactor-box textarea:focus {
+    background: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .redactor-editor * {
+    font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 105% !important;
+  }
+
+  .ibox-content .row > div > label, .box > label {
+    font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    font-size: 115%;
+  }
+
+  .navbar-static-side {
+    font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+    font-size: 105%;
+  }
+
+  .box.wysiwyg {
+    background: #eee;
+    padding: 1em 2em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin: 1em 0;
+  }
+
+  .table-middle td {
+    vertical-align: middle !important;
+  }
+}
+
+.page-content {
+  .content-block-sidebar {
+    min-width: 250px;
+    position: fixed;
+    right: 0;
+    .sidebar-submit {
+      padding: 5px 10px;
+      [type=submit]:last-child {
+        margin-right: 5px;
+      }
+    }
+  }
+  .section-blocks {
+    min-height: 100px;
+  }
+  .box {
+    display: inline-block;
+    width: 44.4%;
+    margin: 0 5px 5px 0;
+    min-height: 6.5em;
+    vertical-align: top;
+  }
+
+  .box.textarea,
+  .box.wysiwyg,
+  .box.blocks,
+  .box.formbuilder,
+  .box.formdata,
+  .box.content_block_item,
+  .box.content_block {
+    width: 88.8%;
+  }
+
+  .box.content_block {
+    .left {
+      float: left;
+      h2 {
+        margin-bottom: 0;
+        color: #0e9aef;
+      }
+      h4 {
+        display: inline;
+        margin-right: .5em;
+      }
+    }
+    .right {
+      //width: 20em;
+      float: right;
+      select {
+        width: 10em;
+        display: inline;
+      }
+      a {
+        margin-left: .5em;
+      }
+    }
+    .first-row {
+      margin-bottom: 1.5em;
+    }
+    .panel-heading {
+      .right {
+        button {
+          width: 20px;
+          height: 20px;
+          line-height: 0;
+          font-size: 10px;
+          padding: 0;
+        }
+      }
+    }
+    .panel-body {
+      .inner-box {
+        padding-bottom: .5em;
+        display: inline-block;
+        width: 49%;
+        vertical-align: top;
+      }
+      .inner-fullwidth {
+        width: 98%;
+      }
+    }
+  }
+
+  .box label {
+    display: block;
+    font-weight: bold;
+    padding-left: 0;
+  }
+
+  .box select, .box input[type=text], .box input[type=email], .box input[type=password], .box textarea {
+    height: 3em;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: .2em .5em;
+    width: 100%;
+  }
+
+  .box input[type=checkbox] {
+    margin-left: 0;
+  }
+
+  .box textarea {
+    min-height: 10em;
+    resize: vertical;
+  }
+
+  .wrapper-content {
+    form {
+      .box.assetpicker {
+        .image-holder {
+          -webkit-background-size: cover !important;
+          -moz-background-size: cover !important;
+          -o-background-size: cover !important;
+          background-size: cover !important;
+        }
+      }
+    }
+  }
+
+
+  //.box.assetpicker, .box.assetfolderpicker, .content-block-asset {
+  //  background: #eee;
+  //  border: 1px solid #ddd;
+  //  padding: 1em 2em;
+  //  border-radius: 3px;
+  //}
+  //
+  //.box.assetfolderpicker .text-center {
+  //  background: #ddd;
+  //  border: 1px solid #fff;
+  //  margin-left: 1em;
+  //  height: 50px;
+  //  font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+  //  border-radius: 3px;
+  //}
+  //
+  //.box.assetfolderpicker .text-center h4 {
+  //  margin-top: 1.2em;
+  //}
+  //
+  //.box.assetpicker .text-right, .box.assetfolderpicker .text-right {
+  //  float: right;
+  //}
+
+  .box.formdata ul {
+    list-style-type: none;
+    margin: 1em 2em;
+    padding: 0;
+  }
+
+  .box.formdata .name {
+    display: inline-block;
+    min-width: 10em;
+    background: #eee;
+    margin: .2em;
+    padding: .5em 1em;
+    text-align: right;
+    vertical-align: top;
+  }
+
+  .box.formdata .content {
+    display: inline-block;
+    padding: .5em 1em;
+    vertical-align: top;
+  }
+
+  .submit-container {
+    margin: 0 5px 5px 0;
+    width: 88.8%;
+  }
+
+  .submit-container input[type=submit] {
+    margin-left: .5em;
+  }
+
+  ul.formValidationErrors {
+    padding-left: 0;
+  }
+
+  .formValidationError {
+    background: #e92814 none repeat scroll 0 0;
+    border-radius: 4px;
+    color: #fff;
+    display: block;
+    line-height: normal;
+    margin: 0 0 1em;
+    overflow: hidden;
+    padding: 4px 9px;
+    text-align: center;
+    width: auto;
+  }
+}
+
+.page-files {
+  .pz-sidebar {
+    .pz-search {
+      padding: 0 .5em !important;
+      height: 34px;
+    }
+  }
+  .pz-main {
+    .pz-nav {
+      float: left;
+    }
+    .pz-tools {
+      float: right;
+    }
+    .ui-sortable-handle {
+      cursor: move;
+    }
+    .ui-sortable-placeholder {
+      background: lightyellow !important;
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{% extends 'pz/layout.twig' %}
+
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-model-sync.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-model-sync.js') }}" async defer></script>
+{% endblock %}
+
+{% set orm = db.byId('_Model', args.0) ?: db.create('_Model') %}
+
+{% block extraHead %}
+    <style>
+        #columns td { vertical-align: middle; cursor: move; }
+        input + label, .i-checks label { margin-left: .3em; }
+        label { padding: 0 .5em 0 .1em; }
+        .paddingB5 { padding-bottom: .5em; }
+    </style>
+{% endblock %}
+
+{% block extraHeader %}
+{% endblock %}
+
+{% block content %}
+    {{ modelHandler.sync(orm) }}
+
+    <div class="row">
+        <div class="col-lg-12 max-1000">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h1>{% if orm.id %}{{ orm.title }}{% else %}New Model{% endif %}</h1>
+                </div>
+                <div class="ibox-content">
+                    <h3>Updating database...</h3>
+                    <p>Please wait, it may take a few seconds.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
+
+{% block extraFooter %}
+    <script>
+        window._returnUrl = '{{ app.request.get('returnUrl') }}';
+    </script>
+{% endblock %}

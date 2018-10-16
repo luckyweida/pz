@@ -1,0 +1,71 @@
+{% extends 'pz/layout.twig' %}
+
+{% from "pz/html/nestableNav.twig" import nest as nest %}
+{% set categories = db.active('PageCategory') %}
+{% set cat = app.request.get('cat') or app.request.get('cat') is same as('0') ? app.request.get('cat') : categories.0.id %}
+
+{% set pageRoot = db.data('Page')|nestablePges(cat) %}
+
+{% block extraHeaderLeft %}
+    <h2>Manage <label class="label label-warning-light">Pages</label></h2>
+{% endblock %}
+
+{% block asset %}
+    <link rel="stylesheet" href="{{ asset('build/cms-pages.css') }}" as="style" rel="preload">
+    <script src="{{ asset('build/cms-pages.js') }}" async defer></script>
+{% endblock %}
+
+{% set model = db.byField('_Model', 'className', 'Page') %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 max-1000">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <a href="/pz/{{ model.dataType == 0 ? 'database' : 'admin' }}/{{ model.id }}/detail/?returnUrl={{ app.request.uri|url_encode }}">
+                        <button class="btn btn-w-m btn-info">
+                            <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add New Page
+                        </button>
+                    </a>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="page-category">
+
+                        {% for itm in categories %}
+                            <input data-id="{{ itm.id }}" id="itm{{ itm.id }}" type="radio" name="category" {{ itm.id == cat ? 'checked="checked"' : '' }} />
+                            <label data-id="{{ itm.id }}" for="itm{{ itm.id }}">
+                                <div class="dd other content-{{ itm.id }}" data-id="{{ itm.id }}" >
+                                    <div class="dd-empty"></div>
+                                </div>
+                                <div class="item-title">{{ itm.title }} <span class="number"></span></div>
+                            </label>
+                        {% endfor %}
+
+                        <input data-id="0"  id="itm0" type="radio" name="category" {{ 0 == cat ? 'checked="checked"' : '' }} />
+                        <label data-id="0" for="itm0">
+                            <div class="other dd content--1" data-id="0" >
+                                <div class="dd-empty"></div>
+                            </div>
+                            <div class="item-title">Uncategorised <span class="number"></span></div>
+                        </label>
+                    </div>
+
+                    <div class="nestable-lists">
+                        <div class="dd" id="nestable">
+                            <ol class="dd-list">
+                                {% for itm in pageRoot.children %}
+                                    {{ nest(itm, 1) }}
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
