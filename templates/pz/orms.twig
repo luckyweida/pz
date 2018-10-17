@@ -89,8 +89,8 @@
                                                     {% endfor %}
                                                     <i class="fa {{ classes[status]['icon'] }}"></i>
                                                 </a>
-                                                <a href="/pz/admin/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
-                                                <a href="/pz/admin/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
+                                                <a href="/pz/{{ model.dataType == 0 ? 'database' : 'admin' }}/{{ model.id }}/detail/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-pencil"></i></a>
+                                                <a href="/pz/{{ model.dataType == 0 ? 'database' : 'admin' }}/{{ model.id }}/copy/{{ itm.id }}" class="btn-xs btn btn-xs btn-circle btn-primary btn-outline"><i class="fa fa-copy"></i></a>
                                                 <a href="#" data-id="{{ itm.id }}" class="js-delete btn-xs btn btn-xs btn-circle btn-outline btn-danger"><i class="fa fa-times"></i></a>
                                             </td>
                                         </tr>
