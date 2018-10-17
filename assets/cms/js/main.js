@@ -9,6 +9,7 @@ require('../../inspinia/css/plugins/sweetalert/sweetalert.css');
 require('../../font-awesome/css/font-awesome.css');
 require('../../pz/css/chosen.css');
 require('../../pz/css/style.css');
+require('datetimepicker-jquery/build/jquery.datetimepicker.min.css');
 
 const $ = require("jquery");
 window.$ = $;

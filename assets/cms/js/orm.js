@@ -48,6 +48,23 @@ $(function() {
         var dataBlocks = JSON.parse($(itm).find('.js-blocks').val());
         var dataValue = JSON.parse($(itm).find(`#${dataId}`).val());
         var dataTags = JSON.parse($(itm).find('.js-tags').val());
+        var dataDefault = $(itm).find('.js-default').val() != 'null' ? JSON.parse($(itm).find('.js-default').val()) : null;
+
+        if (!dataValue.length && dataDefault) {
+            dataDefault.content = JSON.parse(dataDefault.content);
+
+            for (var idx in dataDefault.content) {
+                var itm = dataDefault.content[idx];
+                dataValue.push({
+                    id: Math.random().toString(36).substr(2, 9),
+                    title: itm.title,
+                    attr: itm.id,
+                    status: 1,
+                    tags: itm.tags,
+                    blocks: [],
+                })
+            }
+        }
 
         for (var idx in dataBlocks) {
             var itm = dataBlocks[idx];
@@ -286,9 +303,17 @@ $(function() {
 
             for (var idx in dataValue) {
                 var itm = dataValue[idx];
+                var blocks = [];
+                for (idxBlk in dataBlocks) {
+                    var dataBlk = dataBlocks[idxBlk];
+                    var tags = itm.tags.filter(value => -1 !== dataBlk.tags.indexOf(value));
+                    if (tags.length || !itm.tags.length) {
+                        blocks.push(dataBlk);
+                    }
+                }
                 $(`#${dataId}_container`).append(template_section({
                     id: `${dataId}`,
-                    blockOptions: dataBlocks,
+                    blockOptions: blocks,
                     section: itm,
                     idx: idx,
                     total: dataValue.length - 1,
@@ -368,8 +393,8 @@ $(function() {
                 var _this = this;
                 window._callback = function () {
                     $(_this).closest('.inner-box').find($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').css('visibility', 'visible');
-                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').attr('src', '/asset/files/image/' + $(this).closest('.file-box').data('id') + '/cms_file_preview');
+                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
+                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
                     assemble();
                 };
                 filepicker();
@@ -639,7 +664,6 @@ $(function() {
         return false;
     });
 
-
     $('.wysiwyg textarea').redactor({
         plugins: ['filePicker', 'imagePicker', 'video', 'table'],
         minHeight: 300,
@@ -647,6 +671,18 @@ $(function() {
 
     $('select:not(.no-chosen)').chosen({
         allow_single_deselect: true
+    });
+
+    $('.box.datepicker input').datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+        scrollInput: false,
+    });
+
+    $('.box.datetimepicker input').datetimepicker({
+        step: 5,
+        format: 'Y-m-d H:i',
+        scrollInput: false,
     });
 
     $(document).on('change', '.js-choice_multi_json', function() {
