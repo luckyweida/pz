@@ -69,7 +69,7 @@ class Cms extends Mo
         $fullClassName = Db::fullClassName($model->getClassName());
         $orm = $fullClassName::getById($pdo, $ormId);
         $orm->setId(null);
-        $orm->setTitle('New ' . $orm->getTitle());
+//        $orm->setTitle('New ' . $orm->getTitle());
         $params['orm'] = $orm;
 
         return $this->render($params['node']->getTemplate(), $params);
