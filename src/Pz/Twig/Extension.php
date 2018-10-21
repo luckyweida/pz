@@ -82,7 +82,7 @@ class Extension extends AbstractExtension
     {
         $nodes = array();
         foreach ($pages as $page) {
-            $category = json_decode($page->getCategory());
+            $category = $page->getCategory() ? json_decode($page->getCategory()) : [];
             if (!in_array($cat, $category) && !($cat == 0 && count($category) == 0)) {
                 continue;
             }
