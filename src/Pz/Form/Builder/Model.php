@@ -1,6 +1,7 @@
 <?php
 namespace Pz\Form\Builder;
 
+use Pz\Form\Type\ChoiceMultiJson;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -23,6 +24,7 @@ class Model extends AbstractType
         parent::buildForm($builder, $options);
 
         $defaultSortByOptions = isset($options['defaultSortByOptions']) ? $options['defaultSortByOptions'] : array();
+        $dataGroups = isset($options['dataGroups']) ? $options['dataGroups'] : array();
 
         $builder->add('title', TextType::class, array(
             'label' => 'Name:',
@@ -30,35 +32,38 @@ class Model extends AbstractType
                 new Assert\NotBlank()
             )
         ))->add('className', TextType::class, array(
-            'label' => 'Class name:',
+            'label' => 'Class Name:',
             'constraints' => array(
                 new Assert\NotBlank()
             )
         ))->add('modelType', ChoiceType::class, array(
-            'label' => 'Model type:',
+            'label' => 'Model Type:',
             'expanded' => true,
             'choices' => array(
                 'Customised' => 0,
                 'Built in' => 1,
             )
         ))->add('dataType', ChoiceType::class, array(
-            'label' => 'Data type:',
+            'label' => 'Data Type:',
             'expanded' => true,
             'choices' => array(
-                'Database' => 0,
                 'Admin' => 1,
+                'User' => 0,
                 'None' => 2,
             )
         ))->add('listType', ChoiceType::class, array(
-            'label' => 'Listing type:',
+            'label' => 'Listing Type:',
             'expanded' => true,
             'choices' => array(
                 'Drag & Drop' => 0,
                 'Pagination' => 1,
                 'Tree' => 2,
             )
+        ))->add('dataGroups', ChoiceMultiJson::class, array(
+            'label' => 'Data Groups:',
+            'choices' => $dataGroups,
         ))->add('numberPerPage', TextType::class, array(
-            'label' => 'Page size:',
+            'label' => 'Page Size:',
         ))->add('defaultSortBy', ChoiceType::class, array(
             'label' => 'Sort:',
             'choices' => $defaultSortByOptions,
@@ -77,6 +82,7 @@ class Model extends AbstractType
         parent::configureOptions($resolver);
         $resolver->setDefaults(array(
             'defaultSortByOptions' => array(),
+            'dataGroups' => array(),
         ));
     }
 }

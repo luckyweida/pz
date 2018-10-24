@@ -110,6 +110,27 @@ body .box.wysiwyg {
 body .table-middle td {
   vertical-align: middle !important;
 }
+.page-model .model-data-group select {
+  width: 100%;
+}
+.page-model .row-eq-height > div.row1 {
+  min-height: 7.5em;
+}
+.page-model .row-eq-height > div.row1 .i-checks {
+  padding-top: 1em;
+}
+.page-model .row-eq-height > div.row2 {
+  text-align: center;
+}
+.page-model .row-eq-height > div.row3 {
+  min-height: 7.5em;
+}
+.page-model .row-eq-height > div.row3 .i-checks {
+  padding-top: 1em;
+}
+.page-model .row-eq-height > div.row3 .i-checks label {
+  font-size: 90%;
+}
 .page-content .content-block-sidebar {
   min-width: 250px;
   position: fixed;

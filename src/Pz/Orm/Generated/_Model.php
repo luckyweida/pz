@@ -36,6 +36,11 @@ class _Model extends Walle
     private $dataType;
 
     /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $dataGroups;
+
+    /**
      * #pz tinyint(1) DEFAULT NULL
      */
     private $listType;
@@ -138,6 +143,22 @@ class _Model extends Walle
     public function setDataType($dataType)
     {
         $this->dataType = $dataType;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDataGroups()
+    {
+        return $this->dataGroups;
+    }
+
+    /**
+     * @param mixed $dataGroups
+     */
+    public function setDataGroups($dataGroups)
+    {
+        $this->dataGroups = $dataGroups;
     }
 
     /**

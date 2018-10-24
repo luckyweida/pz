@@ -5,15 +5,38 @@ require("./main.js");
 $(function() {
     window._fieldSource = $("#field-source").html();
 
+    $('#model_dataType :radio').on('ifChanged', function (ev) {
+        if ($(this).val() == 0) {
+            $('.model-data-group').fadeIn(400, function () {
+                $('.js-choice_multi_json').chosen({
+                    allow_single_deselect: true
+                });
+            });
+        } else {
+            $('.model-data-group').hide();
+        }
+        setOffset();
+    });
+    if ($('#model_dataType :radio:checked').val() == 0) {
+        $('.model-data-group').fadeIn(400, function () {
+            $('.js-choice_multi_json').chosen({
+                allow_single_deselect: true
+            });
+        });
+        setOffset();
+    }
+
     $('#model_listType :radio').on('ifChanged', function (ev) {
         if ($(this).val() == 1) {
             $('.model-pagination-detail').fadeIn();
         } else {
             $('.model-pagination-detail').hide();
         }
+        setOffset();
     });
     if ($('#model_listType :radio:checked').val() == 1) {
         $('.model-pagination-detail').fadeIn();
+        setOffset();
     }
 
     $(document).on('change', '#fields', function (ev) {
@@ -75,8 +98,21 @@ $(function() {
         renderFields();
         renderDefaultSortBy();
     });
+
+    $(document).on('change', '.js-choice_multi_json', function() {
+        $(this).prev('input').val(JSON.stringify($(this).val()));
+    });
 });
 
+function setOffset() {
+    if ($('#model_listType :radio:checked') !== 'undefined') {
+        if ($('#model_listType :radio:checked').val() == 1) {
+            $('.model-data-group').removeClass('col-md-offset-6');
+        } else {
+            $('.model-data-group').addClass('col-md-offset-6');
+        }
+    }
+};
 
 function renderDefaultSortBy() {
     $('#model_defaultSortBy').empty();

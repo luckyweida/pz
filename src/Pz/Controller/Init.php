@@ -7,6 +7,9 @@ use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
 use Pz\Orm\AssetSize;
+use Pz\Orm\DataGroup;
+use Pz\Orm\FragmentBlock;
+use Pz\Orm\FragmentDefault;
 use Pz\Orm\FragmentTag;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
@@ -43,7 +46,7 @@ class Init extends Controller
                 continue;
             }
 
-            $className = "Pz\\Orm\\" . rtrim($file, '.php');
+            $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             $className::sync($pdo);
         }
         foreach ($files as $file) {
@@ -53,7 +56,7 @@ class Init extends Controller
                 continue;
             }
 
-            $className = "Pz\\Orm\\" . rtrim($file, '.php');
+            $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             $className::updateModel($pdo);
         }
 
@@ -68,6 +71,9 @@ class Init extends Controller
         $this->addPageTemplates($pdo);
         $this->addPages($pdo);
         $this->addFragmentTags($pdo);
+        $this->addFragmentBlock($pdo);
+        $this->addFragmentDefault($pdo);
+        $this->addDataGroups($pdo);
 
         $pdo->commit();
 
@@ -307,6 +313,54 @@ class Init extends Controller
             $orm = new FragmentTag($pdo);
             $orm->setId(2);
             $orm->setTitle('CMS');
+            $orm->save(true);
+        }
+    }
+
+    public function addFragmentBlock($pdo)
+    {
+        $orm = FragmentBlock::getByField($pdo, 'title', 'Heading & Content');
+        if (!$orm) {
+            $orm = new FragmentBlock($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Heading & Content');
+            $orm->setTwig('heading-content.twig');
+            $orm->setTags('["1"]');
+            $orm->setItems('[{"widget":"0","id":"heading","title":"Heading:","sql":""},{"widget":"5","id":"content","title":"Content:","sql":""}]');
+            $orm->save(true);
+        }
+    }
+
+    public function addFragmentDefault($pdo)
+    {
+        $orm = FragmentDefault::getByField($pdo, 'title', 'Page');
+        if (!$orm) {
+            $orm = new FragmentDefault($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Page');
+            $orm->setAttr('content');
+            $orm->setContent('[{"id":"content","title":"Content:","tags":["1"]}]');
+            $orm->save(true);
+        }
+    }
+
+    public function addDataGroups($pdo)
+    {
+        $orm = DataGroup::getByField($pdo, 'title', 'Database');
+        if (!$orm) {
+            $orm = new DataGroup($pdo);
+            $orm->setId(1);
+            $orm->setTitle('Database');
+            $orm->setIcon('fa fa-database');
+            $orm->save(true);
+        }
+
+        $orm = DataGroup::getByField($pdo, 'title', 'Shop');
+        if (!$orm) {
+            $orm = new DataGroup($pdo);
+            $orm->setId(2);
+            $orm->setTitle('Shop');
+            $orm->setIcon('fa fa-shopping-cart');
             $orm->save(true);
         }
     }

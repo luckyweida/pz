@@ -4,6 +4,7 @@ namespace Pz\Controller;
 
 use Pz\Orm\_Model;
 use Pz\Axiom\Mo;
+use Pz\Orm\DataGroup;
 use Pz\Router\Node;
 use Pz\Service\Db;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,29 +93,80 @@ class Cms extends Mo
      */
     public function getNodes()
     {
+        /** @var \PDO $pdo */
+        $pdo = $this->connection->getWrappedConnection();
         $nodes = array();
-        $nodes[] = new Node(1, 'Pages', 0, 0, '/pz/pages', 'pz/pages.twig');
-        $nodes[] = new Node(2, 'Database', 0, 1);
-        $nodes[] = new Node(3, 'Files', 0, 2, '/pz/files', 'pz/files.twig');
-        $nodes[] = new Node(4, 'Admin', 0, 3);
-        $nodes[] = new Node(11, 'Page', 1, 0, '/pz/admin/6/detail', 'pz/orm.twig', 2, 1, 1);
-        $nodes[] = new Node(41, 'Customised Models', 4, 998, '/pz/admin/models/customised', 'pz/models.twig');
-        $nodes[] = new Node(411, 'Customised Model', 41, 0, '/pz/admin/models/customised/detail', 'pz/model.twig', 2, 1, 1);
-        $nodes[] = new Node(42, 'Built-in Models', 4, 999, '/pz/admin/models/built-in', 'pz/models.twig');
-        $nodes[] = new Node(421, 'Built-in Model', 42, 0, '/pz/admin/models/built-in/detail', 'pz/model.twig', 2, 1, 1);
 
-        $nodes[0]->addExtra('icon', 'fa fa-sitemap');
-        $nodes[1]->addExtra('icon', 'fa fa-database');
-        $nodes[2]->addExtra('icon', 'fa fa-file-image-o');
-        $nodes[3]->addExtra('icon', 'fa fa-cogs');
+        $node = new Node(1, 'Pages', 0, 0, '/pz/pages', 'pz/pages.twig');
+        $node->addExtra('icon', 'fa fa-sitemap');
+        $nodes[] = $node;
 
-        $nodes[] = new Node(412, 'Sync Model', 41, 0, '/pz/admin/models/customised/sync', 'pz/model-sync.twig', 2, 1, 1);
-        $nodes[] = new Node(422, 'Sync Model', 42, 0, '/pz/admin/models/built-in/sync', 'pz/model-sync.twig', 2, 1, 1);
+        $node = new Node(11, 'Page', 1, 0, '/pz/admin/6/detail', 'pz/orm.twig', 2, 1, 1);
+        $nodes[] = $node;
 
-        $db = new Db($this->connection);
+
+        /** @var DataGroup[] $dataGroups */
+        $dataGroups = DataGroup::active($pdo);
+        foreach ($dataGroups as $dgIdx => $dataGroup) {
+            $dgId = 2 + $dgIdx;
+
+            $dgNode = new Node($dgId, $dataGroup->getTitle(), 0, $dgId);
+            $dgNode->addExtra('icon', $dataGroup->getIcon());
+
+            $result = _Model::active($pdo, array(
+                'whereSql' => 'm.dataGroups LIKE ? AND m.dataType = 0',
+                'params' => array('%"' . $dataGroup->getId() . '"%'),
+            ));
+
+            if (count($result)) {
+                $nodes[] = $dgNode;
+
+                foreach ($result as $idx => $itm) {
+                    $ormTwigFile = 'pz/orm.twig';
+                    if ($itm->getClassName() == 'FragmentBlock') {
+                        $ormTwigFile = 'pz/orm-fragmentblock.twig';
+                    } elseif ($itm->getClassName() == 'FragmentDefault') {
+                        $ormTwigFile = 'pz/orm-fragmentdefault.twig';
+                    }
+
+                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), 'pz/orms.twig');
+                    $nodes[] = $node;
+
+                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
+                    $nodes[] = $node;
+                }
+            }
+        }
+
+        $node = new Node(30, 'Files', 0, 30, '/pz/files', 'pz/files.twig');
+        $node->addExtra('icon', 'fa fa-file-image-o');
+        $nodes[] = $node;
+
+        $node = new Node(40, 'Admin', 0, 40);
+        $node->addExtra('icon', 'fa fa-cogs');
+        $nodes[] = $node;
+
+        $node = new Node(41, 'Customised Models', 40, 998, '/pz/admin/models/customised', 'pz/models.twig');
+        $nodes[] = $node;
+
+        $node = new Node(411, 'Customised Model', 41, 0, '/pz/admin/models/customised/detail', 'pz/model.twig', 2, 1, 1);;
+        $nodes[] = $node;
+
+        $node = new Node(42, 'Built-in Models', 40, 999, '/pz/admin/models/built-in', 'pz/models.twig');
+        $nodes[] = $node;
+
+        $node = new Node(421, 'Built-in Model', 42, 0, '/pz/admin/models/built-in/detail', 'pz/model.twig', 2, 1, 1);
+        $nodes[] = $node;
+
+
+        $node = new Node(412, 'Sync Model', 41, 0, '/pz/admin/models/customised/sync', 'pz/model-sync.twig', 2, 1, 1);
+        $nodes[] = $node;
+
+        $node = new Node(422, 'Sync Model', 42, 0, '/pz/admin/models/built-in/sync', 'pz/model-sync.twig', 2, 1, 1);
+        $nodes[] = $node;
 
         /** @var _Model[] $modelDatabase */
-        $modelDatabase = $db->active('_Model');
+        $modelDatabase = _Model::active($pdo);
         foreach ($modelDatabase as $idx => $itm) {
             $ormTwigFile = 'pz/orm.twig';
             if ($itm->getClassName() == 'FragmentBlock') {
@@ -123,12 +175,12 @@ class Cms extends Mo
                 $ormTwigFile = 'pz/orm-fragmentdefault.twig';
             }
 
-            if ($itm->getDataType() == 0) {
-                $nodes[] = new Node('2-' . $itm->getId(), $itm->getTitle(), 2, $idx, "/pz/database/" . $itm->getId(), 'pz/orms.twig');
-                $nodes[] = new Node('2-' . $itm->getId() . '-1', $itm->getTitle(), '2-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
-            } else if ($itm->getDataType() == 1) {
-                $nodes[] = new Node('4-' . $itm->getId(), $itm->getTitle(), 4, $idx, "/pz/admin/" . $itm->getId(), 'pz/orms.twig');
-                $nodes[] = new Node('4-' . $itm->getId() . '-1', $itm->getTitle(), '4-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
+            if ($itm->getDataType() == 1) {
+                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), 'pz/orms.twig');
+                $nodes[] = $node;
+
+                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
+                $nodes[] = $node;
             }
         }
 

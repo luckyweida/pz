@@ -6,6 +6,7 @@ use Cocur\Slugify\Slugify;
 use Pz\Axiom\Eve;
 use Pz\Axiom\Walle;
 use Pz\Orm\_Model;
+use Pz\Orm\DataGroup;
 use Pz\Redirect\RedirectException;
 use Pz\Service\Db;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,9 +47,21 @@ class ModelHandler
             }
         }
 
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $dataGroups = array();
+        /** @var DataGroup[] $result */
+        $result = DataGroup::active($pdo);
+        foreach ($result as $itm) {
+            $dataGroups[$itm->getTitle()] = $itm->getId();
+        }
+
         $columns = array_keys(_Model::getFields());
         $form = $this->container->get('form.factory')->create(\Pz\Form\Builder\Model::class, $model, array(
             'defaultSortByOptions' => array_combine($columns, $columns),
+            'dataGroups' => $dataGroups,
         ));
 
         $request = Request::createFromGlobals();

@@ -144,6 +144,34 @@ body {
   }
 }
 
+.page-model {
+  .model-data-group {
+    select {
+      width: 100%;
+    }
+  }
+  .row-eq-height {
+    & > div.row1 {
+      min-height: 7.5em;
+      .i-checks {
+        padding-top: 1em;
+      }
+    }
+    & > div.row2 {
+      text-align: center;
+    }
+    & > div.row3 {
+      min-height: 7.5em;
+      .i-checks {
+        padding-top: 1em;
+        label {
+          font-size: 90%;
+        }
+      }
+    }
+  }
+}
+
 .page-content {
   .content-block-sidebar {
     min-width: 250px;
