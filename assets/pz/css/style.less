@@ -44,6 +44,7 @@ body {
   }
 
   .file-box {
+    width: 22%;
     position: relative;
     background: #f3f3f4;
     border: 1px solid #f3f3f4;
@@ -66,6 +67,32 @@ body {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+    }
+  }
+
+  #jstree-marker {
+    z-index: 999999 !important;
+  }
+
+  #popup-container {
+    .js-nav {
+      .pz-label {
+        float: none;
+        margin-left: 0;
+      }
+    }
+
+    #js-files {
+      padding: 0;
+    }
+
+    #js-folders {
+      form {
+        margin-bottom: 20px;
+      }
+    }
+    .row {
+      margin: 0;
     }
   }
 
@@ -161,7 +188,7 @@ body {
       text-align: center;
     }
     & > div.row3 {
-      min-height: 7.5em;
+      min-height: 8em;
       .i-checks {
         padding-top: 1em;
         label {
@@ -173,6 +200,10 @@ body {
 }
 
 .page-content {
+  #popup-container {
+    display: none;
+  }
+
   .content-block-sidebar {
     min-width: 250px;
     position: fixed;
@@ -184,9 +215,11 @@ body {
       }
     }
   }
+
   .section-blocks {
     min-height: 100px;
   }
+
   .box {
     display: inline-block;
     width: 44.4%;
@@ -291,31 +324,6 @@ body {
     }
   }
 
-
-  //.box.assetpicker, .box.assetfolderpicker, .content-block-asset {
-  //  background: #eee;
-  //  border: 1px solid #ddd;
-  //  padding: 1em 2em;
-  //  border-radius: 3px;
-  //}
-  //
-  //.box.assetfolderpicker .text-center {
-  //  background: #ddd;
-  //  border: 1px solid #fff;
-  //  margin-left: 1em;
-  //  height: 50px;
-  //  font-family: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
-  //  border-radius: 3px;
-  //}
-  //
-  //.box.assetfolderpicker .text-center h4 {
-  //  margin-top: 1.2em;
-  //}
-  //
-  //.box.assetpicker .text-right, .box.assetfolderpicker .text-right {
-  //  float: right;
-  //}
-
   .box.formdata ul {
     list-style-type: none;
     margin: 1em 2em;
@@ -366,24 +374,16 @@ body {
 }
 
 .page-files {
-  .pz-sidebar {
-    .pz-search {
-      padding: 0 .5em !important;
-      height: 34px;
+  #js-folders {
+    min-height: 450px;
+    padding: 20px 20px 20px 20px;
+    background: #fdfdfd;
+  }
+
+  #js-files {
+    .file-box {
+      width: 17%;
     }
   }
-  .pz-main {
-    .pz-nav {
-      float: left;
-    }
-    .pz-tools {
-      float: right;
-    }
-    .ui-sortable-handle {
-      cursor: move;
-    }
-    .ui-sortable-placeholder {
-      background: lightyellow !important;
-    }
-  }
+
 }

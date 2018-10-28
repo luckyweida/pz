@@ -49,56 +49,14 @@
 			</div>
 		</div>
 	</div>
-
-	<div id="popup-container" style="display: none;">
-		<div class="row" style="margin: 0">
-			<div class="col-lg-12" style="padding: 0">
-				<div class="ibox">
-					<div class="ibox-title">
-						<div class="js-upload"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row" style="margin: 0">
-			<div class="col-lg-2" id="js-folders"></div>
-			<div class="col-lg-10" id="js-files"></div>
-		</div>
-	</div>
 {% endblock %}
 
 
 {% block extraFooter %}
-	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/file.twig' %}</script>
+    {% include 'pz/html/file-manager.html.twig' %}
+
 	<script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
-	<script id="template-upload" type="text/x-handlebars-template">
-        {% verbatim %}
-			<button class="btn btn-sm btn-info" onclick="$('#fileupload').click();">
-				<i class="fa fa-upload"></i> Upload
-			</button>
-			<input id="fileupload" type="file" name="files[]" multiple style="display: none;">
-			<div class="progress progress-striped" style="display: none;">
-				<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-			</div>
-		{% endverbatim %}
-	</script>
-
-
-	{#<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.iframe-transport.min.js"></script>#}
-	{#<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.5.7/jquery.fileupload.min.js"></script>#}
-	{#<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.min.js"></script>#}
-	{#<script>#}
-
-		{#$(function() {#}
-			{#{% if app.request.get('cat') and not orm.id %}#}
-				{#if ($('#form_category_select').length > 0 && $('#form_category').length > 0) {#}
-					{#$('#form_category_select').val('{{ app.request.get('cat') }}');#}
-					{#$('#form_category').val(JSON.stringify(['{{ app.request.get('cat') }}']));#}
-				{#}#}
-			{#{% endif %}#}
-
-
-		{#});#}
-
-	{#</script>#}
+	<script id="folder" type="text/x-handlebars-template">{% include 'pz/javascript/fm-folders.twig' %}</script>
+	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/fm-files.twig' %}</script>
+	<script id="nav" type="text/x-handlebars-template">{% include 'pz/javascript/fm-nav.twig' %}</script>
 {% endblock %}

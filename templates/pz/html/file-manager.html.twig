@@ -1,0 +1,18 @@
+<input type="hidden" id="currentFolderId" value="{{ app.request.session.get('currentFolderId') ?: 0 }}"/>
+<div id="popup-container">
+    <div class="row">
+        <div class="col-lg-12" style="padding: 0">
+            <div class="ibox">
+                <div class="ibox-title" style="min-height: 55px">
+                    <div class="js-nav"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div id="js-folders"></div>
+        </div>
+        <div class="col-lg-9" id="js-files"></div>
+    </div>
+</div>

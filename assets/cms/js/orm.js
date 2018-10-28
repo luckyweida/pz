@@ -18,6 +18,7 @@ require('blueimp-file-upload/js/jquery.iframe-transport.js');
 require('blueimp-file-upload/js/jquery.fileupload.js');
 require('fancybox/dist/js/jquery.fancybox.js');
 
+require('./fm.js');
 
 $(function() {
     $.each($('.js-fragment-container'), function (idx, itm) {
@@ -691,95 +692,8 @@ $(function() {
 });
 
 function folderpicker() {
-    $('.asset-picker-upload').css('visibility', 'hidden');
-    $('#popup-container .title').html('Choose a folder');
-    $('#popup-container .content').hide();
-    $('#popup-container .load').show();
-    $.fancybox.open([
-        {
-            href : '#popup-container',
-            type : 'inline',
-            minWidth: 400,
-            minHeight: 600,
-            maxWidth: 400,
-            maxHeight: 600,
-            helpers: {
-                overlay: {
-                    locked: false
-                }
-            }
-        },
-    ], {
-        padding : 0
-    });
 
-    folders(-1);
-}
-
-function folders(parentId) {
-
-    $.ajax({
-        url: '/pz/ajax/folders?currentFolderId=' + parentId,
-        dataType: 'json',
-        beforeSend: function() {
-            $('#popup-container .content').fadeOut(400, function() {
-                $('#popup-container .load').fadeIn();
-            });
-        },
-    }).done(function(json) {
-        window._folders = json[0];
-        window._files = [];
-        window._ancestors = json[2];
-        window._parentId = json[3];
-        repaintAssetFolderPicker();
-
-    });
 };
-
-function repaintAssetFolderPicker() {
-    $('#popup-container .content .modal-body').empty();
-
-    var folderPickerTableTemplate = Handlebars.compile(_folderPickerTableSource);
-    $('#popup-container .content .modal-body').append(folderPickerTableTemplate());
-
-    var folderPickerTableRowTemplate = Handlebars.compile(_folderPickerTableRowSource);
-    for (var idx in window._folders) {
-        var itm = window._folders[idx];
-        $('#folderpicker-table-body').append(folderPickerTableRowTemplate({
-            itm: itm,
-        }));
-    }
-
-
-    $('#popup-container .load').fadeOut(400, function() {
-        $('#popup-container .content').fadeIn();
-    });
-
-    $('#popup-container #folderpicker-table-body .folder').off();
-    $('#popup-container #folderpicker-table-body .folder').click(function() {
-        folders($(this).closest('tr.folder-row').attr('data-id'));
-        return false;
-    });
-
-    $('#popup-container #folderpicker-table-body .select').off();
-    $('#popup-container #folderpicker-table-body .select').click(function() {
-        window._callback.call(this);
-        $.fancybox.close();
-        return false;
-    });
-
-    $('#popup-container .content .breadcrumb').empty();
-    $('#popup-container .content .breadcrumb').append(_ancestors.length == 0 ? '<li class="active"><strong>Home</strong></li>' : '<li><a href="#" data-id="0">Home</a></li>');
-    for (var idx in window._ancestors) {
-        var itm = window._ancestors[idx];
-        $('#popup-container .content .breadcrumb').append(idx == window._ancestors.length - 1 ? '<li class="active"><strong>' + itm.title + '</strong></li>' : '<li><a href="#" data-id="' + itm.id + '">' + itm.title + '</a></li>');
-    }
-
-    $('#popup-container .content .breadcrumb a').click(function() {
-        folders($(this).attr('data-id'));
-        return false;
-    });
-}
 
 function filepicker() {
     $.fancybox.open([
@@ -794,90 +708,6 @@ function filepicker() {
     ], {
         padding : 0
     });
-    var template = Handlebars.compile($("#loading").html())
-    $('#js-folders').html('<div class="jstree">' + template() + '</div>');
-    $.ajax({
-        type: 'GET',
-        url: '/pz/ajax/folders',
-        data: 'currentFolderId=' + window._parentId,
-        success: function (data) {
-            $('#js-folders .jstree').jstree({
-                core: {
-                    data: [data.root],
-                },
-                plugins: ['types'],
-                types: {
-                    default: {
-                        'icon': 'fa fa-folder'
-                    },
-                }
-            });
-            getFiles();
-        }
-    });
-    $('#js-folders .jstree').on("select_node.jstree", function (e, data) {
-        window._parentId = data.node.id;
-        getFiles();
-    });
 
-    getFiles();
-}
-
-function getFiles() {
-    var template = Handlebars.compile($("#template-upload").html());
-    $('#popup-container .js-upload').html(template());
-    $('#fileupload').fileupload({
-        url: '/pz/ajax/files/upload',
-        dataType: 'json',
-        sequentialUploads: true,
-        formData: {
-            parentId: window._parentId,
-        },
-        add: function (e, data) {
-            var uploadErrors = [];
-            if (data.files[0]['size'] == '' || data.files[0]['size'] > 50000000) {
-                uploadErrors.push('File size is too big');
-            }
-            if (uploadErrors.length > 0) {
-                alert(uploadErrors.join("\n"));
-            } else {
-                $('.progress').show();
-                data.submit();
-            }
-        },
-        start: function () {
-            $('.progress-bar').css('width', 0);
-        },
-        done: function (e, data) {
-            getFiles();
-        },
-        progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('.progress-bar').css('width', progress + '%');
-        },
-        stop: function (e) {
-            $('.progress').fadeOut(3000);
-        }
-    }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
-
-    var template = Handlebars.compile($("#loading").html())
-    $('#js-files').html('<div>' + template() + '</div>');
-    if (typeof window._ajax != 'undefined') {
-        window._ajax.abort();
-    }
-    window._ajax = $.ajax({
-        type: 'GET',
-        url: '/pz/ajax/files',
-        data: 'currentFolderId=' + window._parentId + '&keyword=',
-        success: function (data) {
-            $('#js-files').html('<div></div>');
-            for (var idx in data.files) {
-                var itm = data.files[idx];
-                var template = Handlebars.compile($("#file").html())
-                $('#js-files > div').append(template(itm))
-                $('#js-files > div').find('.file-box .js-file-delete').remove();
-
-            }
-        }
-    });
+    fm.init();
 };

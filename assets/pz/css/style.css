@@ -23,6 +23,7 @@ body .pz-nav li {
   text-overflow: ellipsis;
 }
 body .file-box {
+  width: 22%;
   position: relative;
   background: #f3f3f4;
   border: 1px solid #f3f3f4;
@@ -46,6 +47,22 @@ body .file-box .file .file-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+body #jstree-marker {
+  z-index: 999999 !important;
+}
+body #popup-container .js-nav .pz-label {
+  float: none;
+  margin-left: 0;
+}
+body #popup-container #js-files {
+  padding: 0;
+}
+body #popup-container #js-folders form {
+  margin-bottom: 20px;
+}
+body #popup-container .row {
+  margin: 0;
 }
 body .max-1000 {
   max-width: 1000px;
@@ -123,13 +140,16 @@ body .table-middle td {
   text-align: center;
 }
 .page-model .row-eq-height > div.row3 {
-  min-height: 7.5em;
+  min-height: 8em;
 }
 .page-model .row-eq-height > div.row3 .i-checks {
   padding-top: 1em;
 }
 .page-model .row-eq-height > div.row3 .i-checks label {
   font-size: 90%;
+}
+.page-content #popup-container {
+  display: none;
 }
 .page-content .content-block-sidebar {
   min-width: 250px;
@@ -271,19 +291,11 @@ body .table-middle td {
   text-align: center;
   width: auto;
 }
-.page-files .pz-sidebar .pz-search {
-  padding: 0 .5em !important;
-  height: 34px;
+.page-files #js-folders {
+  min-height: 450px;
+  padding: 20px 20px 20px 20px;
+  background: #fdfdfd;
 }
-.page-files .pz-main .pz-nav {
-  float: left;
-}
-.page-files .pz-main .pz-tools {
-  float: right;
-}
-.page-files .pz-main .ui-sortable-handle {
-  cursor: move;
-}
-.page-files .pz-main .ui-sortable-placeholder {
-  background: lightyellow !important;
+.page-files #js-files .file-box {
+  width: 17%;
 }

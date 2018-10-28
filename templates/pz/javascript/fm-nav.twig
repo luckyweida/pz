@@ -1,11 +1,11 @@
 {% verbatim %}
     <div class="pz-nav">
         {{#compare '' keyword operator="=="}}
-            <ol class="breadcrumb">
+            <ol class="breadcrumb pull-left">
                 {{#each path}}
                     {{#compare id ../currentFolder.id operator="!="}}
                         <li>
-                            <a href="{{url}}" data-id="{{id}}" title="{{title}}">{{title}}</a>
+                            <a href="#" data-id="{{id}}" title="{{title}}">{{title}}</a>
                         </li>
                     {{/compare}}
                     {{#compare id ../currentFolder.id operator="=="}}
@@ -16,12 +16,16 @@
                 {{/each}}
             </ol>
         {{/compare}}
+
+        {{#compare '' keyword operator="!="}}
+                <div>Search results for <span class="label label-warning pz-label">{{keyword}}</span></div>
+        {{/compare}}
     </div>
 
-    <div class="ibox-tools pz-tools">
+    <div class="ibox-tools pz-tools pull-right">
         {{#compare '' keyword operator="=="}}
             <button class="btn btn-xs btn-circle btn-primary btn-outline" onclick="$('#fileupload').click();">
-                <i class="fa fa-upload"></i>
+                <i class="fa fa-cloud-upload"></i>
             </button>
         {{/compare}}
 
