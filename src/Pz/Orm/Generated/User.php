@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-09-12 15:32:02
+//Last updated: 2018-10-28 16:26:47
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -39,12 +39,22 @@ class User extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
+    private $gallery;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
     private $resetToken;
     
     /**
      * #pz datetime DEFAULT NULL
      */
     private $resetDate;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $test;
     
     /**
      * @return mixed
@@ -145,6 +155,22 @@ class User extends Walle
     /**
      * @return mixed
      */
+    public function getGallery()
+    {
+        return $this->gallery;
+    }
+    
+    /**
+     * @param mixed gallery
+     */
+    public function setGallery($gallery)
+    {
+        $this->gallery = $gallery;
+    }
+    
+    /**
+     * @return mixed
+     */
     public function getResetToken()
     {
         return $this->resetToken;
@@ -172,6 +198,22 @@ class User extends Walle
     public function setResetDate($resetDate)
     {
         $this->resetDate = $resetDate;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getTest()
+    {
+        return $this->test;
+    }
+    
+    /**
+     * @param mixed test
+     */
+    public function setTest($test)
+    {
+        $this->test = $test;
     }
     
 }

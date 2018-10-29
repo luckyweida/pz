@@ -1,0 +1,23 @@
+{% verbatim %}
+    <div class="file-box" data-id="{{id}}" data-title="{{title}}" id="{{id}}">
+        <button class="pz-file-delete btn btn-danger btn-circle js-file-delete"><i class="fa fa-times"></i></button>
+        <div class="file ui-state-default">
+            <a href="/assets/download/{{id}}">
+                <span class="corner"></span>
+                <div class="icon">
+                    <img src="/assets/image/{{id}}/small" />
+                </div>
+                <div class="file-name">
+                    {{title}}
+                    <br/>
+                    <small>{{ added }}</small>
+                </div>
+            </a>
+            <div class="i-checks">
+                <label for="gal{{id}}">
+                    <input id="gal{{id}}" type="checkbox"/>
+                </label>
+            </div>
+        </div>
+    </div>
+{% endverbatim %}

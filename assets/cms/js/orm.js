@@ -21,30 +21,103 @@ require('fancybox/dist/js/jquery.fancybox.js');
 require('./fm.js');
 
 $(function() {
+    var getById = function (data, id) {
+        for (var idx in data) {
+            var itm = data[idx];
+            if (itm.id == id) {
+                return itm;
+            }
+        }
+        return null;
+    };
+
+    var cleanString = function (sections) {
+        sections = JSON.parse(JSON.stringify(sections));
+        for (var idxSection in sections) {
+            var section = sections[idxSection];
+            for (var idxBlock in section.blocks) {
+                var block = section.blocks[idxBlock];
+                delete block.items;
+            }
+        }
+        return JSON.stringify(sections)
+    };
+
+    var templateGalleryFile = Handlebars.compile($('#gallery-file').html());
+
+    $.each($('.assetfolderpicker'), function(idx, itm) {
+        var value = $(itm).find('input').val() ? JSON.parse($(itm).find('input').val()) : [];
+
+        var renderFiles = function () {
+            $(itm).find('.js-gallery-container').empty();
+            for (var idxValue in value) {
+                var itmValue = value[idxValue];
+                $(itm).find('.js-gallery-container').append(templateGalleryFile(itmValue));
+            }
+        };
+        renderFiles();
+
+        $(itm).on('click', '.change', function(ev) {
+            var _this = this;
+            window._callback = function () {
+                $($(_this).attr('data-id')).val($(this).closest('tr.folder-row').attr('data-id'));
+                $($(_this).attr('data-id') + '-title').html($(this).closest('tr.folder-row').find('.folder').html());
+            };
+            folderpicker();
+        });
+
+        $(itm).on('click', '.delete', function(ev) {
+            $($(this).attr('data-id')).val('');
+            $($(this).attr('data-id') + '-title').html('Choose...');
+        });
+
+        $(itm).on('click', '.pz-file-delete', function () {
+            for (var idxValue in value) {
+                var itmValue = value[idxValue];
+                if (itmValue.id == $(this).closest('.gallery-file-box').data('id')) {
+                    value.splice(idxValue, 1);
+                    $(itm).find('input').val(JSON.stringify(value));
+                    renderFiles();
+                }
+            }
+            return false;
+        });
+
+        $(itm).on('click', ".js-fancybox-gallery", function () {
+            var images = [];
+            images.push({
+                href : $(this).attr('href'),
+                type : 'image',
+            });
+
+            $.each($(itm).find('a').not(this), function (idx, itm) {
+                images.push({
+                    href : $(itm).attr('href'),
+                    type : 'image',
+                });
+            });
+            $.fancybox.open(images, {
+                padding : 0
+            });
+            return false;
+        });
+
+        $(itm).find('.js-gallery-container').sortable({
+            cursorAt: {left: -30, top: -30},
+            stop: function () {
+                var newValue = [];
+                var data = $(itm).find('.js-gallery-container').sortable("toArray");
+                for (var idxData in data) {
+                    var itmData = data[idxData];
+                    newValue.push(getById(value, itmData));
+                }
+                value = newValue;
+                $(itm).find('input').val(JSON.stringify(value))
+            }
+        });
+    });
+
     $.each($('.js-fragment-container'), function (idx, itm) {
-
-        var getById = function (data, id) {
-            for (var idx in data) {
-                var itm = data[idx];
-                if (itm.id == id) {
-                    return itm;
-                }
-            }
-            return null;
-        };
-
-        var cleanString = function (sections) {
-            sections = JSON.parse(JSON.stringify(sections));
-            for (var idxSection in sections) {
-                var section = sections[idxSection];
-                for (var idxBlock in section.blocks) {
-                    var block = section.blocks[idxBlock];
-                    delete block.items;
-                }
-            }
-            return JSON.stringify(sections)
-        };
-
         var dataId = $(itm).data('id');
         var dataBlocks = JSON.parse($(itm).find('.js-blocks').val());
         var dataValue = JSON.parse($(itm).find(`#${dataId}`).val());
@@ -635,6 +708,7 @@ $(function() {
             $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
             $($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
             $($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
+            $.fancybox.close();
         };
         filepicker();
     });
@@ -643,26 +717,6 @@ $(function() {
         $($(this).data('id')).val('');
         $($(this).data('id') + '-preview').attr('href', '/assets/image/0/large');
         $($(this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
-    });
-
-    $(document).on('click', '.assetfolderpicker .change', function(ev) {
-        var _this = this;
-        window._callback = function () {
-            $($(_this).attr('data-id')).val($(this).closest('tr.folder-row').attr('data-id'));
-            $($(_this).attr('data-id') + '-title').html($(this).closest('tr.folder-row').find('.folder').html());
-        };
-        folderpicker();
-    });
-
-    $(document).on('click', '.assetfolderpicker .delete', function(ev) {
-        $($(this).attr('data-id')).val('');
-        $($(this).attr('data-id') + '-title').html('Choose...');
-    });
-
-    $(document).on('click', '#js-files .file-box a', function() {
-        window._callback.call(this);
-        $.fancybox.close();
-        return false;
     });
 
     $('.wysiwyg textarea').redactor({
@@ -692,7 +746,20 @@ $(function() {
 });
 
 function folderpicker() {
+    $.fancybox.open([
+        {
+            href : '#popup-container',
+            type : 'inline',
+            minWidth: 900,
+            minHeight: 600,
+            maxWidth: 900,
+            maxHeight: 600,
+        },
+    ], {
+        padding : 0
+    });
 
+    fm.init();
 };
 
 function filepicker() {

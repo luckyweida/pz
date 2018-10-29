@@ -22,14 +22,16 @@ body .pz-nav li {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-body .file-box {
+body .file-box,
+body .gallery-file-box {
   width: 22%;
   position: relative;
   background: #f3f3f4;
   border: 1px solid #f3f3f4;
   margin: .5em;
 }
-body .file-box .pz-file-delete {
+body .file-box .pz-file-delete,
+body .gallery-file-box .pz-file-delete {
   position: absolute;
   right: 0;
   top: 0;
@@ -37,16 +39,23 @@ body .file-box .pz-file-delete {
   margin-right: -15px;
   margin-top: -15px;
 }
-body .file-box .file {
+body .file-box .file,
+body .gallery-file-box .file {
   margin: 0;
 }
-body .file-box .file img {
+body .file-box .file img,
+body .gallery-file-box .file img {
   width: 100%;
 }
-body .file-box .file .file-name {
+body .file-box .file .file-name,
+body .gallery-file-box .file .file-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+body .js-gallery-widget .gallery-file-box {
+  display: inline-block;
+  margin: 1em 0.5em;
 }
 body #jstree-marker {
   z-index: 999999 !important;
@@ -148,6 +157,10 @@ body .table-middle td {
 .page-model .row-eq-height > div.row3 .i-checks label {
   font-size: 90%;
 }
+.page-content .ui-sortable-placeholder {
+  background: lightgoldenrodyellow;
+  margin-bottom: -0.25em !important;
+}
 .page-content #popup-container {
   display: none;
 }
@@ -172,6 +185,7 @@ body .table-middle td {
   min-height: 6.5em;
   vertical-align: top;
 }
+.page-content .box.assetfolderpicker,
 .page-content .box.textarea,
 .page-content .box.wysiwyg,
 .page-content .box.blocks,
@@ -292,7 +306,7 @@ body .table-middle td {
   width: auto;
 }
 .page-files #js-folders {
-  min-height: 450px;
+  min-height: 250px;
   padding: 20px 20px 20px 20px;
   background: #fdfdfd;
 }

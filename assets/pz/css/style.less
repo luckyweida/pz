@@ -43,7 +43,7 @@ body {
     text-overflow: ellipsis;
   }
 
-  .file-box {
+  .file-box, .gallery-file-box {
     width: 22%;
     position: relative;
     background: #f3f3f4;
@@ -67,6 +67,13 @@ body {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+    }
+  }
+
+  .js-gallery-widget {
+    .gallery-file-box {
+      display: inline-block;
+      margin: 1em 0.5em;
     }
   }
 
@@ -200,6 +207,11 @@ body {
 }
 
 .page-content {
+  .ui-sortable-placeholder {
+    background: lightgoldenrodyellow;
+    margin-bottom: -0.25em !important;
+  }
+
   #popup-container {
     display: none;
   }
@@ -228,6 +240,7 @@ body {
     vertical-align: top;
   }
 
+  .box.assetfolderpicker,
   .box.textarea,
   .box.wysiwyg,
   .box.blocks,
@@ -375,7 +388,7 @@ body {
 
 .page-files {
   #js-folders {
-    min-height: 450px;
+    min-height: 250px;
     padding: 20px 20px 20px 20px;
     background: #fdfdfd;
   }

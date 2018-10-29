@@ -25,6 +25,11 @@ fm = {
         fm.getFiles();
         fm.getNav();
 
+        $(document).on('click', '#js-files .file-box a', function() {
+            window._callback.call(this);
+            return false;
+        });
+
         $(document).on('click', '.jstree-anchor', function () {
             fm.currentFolderId = $(this).parent().attr('id');
             window.__currentFolderId = fm.currentFolderId;

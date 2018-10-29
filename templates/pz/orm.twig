@@ -53,10 +53,12 @@
 
 
 {% block extraFooter %}
+	<script id="gallery-file" type="text/x-handlebars-template">{% include 'pz/javascript/gallery-file.twig' %}</script>
+
     {% include 'pz/html/file-manager.html.twig' %}
 
 	<script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
 	<script id="folder" type="text/x-handlebars-template">{% include 'pz/javascript/fm-folders.twig' %}</script>
-	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/fm-files.twig' %}</script>
+	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/fm-file.twig' %}</script>
 	<script id="nav" type="text/x-handlebars-template">{% include 'pz/javascript/fm-nav.twig' %}</script>
 {% endblock %}
