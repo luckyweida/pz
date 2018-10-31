@@ -313,3 +313,11 @@ body .table-middle td {
 .page-files #js-files .file-box {
   width: 17%;
 }
+.page-files #js-files .file-box .i-checks {
+  text-align: center;
+  padding: 10px 20px;
+  padding-top: 15px;
+}
+.page-files #js-files .file-box .i-checks .icheckbox_square-green {
+  margin-right: 5px;
+}

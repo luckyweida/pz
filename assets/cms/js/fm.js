@@ -314,6 +314,10 @@ fm = {
                 });
             }
         });
+
+        $(':checkbox').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+        });
     },
 
     renderNav: function () {
