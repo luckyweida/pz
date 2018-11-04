@@ -2,8 +2,10 @@
 var fm = {}
 
 fm = {
-    init: function () {
+    init: function (options = {}) {
         window.__currentFolderId = $('#currentFolderId').length ? $('#currentFolderId').val() : 0;
+
+        fm.options = options;
         fm.currentFolderId = window.__currentFolderId;
 
         fm.templateLoading = Handlebars.compile($("#loading").html());
@@ -24,11 +26,6 @@ fm = {
         fm.getFolders();
         fm.getFiles();
         fm.getNav();
-
-        $(document).on('click', '#js-files .file-box a', function() {
-            window._callback.call(this);
-            return false;
-        });
 
         $(document).on('click', '.jstree-anchor', function () {
             fm.currentFolderId = $(this).parent().attr('id');

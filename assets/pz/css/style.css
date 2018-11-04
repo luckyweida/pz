@@ -53,6 +53,20 @@ body .gallery-file-box .file .file-name {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+body .file-box .file .select-area,
+body .gallery-file-box .file .select-area {
+  text-align: center;
+  padding: 5px 20px;
+  padding-top: 8px;
+}
+body .file-box .file .select-area a.selected i,
+body .gallery-file-box .file .select-area a.selected i {
+  color: #18a689;
+}
+body .file-box .file .select-area a.deselected i,
+body .gallery-file-box .file .select-area a.deselected i {
+  color: darkgrey;
+}
 body .js-gallery-widget .gallery-file-box {
   display: inline-block;
   margin: 1em 0.5em;
@@ -72,6 +86,13 @@ body #popup-container #js-folders form {
 }
 body #popup-container .row {
   margin: 0;
+}
+body #popup-container .extra-stuff {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  padding: 5px 10px;
 }
 body .max-1000 {
   max-width: 1000px;
@@ -258,7 +279,8 @@ body .table-middle td {
   min-height: 10em;
   resize: vertical;
 }
-.page-content .wrapper-content form .box.assetpicker .image-holder {
+.page-content .wrapper-content form .box.assetpicker .image-holder,
+.page-content .wrapper-content form .inner-box.assetpicker .image-holder {
   -webkit-background-size: cover !important;
   -moz-background-size: cover !important;
   -o-background-size: cover !important;
@@ -312,12 +334,4 @@ body .table-middle td {
 }
 .page-files #js-files .file-box {
   width: 17%;
-}
-.page-files #js-files .file-box .i-checks {
-  text-align: center;
-  padding: 10px 20px;
-  padding-top: 15px;
-}
-.page-files #js-files .file-box .i-checks .icheckbox_square-green {
-  margin-right: 5px;
 }

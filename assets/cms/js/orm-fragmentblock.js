@@ -12,7 +12,7 @@ $(function() {
         data.push({
             widget: 0,
             id: 'id',
-            title: 'Titie:',
+            title: 'Title:',
             sql: '',
         });
         $('#form_items').val(JSON.stringify(data));

@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-10-28 16:26:47
+//Last updated: 2018-11-04 13:02:30
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -55,6 +55,16 @@ class User extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $test;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $extra6;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $extra4;
     
     /**
      * @return mixed
@@ -214,6 +224,38 @@ class User extends Walle
     public function setTest($test)
     {
         $this->test = $test;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getExtra6()
+    {
+        return $this->extra6;
+    }
+    
+    /**
+     * @param mixed extra6
+     */
+    public function setExtra6($extra6)
+    {
+        $this->extra6 = $extra6;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getExtra4()
+    {
+        return $this->extra4;
+    }
+    
+    /**
+     * @param mixed extra4
+     */
+    public function setExtra4($extra4)
+    {
+        $this->extra4 = $extra4;
     }
     
 }

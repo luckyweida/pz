@@ -6,6 +6,7 @@ namespace Pz\Controller;
 use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\Asset;
+use Pz\Orm\AssetOrm;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Router\Node;
@@ -22,6 +23,31 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AjaxAsset extends Controller
 {
+    /**
+     * @route("/pz/ajax/asset/files/chosen", name="pzAjaxAssetFilesChosen")
+     * @return Response
+     */
+    public function pzAjaxAssetFilesChosen()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+
+        $value = $request->get('value') ?: '';
+
+        $data = array();
+        if ($value) {
+            $data = AssetOrm::data($pdo, array(
+                'whereSql' => 'm.generatedId = ?',
+                'params' => array($value),
+            ));
+        }
+
+        return new JsonResponse($data);
+    }
+
     /**
      * @route("/pz/ajax/asset/files", name="pzAjaxAssetFiles")
      * @return Response

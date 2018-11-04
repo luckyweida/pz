@@ -61,6 +61,11 @@ $(function() {
         return array[key];
 	});
 
+    Handlebars.registerHelper('getByKey0', function(array, key) {
+        array = array && typeof array == 'object' ? array : [];
+        return array[key] ? array[key] : 0;
+    });
+
 	Handlebars.registerHelper('getByKeyAndCompare', function(array, key, value, options) {
         array = array && typeof array == 'object' ? array : [];
         if (typeof array[key] == 'object') {

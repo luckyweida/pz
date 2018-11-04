@@ -31,17 +31,17 @@
                         {{/compare}}
 
                         {{#compare widget 2 operator='==' }}
-                            <div class="inner-box content-block-asset">
+                            <div class="inner-box content-block-asset assetpicker">
                                 <label>{{title}}</label>
                                 <div class="row">
                                     <div class="col-lg-6 text-center">
-                                        <a class="js-fancybox" id="{{ id }}-preview" href="/assets/image/{{#getByKey ../block.values id}}{{/getByKey}}/large">
-                                            <div class="image-holder" style="background: url('/assets/image/{{#getByKey ../block.values id}}{{/getByKey}}/small') no-repeat center center; height: 100px;"></div>
+                                        <a class="js-fancybox" id="{{ id }}-preview" href="/assets/image/{{#getByKey0 ../block.values id}}{{/getByKey0}}/large">
+                                            <div class="image-holder" style="background: url('/assets/image/{{#getByKey0 ../block.values id}}{{/getByKey0}}/small') no-repeat center center; height: 100px;"></div>
                                         </a>
                                     </div>
                                     <div class="col-lg-6">
-                                        <button type="button" class="btn btn-primary btn-sm btn-block js-asset-change" data-id="#{{id}}"><i class="fa fa-upload"></i> Upload</button>
-                                        <button type="button" class="btn btn-danger btn-outline btn-sm btn-block js-asset-delete" data-id="#{{id}}"><i class="fa fa-times"></i> Clear</button>
+                                        <button type="button" class="btn btn-primary btn-sm btn-block js-asset-change" data-id="#{{id}}"><i class="fa fa-file-image-o"></i> Choose</button>
+                                        <button type="button" class="btn btn-danger btn-outline btn-sm btn-block js-asset-delete" data-id="#{{id}}"><i class="fa fa-times"></i> Delete</button>
                                     </div>
                                 </div>
                                 <input type="hidden" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
@@ -49,9 +49,18 @@
                         {{/compare}}
 
                         {{#compare widget 3 operator='==' }}
-                            <div class="inner-box">
-                                <label>{{title}}</label>
-                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                            <div class="inner-box inner-fullwidth assetfolderpicker">
+                                <hr />
+                                <label for="form_gallery" class="required" style="display: inline-block;">Gallery:</label>
+                                <div style="display: inline-block; margin-left: 10px;">
+                                    <button type="button" class="btn btn-success btn-sm change" style="margin-right: .2em;" data-id="#{{id}}"><i class="fa fa-files-o"></i> Select Images</button>
+                                    <button type="button" class="btn btn-danger btn-sm delete" data-id="#{{id}}"><i class="fa fa-times"></i> Empty</button>
+                                </div>
+                                <div class="widget style1 js-gallery-widget" style="padding: 0; margin: 0;">
+                                    <input type="hidden2" id="form_gallery" required="required" value="">
+                                    <div class="js-gallery-container"></div>
+                                </div>
+                                <hr />
                             </div>
                         {{/compare}}
 
@@ -63,30 +72,30 @@
                         {{/compare}}
 
                         {{#compare widget 5 operator='==' }}
-                            <div class="inner-box inner-fullwidth">
+                            <div class="inner-box inner-fullwidth wysiwyg">
                                 <label>{{title}}</label>
-                                <textarea class="js-elem js-redactor" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
+                                <textarea class="js-elem" id="{{id}}">{{#getByKey ../block.values id}}{{/getByKey}}</textarea>
                             </div>
                         {{/compare}}
 
                         {{#compare widget 6 operator='==' }}
-                            <div class="inner-box">
+                            <div class="inner-box datepicker">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-elem js-date" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 7 operator='==' }}
-                            <div class="inner-box">
+                            <div class="inner-box datetimepicker">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-elem js-datetime" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 
                         {{#compare widget 8 operator='==' }}
-                            <div class="inner-box">
+                            <div class="inner-box timepicker">
                                 <label>{{title}}</label>
-                                <input type="text" class="js-elem js-time" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
+                                <input type="text" class="js-elem" id="{{id}}" value="{{#getByKey ../block.values id}}{{/getByKey}}">
                             </div>
                         {{/compare}}
 

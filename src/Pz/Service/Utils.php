@@ -3,6 +3,7 @@
 namespace Pz\Service;
 
 use Pz\Form\Type\ContentBlock;
+use Pz\Orm\FragmentBlock;
 use Pz\Orm\PageCategory;
 use Pz\Orm\PageTemplate;
 use Pz\Router\Node;
@@ -59,18 +60,17 @@ class Utils
 
     public function getBlockDropdownOptions()
     {
-
         /** @var \PDO $pdo */
         $pdo = $this->connection->getWrappedConnection();
 
-        $blocks = ContentBlock::active($this->app['zdb']);
+        /** @var FragmentBlock[] $blocks */
+        $blocks = FragmentBlock::active($pdo);
         foreach ($blocks as $block) {
-            $items = json_decode($block->items);
+            $items = json_decode($block->getItems());
             foreach ($items as &$item) {
                 $choices = array();
                 if ($item->widget == 9 || $item->widget == 10) {
-                    $conn = $this->app['zdb']->getConnection();
-                    $stmt = $conn->prepare($item->sql);
+                    $stmt = $pdo->prepare($item->sql);
                     $stmt->execute();
                     foreach ($stmt->fetchAll() as $key => $val) {
                         $choices[$val['key']] = $val['value'];
@@ -78,7 +78,7 @@ class Utils
                 }
                 $item->choices = $choices;
             }
-            $block->items = $items;
+            $block->setItems(json_encode($items));
         }
         return $blocks;
     }

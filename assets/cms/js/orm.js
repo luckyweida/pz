@@ -21,6 +21,47 @@ require('fancybox/dist/js/jquery.fancybox.js');
 require('./fm.js');
 
 $(function() {
+
+    $.Redactor.prototype.filePicker = function() {
+        return {
+            init: function()
+            {
+                var button = this.button.add('file', 'File Picker');
+                this.button.addCallback(button, this.filePicker.show);
+            },
+            show: function()
+            {
+                window._redactor = this;
+                window._callback = function() {
+                    window._redactor.file.insert.call(window._redactor, '<a href="/assets/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
+                    $.fancybox.close();
+                };
+                filepicker();
+            }
+        };
+    };
+
+    $.Redactor.prototype.imagePicker = function() {
+        return {
+            init: function()
+            {
+                var button = this.button.add('image', 'Image Picker');
+                this.button.addCallback(button, this.imagePicker.show);
+            },
+            show: function()
+            {
+                window._redactor = this;
+                window._callback = function() {
+                    window._redactor.image.insert.call(window._redactor, '<img src="/assets/image/' + $(this).closest('.file-box').data('id') + '/large" alt="' + $(this).closest('.file-box').data('title') + '">');
+                    $.fancybox.close();
+                };
+                filepicker();
+            }
+        };
+    };
+
+    var templateGalleryFile = Handlebars.compile($('#gallery-file').html());
+
     var getById = function (data, id) {
         for (var idx in data) {
             var itm = data[idx];
@@ -43,79 +84,157 @@ $(function() {
         return JSON.stringify(sections)
     };
 
-    var templateGalleryFile = Handlebars.compile($('#gallery-file').html());
+    var getRandomId = function () {
+        return 'uniq_' + Math.random().toString(36).substr(2, 9) + new Date().getTime();
+    };
 
-    $.each($('.assetfolderpicker'), function(idx, itm) {
-        var value = $(itm).find('input').val() ? JSON.parse($(itm).find('input').val()) : [];
-
-        var renderFiles = function () {
-            $(itm).find('.js-gallery-container').empty();
-            for (var idxValue in value) {
-                var itmValue = value[idxValue];
-                $(itm).find('.js-gallery-container').append(templateGalleryFile(itmValue));
+    var renderElements = function(container, callback) {
+        $.each($(container).find('.assetfolderpicker'), function(idx, itm) {
+            var value = $(itm).find('input').val();
+            if (!value || value.substr(0, 5) != 'uniq_') {
+                value = getRandomId();
+                $(itm).find('input').val(value)
             }
-        };
-        renderFiles();
 
-        $(itm).on('click', '.change', function(ev) {
-            var _this = this;
-            window._callback = function () {
-                $($(_this).attr('data-id')).val($(this).closest('tr.folder-row').attr('data-id'));
-                $($(_this).attr('data-id') + '-title').html($(this).closest('tr.folder-row').find('.folder').html());
-            };
-            folderpicker();
-        });
 
-        $(itm).on('click', '.delete', function(ev) {
-            $($(this).attr('data-id')).val('');
-            $($(this).attr('data-id') + '-title').html('Choose...');
-        });
-
-        $(itm).on('click', '.pz-file-delete', function () {
-            for (var idxValue in value) {
-                var itmValue = value[idxValue];
-                if (itmValue.id == $(this).closest('.gallery-file-box').data('id')) {
-                    value.splice(idxValue, 1);
-                    $(itm).find('input').val(JSON.stringify(value));
-                    renderFiles();
+            var renderFiles = function (data) {
+                $(itm).find('.js-gallery-container').empty();
+                for (var idxValue in data) {
+                    var itmValue = value[idxValue];
+                    $(itm).find('.js-gallery-container').append(templateGalleryFile(itmValue));
                 }
-            }
-            return false;
-        });
+                $('.js-gallery-container').sortable({
+                    cursorAt: {left: -30, top: -30},
+                    stop: function () {
+                        var newValue = [];
+                        var data = $(itm).find('.js-gallery-container').sortable("toArray");
+                        for (var idxData in data) {
+                            var itmData = data[idxData];
+                            newValue.push(getById(value, itmData));
+                        }
+                        value = newValue;
+                        $(itm).find('input').val(JSON.stringify(value))
+                    }
+                });
+            };
 
-        $(itm).on('click', ".js-fancybox-gallery", function () {
-            var images = [];
-            images.push({
-                href : $(this).attr('href'),
-                type : 'image',
+            var getFiles = function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '/pz/ajax/asset/files/chosen',
+                    data: 'value=' + value,
+                    success: function (data) {
+                        renderFiles(data);
+                    }
+                });
+            };
+
+            getFiles();
+
+            $(itm).on('click', '.change', function(ev) {
+                var _this = this;
+                window._callback = function () {};
+                folderpicker();
             });
 
-            $.each($(itm).find('a').not(this), function (idx, itm) {
+            $(itm).on('click', '.delete', function(ev) {
+                $($(this).attr('data-id')).val('');
+                $($(this).attr('data-id') + '-title').html('Choose...');
+            });
+
+            $(itm).on('click', '.pz-file-delete', function () {
+                for (var idxValue in value) {
+                    var itmValue = value[idxValue];
+                    if (itmValue.id == $(this).closest('.gallery-file-box').data('id')) {
+                        value.splice(idxValue, 1);
+                        $(itm).find('input').val(JSON.stringify(value));
+                        renderFiles();
+                    }
+                }
+                return false;
+            });
+
+            $(itm).on('click', ".js-fancybox-gallery", function () {
+                var images = [];
                 images.push({
-                    href : $(itm).attr('href'),
+                    href : $(this).attr('href'),
                     type : 'image',
                 });
+
+                $.each($(itm).find('a').not(this), function (idx, itm) {
+                    images.push({
+                        href : $(itm).attr('href'),
+                        type : 'image',
+                    });
+                });
+                $.fancybox.open(images, {
+                    padding : 0
+                });
+                return false;
             });
-            $.fancybox.open(images, {
-                padding : 0
-            });
-            return false;
+
         });
 
-        $(itm).find('.js-gallery-container').sortable({
-            cursorAt: {left: -30, top: -30},
-            stop: function () {
-                var newValue = [];
-                var data = $(itm).find('.js-gallery-container').sortable("toArray");
-                for (var idxData in data) {
-                    var itmData = data[idxData];
-                    newValue.push(getById(value, itmData));
-                }
-                value = newValue;
-                $(itm).find('input').val(JSON.stringify(value))
-            }
+        $.each($(container).find('.assetpicker'), function(idx, itm) {
+            $(itm).on('click', '.js-asset-change', function(ev) {
+                var _this = this;
+                window._callback = function () {
+                    $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
+                    $($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
+                    $($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
+                    if (callback) {
+                        callback();
+                    };
+                    $.fancybox.close();
+                };
+                filepicker();
+            });
+
+            $(itm).on('click', '.js-asset-delete', function(ev) {
+                $($(this).data('id')).val('');
+                $($(this).data('id') + '-preview').attr('href', '/assets/image/0/large');
+                $($(this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
+                if (callback) {
+                    callback();
+                };
+            });
         });
-    });
+
+        $(container).find('.box.datepicker input,.inner-box.datepicker input').datetimepicker({
+            timepicker: false,
+            format: 'Y-m-d',
+            scrollInput: false,
+        });
+
+        $(container).find('.box.datetimepicker input,.inner-box.datetimepicker input').datetimepicker({
+            step: 5,
+            format: 'Y-m-d H:i',
+            scrollInput: false,
+        });
+
+        $(container).find('.box.timepicker input,.inner-box.timepicker input').datetimepicker({
+            timepicker: true,
+            datepicker: false,
+            step: 5,
+            format: 'H:i',
+            scrollInput: false,
+        });
+
+        $(container).find('select:not(.no-chosen)').chosen({
+            allow_single_deselect: true
+        });
+
+        $(container).find('.wysiwyg textarea').redactor({
+            plugins: ['filePicker', 'imagePicker', 'video', 'table'],
+            minHeight: 300,
+            changeCallback: function() {
+                if (callback) {
+                    callback();
+                }
+            },
+        });
+    };
+    renderElements($('.page-content'), null);
 
     $.each($('.js-fragment-container'), function (idx, itm) {
         var dataId = $(itm).data('id');
@@ -130,7 +249,7 @@ $(function() {
             for (var idx in dataDefault.content) {
                 var itm = dataDefault.content[idx];
                 dataValue.push({
-                    id: Math.random().toString(36).substr(2, 9),
+                    id: getRandomId(),
                     title: itm.title,
                     attr: itm.id,
                     status: 1,
@@ -206,7 +325,7 @@ $(function() {
         $(document).on('click', `#${dataId}-add-section`, function () {
             $(`#${dataId}-modal-section`).html(template_modal_section({
                 section: {
-                    id: Math.random().toString(36).substr(2, 9),
+                    id: getRandomId(),
                     title: 'Content',
                     attr: 'content',
                     status: 1,
@@ -287,7 +406,7 @@ $(function() {
         $(document).on('change', `.js-section-${dataId} .js-add-block`, function () {
             var blockOption = getById(dataBlocks, $(this).val());
             var block = {
-                id: Math.random().toString(36).substr(2, 9),
+                id: getRandomId(),
                 title: blockOption.title,
                 status: 1,
                 block: blockOption.id,
@@ -428,50 +547,8 @@ $(function() {
                 allow_single_deselect: true
             });
 
-            $(`#${dataId}_container .js-date`).datetimepicker({
-                timepicker: false,
-                format: 'Y-m-d',
-                scrollInput: false,
-            });
-
-            $(`#${dataId}_container .js-datetime`).datetimepicker({
-                timepicker: true,
-                format: 'Y-m-d H:i',
-                scrollInput: false,
-                step: 5,
-            });
-
-            $(`#${dataId}_container .js-time`).datetimepicker({
-                timepicker: true,
-                datepicker: false,
-                format: 'H:i',
-                scrollInput: false,
-                step: 5,
-            });
-
-            $(`#${dataId}_container .js-redactor`).redactor({
-                plugins: ['filePicker', 'imagePicker', 'video', 'table'],
-                minHeight: 300,
-                changeCallback: function() {
-                    assemble();
-                },
-            });
-
-            $(`#${dataId}_container .js-asset-delete`).click(function(ev) {
-                $($(this).data('id')).val('');
-                $($(this).data('id') + '-preview').css('visibility', 'hidden');
+            renderElements($(`#${dataId}_container`), function () {
                 assemble();
-            });
-
-            $(`#${dataId}_container .js-asset-change`).click(function(ev) {
-                var _this = this;
-                window._callback = function () {
-                    $(_this).closest('.inner-box').find($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
-                    $(_this).closest('.inner-box').find($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
-                    assemble();
-                };
-                filepicker();
             });
 
             $('.js-elem').change(function () {
@@ -654,42 +731,6 @@ $(function() {
     window._files = [];
     window._ancestors = [];
 
-    $.Redactor.prototype.filePicker = function() {
-        return {
-            init: function()
-            {
-                var button = this.button.add('file', 'File Picker');
-                this.button.addCallback(button, this.filePicker.show);
-            },
-            show: function()
-            {
-                window._redactor = this;
-                window._callback = function() {
-                    window._redactor.file.insert.call(window._redactor, '<a href="/assets/download/' + $(this).closest('.file-box').data('id') + '/">' + $(this).closest('.file-box').data('title') + '</a>');
-                };
-                filepicker();
-            }
-        };
-    };
-
-    $.Redactor.prototype.imagePicker = function() {
-        return {
-            init: function()
-            {
-                var button = this.button.add('image', 'Image Picker');
-                this.button.addCallback(button, this.imagePicker.show);
-            },
-            show: function()
-            {
-                window._redactor = this;
-                window._callback = function() {
-                    window._redactor.image.insert.call(window._redactor, '<img src="/assets/image/' + $(this).closest('.file-box').data('id') + '/large" alt="' + $(this).closest('.file-box').data('title') + '">');
-                };
-                filepicker();
-            }
-        };
-    };
-
     $(document).on('click', ".js-fancybox", function () {
         $.fancybox.open([
             {
@@ -702,42 +743,9 @@ $(function() {
         return false;
     });
 
-    $(document).on('click', '.assetpicker .js-asset-change', function(ev) {
-        var _this = this;
-        window._callback = function () {
-            $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-            $($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
-            $($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
-            $.fancybox.close();
-        };
-        filepicker();
-    });
-
-    $(document).on('click', '.assetpicker .js-asset-delete', function(ev) {
-        $($(this).data('id')).val('');
-        $($(this).data('id') + '-preview').attr('href', '/assets/image/0/large');
-        $($(this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
-    });
-
-    $('.wysiwyg textarea').redactor({
-        plugins: ['filePicker', 'imagePicker', 'video', 'table'],
-        minHeight: 300,
-    });
-
-    $('select:not(.no-chosen)').chosen({
-        allow_single_deselect: true
-    });
-
-    $('.box.datepicker input').datetimepicker({
-        timepicker: false,
-        format: 'Y-m-d',
-        scrollInput: false,
-    });
-
-    $('.box.datetimepicker input').datetimepicker({
-        step: 5,
-        format: 'Y-m-d H:i',
-        scrollInput: false,
+    $(document).on('click', '#js-files .file-box a', function() {
+        window._callback.call(this);
+        return false;
     });
 
     $(document).on('change', '.js-choice_multi_json', function() {
@@ -745,7 +753,7 @@ $(function() {
     });
 });
 
-function folderpicker() {
+function folderpicker(chosen) {
     $.fancybox.open([
         {
             href : '#popup-container',
@@ -754,12 +762,17 @@ function folderpicker() {
             minHeight: 600,
             maxWidth: 900,
             maxHeight: 600,
+            beforeClose: function() {
+                alert(1)
+            }
         },
     ], {
         padding : 0
     });
 
-    fm.init();
+    fm.init({
+        chosen: chosen,
+    });
 };
 
 function filepicker() {

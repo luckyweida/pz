@@ -67,6 +67,23 @@ body {
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .select-area {
+        text-align: center;
+        padding: 5px 20px;
+        padding-top: 8px;
+        a {
+          &.selected {
+            i {
+              color: #18a689;
+            }
+          }
+          &.deselected {
+            i {
+              color: darkgrey;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -100,6 +117,14 @@ body {
     }
     .row {
       margin: 0;
+    }
+
+    .extra-stuff {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      padding: 5px 10px;
     }
   }
 
@@ -326,7 +351,7 @@ body {
 
   .wrapper-content {
     form {
-      .box.assetpicker {
+      .box.assetpicker, .inner-box.assetpicker {
         .image-holder {
           -webkit-background-size: cover !important;
           -moz-background-size: cover !important;
@@ -396,15 +421,6 @@ body {
   #js-files {
     .file-box {
       width: 17%;
-
-      .i-checks {
-        text-align: center;
-        padding: 10px 20px;
-        padding-top: 15px;
-        .icheckbox_square-green {
-          margin-right: 5px;
-        }
-      }
     }
   }
 
