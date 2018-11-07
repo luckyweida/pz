@@ -45,8 +45,8 @@
 
         {{#compare '' keyword operator="=="}}
             {{#ifMoreThan1 path}}
-                <button class="btn btn-xs btn-circle btn-danger js-folder-delete" data-id="{{currentFolder.id}}" data-parent="{{currentFolder.parentId}}">
-                    <i class="fa fa-times"></i>
+                <button class="btn btn-xs btn-circle btn-danger btn-outline js-folder-delete" data-id="{{currentFolder.id}}" data-parent="{{currentFolder.parentId}}">
+                    <i class="fa fa-trash-o"></i>
                 </button>
             {{/ifMoreThan1}}
         {{/compare}}

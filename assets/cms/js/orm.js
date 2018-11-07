@@ -90,17 +90,26 @@ $(function() {
 
     var renderElements = function(container, callback) {
         $.each($(container).find('.assetfolderpicker'), function(idx, itm) {
-            var value = $(itm).find('input').val();
-            if (!value || value.substr(0, 5) != 'uniq_') {
-                value = getRandomId();
-                $(itm).find('input').val(value)
-            }
-
+            var modelName = $(itm).closest('form').data('modelname');
+            var ormId = $(itm).closest('form').data('ormid');
+            var attributeName = $(itm).find('input').data('attributename');
+            var getFiles = function () {
+                $(itm).find('.js-gallery-container').html('Loading...');
+                $.ajax({
+                    type: 'GET',
+                    url: '/pz/ajax/asset/files/chosen',
+                    data: 'modelName=' + modelName + '&attributeName=' + attributeName + '&ormId=' + ormId,
+                    success: function (data) {
+                        renderFiles(data);
+                    }
+                });
+            };
 
             var renderFiles = function (data) {
                 $(itm).find('.js-gallery-container').empty();
                 for (var idxValue in data) {
-                    var itmValue = value[idxValue];
+                    var itmValue = data[idxValue];
+                    console.log(itmValue)
                     $(itm).find('.js-gallery-container').append(templateGalleryFile(itmValue));
                 }
                 $('.js-gallery-container').sortable({
@@ -118,23 +127,21 @@ $(function() {
                 });
             };
 
-            var getFiles = function () {
-                $.ajax({
-                    type: 'GET',
-                    url: '/pz/ajax/asset/files/chosen',
-                    data: 'value=' + value,
-                    success: function (data) {
-                        renderFiles(data);
-                    }
-                });
-            };
-
             getFiles();
 
             $(itm).on('click', '.change', function(ev) {
                 var _this = this;
-                window._callback = function () {};
-                folderpicker();
+                window._callback = function () {
+                    $(this).next('div').find('a').click();
+                };
+
+                var modelName = $(this).closest('form').data('modelname');
+                var ormId = $(this).closest('form').data('ormid');
+                var attributeName = $(this).closest('div').next('div').find('input').data('attributename');
+
+                folderpicker(modelName, ormId, attributeName, function () {
+                    getFiles();
+                });
             });
 
             $(itm).on('click', '.delete', function(ev) {
@@ -753,7 +760,7 @@ $(function() {
     });
 });
 
-function folderpicker(chosen) {
+function folderpicker(modelName, ormId, attributeName, callback) {
     $.fancybox.open([
         {
             href : '#popup-container',
@@ -763,7 +770,7 @@ function folderpicker(chosen) {
             maxWidth: 900,
             maxHeight: 600,
             beforeClose: function() {
-                alert(1)
+                callback()
             }
         },
     ], {
@@ -771,7 +778,10 @@ function folderpicker(chosen) {
     });
 
     fm.init({
-        chosen: chosen,
+        mode: 1,
+        modelName: modelName,
+        attributeName: attributeName,
+        ormId: ormId,
     });
 };
 
@@ -789,5 +799,10 @@ function filepicker() {
         padding : 0
     });
 
-    fm.init();
+    fm.init({
+        mode: 0,
+        modelName: null,
+        attributeName: null,
+        ormId: null,
+    });
 };

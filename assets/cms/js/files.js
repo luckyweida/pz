@@ -24,5 +24,10 @@ require('blueimp-file-upload/js/jquery.fileupload.js');
 require('./fm.js');
 
 $(function() {
-    fm.init();
+    fm.init({
+        mode: 0,
+        modelName: null,
+        attributeName: null,
+        ormId: null,
+    });
 });

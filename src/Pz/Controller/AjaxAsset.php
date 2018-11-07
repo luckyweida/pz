@@ -29,20 +29,27 @@ class AjaxAsset extends Controller
      */
     public function pzAjaxAssetFilesChosen()
     {
+        $data = array();
+
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
         $request = Request::createFromGlobals();
+        $modelName = $request->get('modelName');
+        $attributeName = $request->get('attributeName');
+        $ormId = $request->get('ormId');
+        if ($modelName && $attributeName && $ormId) {
 
-        $value = $request->get('value') ?: '';
-
-        $data = array();
-        if ($value) {
-            $data = AssetOrm::data($pdo, array(
-                'whereSql' => 'm.generatedId = ?',
-                'params' => array($value),
+            /** @var AssetOrm[] $result */
+            $result = AssetOrm::data($pdo, array(
+                'whereSql' => 'm.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                'params' => array($modelName, $attributeName, $ormId),
             ));
+
+            foreach ($result as $itm) {
+                $data[] = $itm->objAsset();
+            }
         }
 
         return new JsonResponse($data);
@@ -76,6 +83,27 @@ class AjaxAsset extends Controller
             ));
         }
 
+        $modelName = $request->get('modelName');
+        $attributeName = $request->get('attributeName');
+        $ormId = $request->get('ormId');
+        if ($modelName && $attributeName && $ormId) {
+            $assetOrmMap = array();
+            /** @var AssetOrm[] $result */
+            $result = AssetOrm::data($pdo, array(
+                'whereSql' => 'm.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                'params' => array($modelName, $attributeName, $ormId),
+            ));
+            foreach ($result as $itm) {
+                $assetOrmMap[$itm->getTitle()] = 1;
+            }
+
+            foreach ($data as &$itm) {
+                $itm = json_decode(json_encode($itm));
+                $itm->_selected = isset($assetOrmMap[$itm->id]) ? 1 : 0;
+            }
+        }
+
+
         return new JsonResponse(array(
             'files' => $data,
         ));
@@ -96,6 +124,56 @@ class AjaxAsset extends Controller
         return new JsonResponse(array(
             'folders' => $root,
         ));
+    }
+
+    /**
+     * @route("/pz/ajax/asset/folders/file/select", name="pzAjaxAssetFoldersFileSelect")
+     * @return Response
+     */
+    public function pzAjaxAssetFoldersFileSelect()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $addOrDelete = $request->get('addOrDelete') ?: 0;
+        $ids = $request->get('id');
+
+        $modelName = $request->get('modelName');
+        $ormId = $request->get('ormId');
+        $attributeName = $request->get('attributeName');
+
+        if (!$addOrDelete) {
+            foreach ($ids as $id) {
+                $assetOrms = AssetOrm::data($pdo, array(
+                    'whereSql' => 'm.title = ? AND m.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                    'params' => array($id, $modelName, $attributeName, $ormId),
+                ));
+                foreach ($assetOrms as $assetOrm) {
+                    $assetOrm->delete();
+                }
+            }
+        } else {
+
+            foreach ($ids as $id) {
+                $assetOrm = AssetOrm::data($pdo, array(
+                    'whereSql' => 'm.title = ? AND m.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                    'params' => array($id, $modelName, $attributeName, $ormId),
+                    'oneOrNull' => 1,
+                ));
+                if (!$assetOrm) {
+                    $assetOrm = new AssetOrm($pdo);
+                    $assetOrm->setTitle($id);
+                    $assetOrm->setModelName($modelName);
+                    $assetOrm->setAttributeName($attributeName);
+                    $assetOrm->setOrmId($ormId);
+                    $assetOrm->save();
+                }
+            }
+        }
+
+        return new JsonResponse($ids);
     }
 
     /**

@@ -1,23 +1,26 @@
 {% verbatim %}
-    <div class="file-box" data-id="{{id}}" data-title="{{title}}" id="{{id}}">
+    <div class="file-box {{#compare 1 file._selected operator="=="}}active{{/compare}}" data-id="{{file.id}}" data-title="{{file.title}}" id="{{file.id}}">
         <button class="pz-file-delete btn btn-danger btn-circle js-file-delete"><i class="fa fa-times"></i></button>
         <div class="file ui-state-default">
-            <a href="/assets/download/{{id}}">
+            <a href="/assets/download/{{file.id}}">
                 <span class="corner"></span>
                 <div class="icon">
-                    <img src="/assets/image/{{id}}/small" />
+                    <img src="/assets/image/{{file.id}}/small" />
                 </div>
                 <div class="file-name">
-                    {{title}}
+                    {{file.title}}
                     <br/>
-                    <small>{{ added }}</small>
+                    <small>{{file.added}}</small>
                 </div>
             </a>
-            <div class="select-area">
-                <a href="#" class="selected">
-                    <i class="fa fa-toggle-off fa-2x"></i>
-                </a>
-            </div>
+            {{#compare 1 mode operator="=="}}
+                <div class="select-area">
+                    <a href="#" class="selected js-select {{#compare 1 file._selected operator="=="}}active{{/compare}}">
+                        {{#compare 1 file._selected operator="=="}}<i class="fa fa-toggle-on fa-2x"></i>{{/compare}}
+                        {{#compare 1 file._selected operator="!="}}<i class="fa fa-toggle-off fa-2x"></i>{{/compare}}
+                    </a>
+                </div>
+            {{/compare}}
         </div>
     </div>
 {% endverbatim %}

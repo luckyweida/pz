@@ -95,7 +95,7 @@
         </{{ element|default('label') }}>
 
         <div style="display: inline-block; margin-left: 10px;">
-            <button type="button" class="btn btn-success btn-sm change" style="margin-right: .2em;" data-id="#{{ id }}"><i class="fa fa-files-o"></i> Select Images</button>
+            <button type="button" class="btn btn-success btn-sm change" style="margin-right: .2em;" data-id="#{{ id }}"><i class="fa fa-files-o"></i> Manage</button>
             <button type="button" class="btn btn-danger btn-sm delete" data-id="#{{ id }}"><i class="fa fa-times"></i> Empty</button>
         </div>
     {%- endif -%}
@@ -103,7 +103,7 @@
 
 {% block assetfolderpicker_widget -%}
     <div class="widget style1 js-gallery-widget" style="padding: 0; margin: 0;">
-        <input type="hidden2" {{ block('widget_attributes') }} value="{{ value }}"/>
+        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" data-attributename="{{ id }}"/>
         <div class="js-gallery-container"></div>
     </div>
 {%- endblock assetfolderpicker_widget -%}

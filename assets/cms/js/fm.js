@@ -4,9 +4,19 @@ var fm = {}
 fm = {
     init: function (options = {}) {
         window.__currentFolderId = $('#currentFolderId').length ? $('#currentFolderId').val() : 0;
+        fm.currentFolderId = window.__currentFolderId;
 
         fm.options = options;
-        fm.currentFolderId = window.__currentFolderId;
+        fm.mode = options.mode;
+        fm.modelName = options.modelName;
+        fm.attributeName = options.attributeName;
+        fm.ormId = options.ormId;
+
+        if (fm.mode === 0) {
+            $('#popup-container .extra-stuff').hide();
+        } else {
+            $('#popup-container .extra-stuff').show();
+        }
 
         fm.templateLoading = Handlebars.compile($("#loading").html());
         fm.templateFolder = Handlebars.compile($("#folder").html());
@@ -27,7 +37,58 @@ fm = {
         fm.getFiles();
         fm.getNav();
 
-        $(document).on('click', '.jstree-anchor', function () {
+        $('#popup-container').on('click', '.js-select', function () {
+            var id = $(this).closest('.file-box').data('id');
+            var file = fm.getById(fm.files, id);
+            file._selected = $(this).hasClass('active') ? 0 : 1;
+            $.ajax({
+                type: 'GET',
+                url: '/pz/ajax/asset/folders/file/select',
+                data: 'modelName=' + fm.modelName + '&attributeName=' + fm.attributeName + '&ormId=' + fm.ormId + '&addOrDelete=' + file._selected + '&id[]=' + id,
+                success: function (data) {
+                }
+            });
+            fm.renderFiles();
+            return false;
+        });
+
+        $('#popup-container').on('click', '.js-select-all', function () {
+            var str = '';
+            for (var idx in fm.files) {
+                var itm = fm.files[idx];
+                itm._selected = 1;
+                str += '&id[]=' + itm.id;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/pz/ajax/asset/folders/file/select',
+                data: 'modelName=' + fm.modelName + '&attributeName=' + fm.attributeName + '&ormId=' + fm.ormId + '&addOrDelete=1' + str,
+                success: function (data) {
+                }
+            });
+            fm.renderFiles();
+            return false;
+        });
+
+        $('#popup-container').on('click', '.js-deselect-all', function () {
+            var str = '';
+            for (var idx in fm.files) {
+                var itm = fm.files[idx];
+                itm._selected = 0;
+                str += '&id[]=' + itm.id;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/pz/ajax/asset/folders/file/select',
+                data: 'modelName=' + fm.modelName + '&attributeName=' + fm.attributeName + '&ormId=' + fm.ormId + '&addOrDelete=0' + str,
+                success: function (data) {
+                }
+            });
+            fm.renderFiles();
+            return false;
+        });
+
+        $('#popup-container').on('click', '.jstree-anchor', function () {
             fm.currentFolderId = $(this).parent().attr('id');
             window.__currentFolderId = fm.currentFolderId;
             $('#currentFolderId').val(window.__currentFolderId);
@@ -36,7 +97,7 @@ fm = {
             return false;
         });
 
-        $(document).on('click', '.js-nav .pz-nav a', function () {
+        $('#popup-container').on('click', '.js-nav .pz-nav a', function () {
             fm.currentFolderId = $(this).data('id');
             fm.getFolders();
             fm.getFiles();
@@ -44,14 +105,14 @@ fm = {
             return false;
         });
 
-        $(document).on('change', '.js-search', function () {
+        $('#popup-container').on('change', '.js-search', function () {
             fm.keyword = $(this).val();
             fm.renderFolders();
             fm.renderNav();
             fm.getFiles();
         });
 
-        $(document).on('click', '.js-reset', function () {
+        $('#popup-container').on('click', '.js-reset', function () {
             fm.keyword = '';
             fm.renderFolders();
             fm.renderNav();
@@ -59,14 +120,14 @@ fm = {
             return false;
         });
 
-        $('body').mousedown(function (ev) {
+        $('#popup-container').mousedown(function (ev) {
             fm.currentFileId = $(ev.target).data('id');
             if (!fm.currentFileId) {
                 fm.currentFileId = $(ev.target).closest('.file-box').data('id');
             }
         });
 
-        $('body').mouseup(function (ev) {
+        $('#popup-container').mouseup(function (ev) {
             if ($(ev.target).closest('li').attr('aria-selected') != 'true') {
                 var targetFolderId = $(ev.target).closest('li').attr('id')
                 if (fm.currentFileId && targetFolderId) {
@@ -89,7 +150,7 @@ fm = {
             fm.currentFileId = null;
         });
 
-        $(document).on('click', '.js-folder-delete', function(ev) {
+        $('#popup-container').on('click', '.js-folder-delete', function(ev) {
             var _this = this;
             swal({
                 title: "Are you sure?",
@@ -133,7 +194,7 @@ fm = {
             });
         });
 
-        $(document).on('click', '.js-file-delete', function(ev) {
+        $('#popup-container').on('click', '.js-file-delete', function(ev) {
             var _this = this;
             swal({
                 title: "Are you sure?",
@@ -209,7 +270,7 @@ fm = {
         fm.ajaxFile = $.ajax({
             type: 'GET',
             url: '/pz/ajax/asset/files',
-            data: 'currentFolderId=' + fm.currentFolderId + '&keyword=' + fm.keyword,
+            data: 'currentFolderId=' + fm.currentFolderId + '&keyword=' + fm.keyword + '&modelName=' + fm.modelName + '&attributeName=' + fm.attributeName + '&ormId=' + fm.ormId,
             success: function (data) {
                 fm.files = data.files;
                 fm.renderFiles()
@@ -292,7 +353,10 @@ fm = {
         for (var idx in fm.files) {
             var itm = fm.files[idx];
             var template = Handlebars.compile($("#file").html())
-            $('#js-files > div').append(template(itm))
+            $('#js-files > div').append(template({
+                mode: fm.mode,
+                file: itm,
+            }))
         }
 
         $('#js-files > div').sortable({
@@ -413,6 +477,17 @@ fm = {
             return false;
         });
     },
+
+    getById: function (data, id) {
+        for (var idx in data) {
+            var itm = data[idx];
+            if (itm.id == id) {
+                return itm;
+            }
+        }
+        return null;
+    },
+
 };
 
 window.fm = fm;

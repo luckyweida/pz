@@ -33,7 +33,7 @@
 				</div>
 				<div class="ibox-content">
 					{% block form %}
-						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}">
+						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}" data-modelname="{{ model.className }}" data-modelname="{{ model.className }}"data-ormid="{{ orm.id }}">
 							{{ form_widget(form) }}
 							<div style="clear: both;"></div>
 							<div>&nbsp;</div>

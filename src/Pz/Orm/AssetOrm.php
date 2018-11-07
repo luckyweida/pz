@@ -4,4 +4,7 @@ namespace Pz\Orm;
 
 class AssetOrm extends \Pz\Orm\Generated\AssetOrm
 {
+    public function objAsset() {
+        return Asset::getById($this->getPdo(), $this->getTitle());
+    }
 }

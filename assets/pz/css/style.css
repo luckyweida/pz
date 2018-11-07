@@ -30,6 +30,10 @@ body .gallery-file-box {
   border: 1px solid #f3f3f4;
   margin: .5em;
 }
+body .file-box.active,
+body .gallery-file-box.active {
+  border: 1px solid #18a689;
+}
 body .file-box .pz-file-delete,
 body .gallery-file-box .pz-file-delete {
   position: absolute;
