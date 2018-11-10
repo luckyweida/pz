@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-07 22:55:57
+//Last updated: 2018-11-10 13:13:32
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -25,6 +25,11 @@ class AssetOrm extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $ormId;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $myRank;
     
     /**
      * @return mixed
@@ -88,6 +93,22 @@ class AssetOrm extends Walle
     public function setOrmId($ormId)
     {
         $this->ormId = $ormId;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getMyRank()
+    {
+        return $this->myRank;
+    }
+    
+    /**
+     * @param mixed myRank
+     */
+    public function setMyRank($myRank)
+    {
+        $this->myRank = $myRank;
     }
     
 }

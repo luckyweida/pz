@@ -1,6 +1,6 @@
 {% verbatim %}
     <div class="file-box {{#compare 1 file._selected operator="=="}}active{{/compare}}" data-id="{{file.id}}" data-title="{{file.title}}" id="{{file.id}}">
-        <button class="pz-file-delete btn btn-danger btn-circle js-file-delete"><i class="fa fa-times"></i></button>
+        <button type="button" class="pz-file-delete btn btn-danger btn-circle js-file-delete"><i class="fa fa-times"></i></button>
         <div class="file ui-state-default">
             <a href="/assets/download/{{file.id}}">
                 <span class="corner"></span>

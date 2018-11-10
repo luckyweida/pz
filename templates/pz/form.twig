@@ -102,9 +102,21 @@
 {%- endblock assetfolderpicker_label -%}
 
 {% block assetfolderpicker_widget -%}
-    <div class="widget style1 js-gallery-widget" style="padding: 0; margin: 0;">
+    <div class="widget style1 js-gallery-widget ibox" style="padding: 0; margin: 0;">
         <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" data-attributename="{{ id }}"/>
-        <div class="js-gallery-container"></div>
+        <div class="ibox-content">
+            <div class="sk-spinner sk-spinner-double-bounce">
+                <div class="sk-double-bounce1"></div>
+                <div class="sk-double-bounce2"></div>
+            </div>
+            <div class="alert alert-info js-loading">
+                Loading images, please wait...
+            </div>
+            <div class="alert gray-bg js-no-results" style="display: none;">
+                No images selected
+            </div>
+            <div class="js-gallery-container"></div>
+        </div>
     </div>
 {%- endblock assetfolderpicker_widget -%}
 

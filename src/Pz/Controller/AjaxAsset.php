@@ -24,6 +24,38 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxAsset extends Controller
 {
     /**
+     * @route("/pz/ajax/asset/files/chosen/rank", name="pzAjaxAssetFilesChosenRank")
+     * @return Response
+     */
+    public function pzAjaxAssetFilesChosenRank()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $modelName = $request->get('modelName');
+        $attributeName = $request->get('attributeName');
+        $ormId = $request->get('ormId');
+        $ids = json_decode($request->get('ids'));
+        foreach ($ids as $idx => $id) {
+
+            /** @var AssetOrm $orm */
+            $orm = AssetOrm::data($pdo, array(
+                'whereSql' => 'm.title = ? AND m.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                'params' => array($id, $modelName, $attributeName, $ormId),
+                'oneOrNull' => 1,
+            ));
+            if ($orm) {
+                $orm->setMyRank($idx);
+                $orm->save();
+            }
+        }
+
+        return new JsonResponse($ids);
+    }
+
+    /**
      * @route("/pz/ajax/asset/files/chosen", name="pzAjaxAssetFilesChosen")
      * @return Response
      */
@@ -45,6 +77,7 @@ class AjaxAsset extends Controller
             $result = AssetOrm::data($pdo, array(
                 'whereSql' => 'm.modelName = ? AND m.attributeName = ? AND ormId = ?',
                 'params' => array($modelName, $attributeName, $ormId),
+                'sort' => 'm.myRank',
             ));
 
             foreach ($result as $itm) {
@@ -144,7 +177,7 @@ class AjaxAsset extends Controller
         $ormId = $request->get('ormId');
         $attributeName = $request->get('attributeName');
 
-        if (!$addOrDelete) {
+        if ($addOrDelete == 0) {
             foreach ($ids as $id) {
                 $assetOrms = AssetOrm::data($pdo, array(
                     'whereSql' => 'm.title = ? AND m.modelName = ? AND m.attributeName = ? AND ormId = ?',
@@ -154,7 +187,7 @@ class AjaxAsset extends Controller
                     $assetOrm->delete();
                 }
             }
-        } else {
+        } elseif ($addOrDelete == 1) {
 
             foreach ($ids as $id) {
                 $assetOrm = AssetOrm::data($pdo, array(
@@ -168,8 +201,22 @@ class AjaxAsset extends Controller
                     $assetOrm->setModelName($modelName);
                     $assetOrm->setAttributeName($attributeName);
                     $assetOrm->setOrmId($ormId);
+                    $assetOrm->setMyRank(999);
                     $assetOrm->save();
                 }
+            }
+        }
+
+        elseif ($addOrDelete == 2) {
+
+            $assetOrms = AssetOrm::data($pdo, array(
+                'whereSql' => 'm.modelName = ? AND m.attributeName = ? AND ormId = ?',
+                'params' => array($modelName, $attributeName, $ormId),
+//                'debug' => 1,
+            ));
+
+            foreach ($assetOrms as $assetOrm) {
+                $assetOrm->delete();
             }
         }
 

@@ -15,8 +15,14 @@
         </div>
         <div class="col-lg-9" id="js-files"></div>
     </div>
-    <div class="extra-stuff text-center" style="display: none;">
-        <button class="btn btn-primary js-select-all" type="button"><i class="fa fa-toggle-on"></i>&nbsp;Select All</button>
-        <button class="btn btn-danger btn-outline js-deselect-all" type="button"><i class="fa fa-toggle-off"></i>&nbsp;&nbsp;<span class="bold">Deselect All</span></button>
+    <div class="extra-stuff" style="display: none;">
+        <div class="pull-left">
+            <button class="btn btn-sm btn-primary js-select-all" type="button"><i class="fa fa-toggle-on"></i>&nbsp;Select all</button>
+            <button class="btn btn-sm btn-primary btn-outline js-deselect-all" type="button"><i class="fa fa-toggle-off"></i>&nbsp;&nbsp;<span class="bold">Deselect all</span></button>
+        </div>
+
+        <div class="pull-right">
+            <button class="btn btn-sm btn-success btn-outline" type="button" onclick="$.fancybox.close();"><i class="fa fa-check"></i>&nbsp;Finish</button>
+        </div>
     </div>
 </div>

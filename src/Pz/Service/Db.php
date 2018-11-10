@@ -17,11 +17,13 @@ class Db
      * @param $className
      * @return mixed
      */
-    public function create($className)
+    public function create($className, $uniqId)
     {
         $fullClassName = static::fullClassName($className);
         $pdo = $this->connection->getWrappedConnection();
-        return new $fullClassName($pdo);
+        $orm = new $fullClassName($pdo);
+        $orm->setUniqid($uniqId);
+        return $orm;
     }
 
     /**

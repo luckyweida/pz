@@ -100,4 +100,8 @@ class Utils
             11 => 'Placeholder',
         );
     }
+
+    public function getUniqId() {
+        return uniqid();
+    }
 }

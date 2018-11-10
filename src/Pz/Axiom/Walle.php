@@ -4,6 +4,7 @@ namespace Pz\Axiom;
 
 use Cocur\Slugify\Slugify;
 use Pz\Orm\_Model;
+use Pz\Orm\AssetOrm;
 
 abstract class Walle implements \JsonSerializable
 {
@@ -387,6 +388,14 @@ abstract class Walle implements \JsonSerializable
      */
     public function delete()
     {
+        $rc = static::getReflectionClass();
+        $result = AssetOrm::data($this->getPdo(), array(
+            'whereSql' => 'm.modelName = ? AND m.ormId = ?',
+            'params' => array($rc->getShortName(), $this->getUniqid()),
+        ));
+        foreach ($result as $itm) {
+            $itm->delete();
+        }
         $tableName = static::getTableName();
         $sql = "DELETE FROM `{$tableName}` WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);

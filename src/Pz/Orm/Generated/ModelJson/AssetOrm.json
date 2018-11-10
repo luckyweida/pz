@@ -4,7 +4,7 @@
     "slug": "asset-orm",
     "rank": "10",
     "added": "2018-11-04 10:14:43",
-    "modified": "2018-11-06 20:00:45",
+    "modified": "2018-11-10 10:51:42",
     "status": "1",
     "title": "Asset ORM",
     "className": "AssetOrm",
@@ -12,9 +12,9 @@
     "modelType": 1,
     "dataType": 1,
     "dataGroups": null,
-    "listType": 0,
+    "listType": 1,
     "numberPerPage": "50",
     "defaultSortBy": "id",
     "defaultOrder": 1,
-    "columnsJson": "[{\"id\":\"z1541278663456\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"AssetId:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278695888\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Model Name:\",\"field\":\"modelName\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278698887\",\"column\":\"extra3\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Attribute Name:\",\"field\":\"attributeName\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278752784\",\"column\":\"extra4\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"ORM Id:\",\"field\":\"ormId\",\"required\":0,\"sql\":\"\"}]"
+    "columnsJson": "[{\"id\":\"z1541278663456\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"AssetId:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278695888\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Model Name:\",\"field\":\"modelName\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278698887\",\"column\":\"extra3\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Attribute Name:\",\"field\":\"attributeName\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541278752784\",\"column\":\"extra4\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"ORM Id:\",\"field\":\"ormId\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541800261188\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"My Rank:\",\"field\":\"myRank\",\"required\":0,\"sql\":\"\"}]"
 }

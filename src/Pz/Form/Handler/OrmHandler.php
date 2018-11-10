@@ -89,7 +89,7 @@ class OrmHandler
             $orm->save();
 
             if ($request->get('submit') == 'Save') {
-                $returnUrl = $request->get('returnUrl') ?: '/pz/admin/' . $model->getId();
+                $returnUrl = $request->get('returnUrl') ?: '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId();
                 throw new RedirectException($returnUrl, 301);
             }
         }

@@ -88,56 +88,65 @@ $(function() {
         return 'uniq_' + Math.random().toString(36).substr(2, 9) + new Date().getTime();
     };
 
+    window._galleryFiles = [];
     var renderElements = function(container, callback) {
         $.each($(container).find('.assetfolderpicker'), function(idx, itm) {
             var modelName = $(itm).closest('form').data('modelname');
             var ormId = $(itm).closest('form').data('ormid');
             var attributeName = $(itm).find('input').data('attributename');
+
             var getFiles = function () {
-                $(itm).find('.js-gallery-container').html('Loading...');
+                $(itm).find('.js-no-results').hide();
+                $(itm).find('.js-loading').show();
+                $(itm).find('.js-gallery-container').parent().addClass('sk-loading');
                 $.ajax({
                     type: 'GET',
                     url: '/pz/ajax/asset/files/chosen',
                     data: 'modelName=' + modelName + '&attributeName=' + attributeName + '&ormId=' + ormId,
                     success: function (data) {
-                        renderFiles(data);
+                        window._galleryFiles[attributeName] = data;
+                        renderFiles();
                     }
                 });
             };
 
-            var renderFiles = function (data) {
+            var renderFiles = function () {
+                var data = window._galleryFiles[attributeName];
+                $(itm).find('.js-loading').hide();
+                $(itm).find('.js-gallery-container').parent().removeClass('sk-loading');
                 $(itm).find('.js-gallery-container').empty();
                 for (var idxValue in data) {
                     var itmValue = data[idxValue];
-                    console.log(itmValue)
                     $(itm).find('.js-gallery-container').append(templateGalleryFile(itmValue));
                 }
-                $('.js-gallery-container').sortable({
+                if (!data.length) {
+                    $(itm).find('.js-no-results').show();
+                }
+                $(itm).find('.js-gallery-container').sortable({
                     cursorAt: {left: -30, top: -30},
                     stop: function () {
-                        var newValue = [];
                         var data = $(itm).find('.js-gallery-container').sortable("toArray");
-                        for (var idxData in data) {
-                            var itmData = data[idxData];
-                            newValue.push(getById(value, itmData));
-                        }
-                        value = newValue;
-                        $(itm).find('input').val(JSON.stringify(value))
+                        $.ajax({
+                            type: 'GET',
+                            url: '/pz/ajax/asset/files/chosen/rank',
+                            data: 'modelName=' + modelName + '&attributeName=' + attributeName + '&ormId=' + ormId + '&ids=' + encodeURIComponent(JSON.stringify(data)),
+                            success: function (data) {
+                            }
+                        });
                     }
                 });
             };
 
-            getFiles();
+            if (typeof window._galleryFiles[attributeName] !== 'undefined') {
+                renderFiles();
+            } else {
+                getFiles();
+            }
 
             $(itm).on('click', '.change', function(ev) {
-                var _this = this;
                 window._callback = function () {
                     $(this).next('div').find('a').click();
                 };
-
-                var modelName = $(this).closest('form').data('modelname');
-                var ormId = $(this).closest('form').data('ormid');
-                var attributeName = $(this).closest('div').next('div').find('input').data('attributename');
 
                 folderpicker(modelName, ormId, attributeName, function () {
                     getFiles();
@@ -145,19 +154,32 @@ $(function() {
             });
 
             $(itm).on('click', '.delete', function(ev) {
-                $($(this).attr('data-id')).val('');
-                $($(this).attr('data-id') + '-title').html('Choose...');
+                $(itm).find('.js-no-results').hide();
+                $(itm).find('.js-loading').show();
+                $(itm).find('.js-gallery-container').parent().addClass('sk-loading');
+                $.ajax({
+                    type: 'GET',
+                    url: '/pz/ajax/asset/folders/file/select',
+                    data: 'modelName=' + modelName + '&attributeName=' + attributeName + '&ormId=' + ormId + '&addOrDelete=2',
+                    success: function (data) {
+                        getFiles();
+                    }
+                });
             });
 
             $(itm).on('click', '.pz-file-delete', function () {
-                for (var idxValue in value) {
-                    var itmValue = value[idxValue];
-                    if (itmValue.id == $(this).closest('.gallery-file-box').data('id')) {
-                        value.splice(idxValue, 1);
-                        $(itm).find('input').val(JSON.stringify(value));
-                        renderFiles();
+                $(itm).find('.js-no-results').hide();
+                $(itm).find('.js-loading').show();
+                $(itm).find('.js-gallery-container').parent().addClass('sk-loading');
+                var id = $(this).parent().data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '/pz/ajax/asset/folders/file/select',
+                    data: 'modelName=' + modelName + '&attributeName=' + attributeName + '&ormId=' + ormId + '&addOrDelete=0' + '&id[]=' + id,
+                    success: function (data) {
+                        getFiles();
                     }
-                }
+                });
                 return false;
             });
 

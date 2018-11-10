@@ -3,9 +3,12 @@
 namespace Pz\Twig;
 
 use Pz\Orm\Page;
+use Pz\Redirect\RedirectException;
 use Pz\Router\Node;
 use Pz\Router\Tree;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -16,8 +19,6 @@ class Extension extends AbstractExtension
      * @var Container
      */
     private $container;
-
-
 
     /**
      * Extension constructor.
@@ -34,8 +35,11 @@ class Extension extends AbstractExtension
     public function getFunctions(): array
     {
         return array(
-            new TwigFunction('getenv', 'getenv'),
-            new TwigFunction('css', array($this, 'css')),
+            'getenv' => new TwigFunction('getenv', 'getenv'),
+            'css' => new TwigFunction('css', array($this, 'css')),
+            'redirect' => new TwigFunction('redirect', [$this, 'throwRedirectException']),
+            'not_found' => new TwigFunction('not_found', [$this, 'throwNotFoundException']),
+            'http_exception' => new TwigFunction('http_exception', [$this, 'throwHttpException'])
         );
     }
 
@@ -118,5 +122,31 @@ class Extension extends AbstractExtension
 
         $tree = new Tree($nodes);
         return $tree->getRoot();
+    }
+
+    /**
+     * @param $status
+     * @param $message
+     */
+    public function throwHttpException($status = Response::HTTP_INTERNAL_SERVER_ERROR, $message)
+    {
+        throw new HttpException($status, $message);
+    }
+
+    /**
+     * @param $status
+     * @param $location
+     */
+    public function throwRedirectException($status = Response::HTTP_FOUND, $location)
+    {
+        throw new RedirectException($location, $status);
+    }
+
+    /**
+     * @param $message
+     */
+    public function throwNotFoundException($message)
+    {
+        throw new NotFoundHttpException($message);
     }
 }

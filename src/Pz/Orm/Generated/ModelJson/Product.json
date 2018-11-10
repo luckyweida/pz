@@ -1,0 +1,20 @@
+{
+    "id": "12",
+    "uniqid": "5be6233729930",
+    "slug": "products",
+    "rank": "11",
+    "added": "2018-11-10 13:15:51",
+    "modified": "2018-11-10 14:28:31",
+    "status": "1",
+    "title": "Products",
+    "className": "Product",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 1,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1541808891440\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541808926908\",\"column\":\"price\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Price:\",\"field\":\"price\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541808930747\",\"column\":\"gallery\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\AssetFolderPicker\",\"label\":\"Gallery:\",\"field\":\"gallery\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541808920972\",\"column\":\"content\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\Wysiwyg\",\"label\":\"Content:\",\"field\":\"content\",\"required\":0,\"sql\":\"\"}]"
+}
