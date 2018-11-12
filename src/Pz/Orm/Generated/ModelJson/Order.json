@@ -1,0 +1,20 @@
+{
+    "id": "14",
+    "uniqid": "5be65680aded7",
+    "slug": "orders",
+    "rank": "13",
+    "added": "2018-11-10 16:54:40",
+    "modified": "2018-11-10 16:55:10",
+    "status": "1",
+    "title": "Orders",
+    "className": "Order",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 1,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1541822062766\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"}]"
+}

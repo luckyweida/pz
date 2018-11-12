@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-10 14:28:47
+//Last updated: 2018-11-10 17:36:21
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -10,6 +10,11 @@ class Product extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $title;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $category;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -40,6 +45,22 @@ class Product extends Walle
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+    
+    /**
+     * @param mixed category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
     }
     
     /**

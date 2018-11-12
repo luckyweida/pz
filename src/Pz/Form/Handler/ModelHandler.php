@@ -76,10 +76,18 @@ class ModelHandler
             $this->setCustomFile($model);
             $model->save();
 
+            $model->setRank($model->getId() - 1);
+            $model->save();
+
             $baseUrl = "/pz/admin/models/" . ($model->getModelType() == 0 ? 'customised' : 'built-in');
             $redirectUrl = "$baseUrl/sync/{$model->getId()}?returnUrl=";
             if ($request->get('submit') == 'Apply') {
-                throw new RedirectException($redirectUrl . urlencode($request->getPathInfo()), 301);
+                $url = $request->getPathInfo();
+                $url = rtrim($url, '/');
+                if (count(explode('/', $url)) < 7) {
+                    $url .= '/' . $model->getId();
+                }
+                throw new RedirectException($redirectUrl . urlencode($url), 301);
             } else if ($request->get('submit') == 'Save') {
                 throw new RedirectException($redirectUrl . urlencode($baseUrl), 301);
             }

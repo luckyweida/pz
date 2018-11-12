@@ -7,8 +7,9 @@
 {% endblock %}
 
 {% set model = db.byId('_Model', fragments.2) %}
-{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className, app.request.get('uniqId')) %}
-
+{% if orm is not defined %}
+	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className, app.request.get('uniqId')) %}
+{% endif %}
 {% set form = ormHandler.handle(model, orm) %}
 {% form_theme form 'pz/form.twig' %}
 
@@ -20,7 +21,7 @@
 
 {% block content %}
     {% if fragments|length < 5 and not app.request.get('uniqId') %}
-        {{ redirect(301, app.request.requesturi ~ '?uniqId=' ~ utils.uniqId) }}
+        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId) }}
     {% endif %}
 
 	{% set exist = db.byField(model.className, 'uniqid', app.request.get('uniqId')) %}
@@ -36,7 +37,7 @@
 				</div>
 				<div class="ibox-content">
 					{% block form %}
-						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}{% if app.request.get('uniqId') %}&uniqId={{ app.request.get('uniqId') }}{% endif %}" data-modelname="{{ model.className }}" data-modelname="{{ model.className }}"data-ormid="{{ orm.uniqId }}">
+						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}{% if app.request.get('uniqId') %}&uniqId={{ app.request.get('uniqId') }}{% endif %}" data-modelname="{{ model.className }}" data-ormid="{{ orm.uniqId }}">
 							{{ form_widget(form) }}
 							<div style="clear: both;"></div>
 							<div>&nbsp;</div>

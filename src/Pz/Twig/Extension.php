@@ -70,7 +70,13 @@ class Extension extends AbstractExtension
     {
         $nodes = array();
         foreach ($orms as $orm) {
-            $nodes[] = new Node($orm->getId(), $orm->getTitle(), $orm->getParentId() ?: 0, $orm->getRank(), '', '', $orm->getStatus());
+            $node = new Node($orm->getId(), $orm->getTitle(), $orm->getParentId() ?: 0, $orm->getRank(), '', '', $orm->getStatus());
+            $node->setExtras(array(
+                'orm' => $orm,
+                'model' => $orm->getModel(),
+                'closed' => $orm->getClosed(),
+            ));
+            $nodes[] = $node;
         }
         $tree = new Tree($nodes);
         return $tree->getRoot();

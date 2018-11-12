@@ -65,7 +65,12 @@ $(function() {
     renderFields();
     renderDefaultSortBy();
     $('#columns select').each(function(key, value) {
-        if ($(value).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType' || $(value).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson') {
+        if (
+            $(value).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType'
+            || $(value).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson'
+            || $(value).val() == '\\Pz\\Form\\Type\\ChoiceMultiJsonTree'
+            || $(value).val() == '\\Pz\\Form\\Type\\ChoiceTree'
+        ) {
             $('#sql' + $(value).closest('tbody').find('.id').val()).show();
         } else {
             $('#sql' + $(value).closest('tbody').find('.id').val()).hide();
@@ -83,7 +88,11 @@ $(function() {
 
     //
     $(document).on('change', '#columns select', function(ev) {
-        if ($(this).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType' || $(this).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson') {
+        if ($(this).val() == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType'
+            || $(this).val() == '\\Pz\\Form\\Type\\ChoiceMultiJson'
+            || $(this).val() == '\\Pz\\Form\\Type\\ChoiceMultiJsonTree'
+            || $(this).val() == '\\Pz\\Form\\Type\\ChoiceTree'
+        ) {
             $('#sql' + $(this).closest('tbody').find('.id').val()).show();
         } else {
             $('#sql' + $(this).closest('tbody').find('.id').val()).hide();

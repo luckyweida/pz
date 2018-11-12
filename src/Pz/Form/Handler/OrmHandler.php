@@ -5,6 +5,8 @@ namespace Pz\Form\Handler;
 use Cocur\Slugify\Slugify;
 use Pz\Orm\_Model;
 use Pz\Redirect\RedirectException;
+use Pz\Router\Node;
+use Pz\Router\Tree;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -66,6 +68,41 @@ class OrmHandler
                     $opts['choices'][$val->value] = $val->key;
                 }
                 $opts['required'] = false;
+            } elseif (
+                $itm->widget == '\\Pz\\Form\\Type\\ChoiceMultiJsonTree'
+                || $itm->widget == '\\Pz\\Form\\Type\\ChoiceTree'
+            ) {
+
+                $slugify = new Slugify(['trim' => false]);
+                preg_match('/\bfrom\b\s*(\w+)/i', $itm->sql, $matches);
+                if (count($matches) == 2) {
+                    if (substr($matches[1], 0, 1) == '_') {
+                        $tablename = $matches[1];
+                    } else {
+                        $tablename = $slugify->slugify($matches[1]);
+                    }
+
+                    $itm->sql = str_replace($matches[0], "FROM $tablename", $itm->sql);
+                }
+
+                $stmt = $pdo->prepare($itm->sql);
+                $stmt->execute();
+                $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+                $nodes = array();
+                foreach ($result as $key => $val) {
+                    $node = new Node($val->key, $val->value, $val->parentId, $key);
+                    $nodes[] = $node;
+                }
+                $tree = new Tree($nodes);
+                $root = $tree->getRoot();
+
+                $result = static::tree2Array($root, 1);
+                $opts['choices'] = array();
+                foreach ($result as $key => $val) {
+                    $opts['choices'][$val->value] = $val->key;
+                }
+                $opts['required'] = false;
             } else if ($itm->widget == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType') {
                 $getMethod = 'get' . ucfirst($itm->field);
                 $setMethod = 'set' . ucfirst($itm->field);
@@ -86,14 +123,34 @@ class OrmHandler
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $isNew = $orm->getId() ? 0 : 1;
             $orm->save();
 
             if ($request->get('submit') == 'Save') {
                 $returnUrl = $request->get('returnUrl') ?: '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId();
                 throw new RedirectException($returnUrl, 301);
             }
+
+            if ($isNew) {
+                $returnUrl = '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId() . '/detail/' . $orm->getId();
+                throw new RedirectException($returnUrl, 301);
+            }
         }
 
         return $form->createView();
+    }
+
+    static public function tree2Array(Node $node, $depth) {
+        $data = array();
+        foreach ($node->getChildren() as $child) {
+            $obj = new \stdClass();
+            $obj->key = $child->getId();
+            $obj->value = "{$child->getTitle()}@{$depth}";
+            $data[] = $obj;
+
+            $result = static::tree2Array($child, $depth + 1);
+            $data = array_merge($data, $result);
+        }
+        return $data;
     }
 }

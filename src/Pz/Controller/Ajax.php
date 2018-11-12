@@ -49,6 +49,59 @@ class Ajax extends Controller
     }
 
     /**
+     * @route("/pz/ajax/nestable/sort", name="pzAjaxNestableSort")
+     * @return Response
+     */
+    public function pzAjaxNestableSort()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $data = json_decode($request->get('data'));
+        $className = $request->get('model');
+
+        $fullClassName = Db::fullClassName($className);
+        foreach ($data as $idx => $itm) {
+            $orm = $fullClassName::getById($pdo, $itm->id);
+            if ($orm) {
+                $orm->setRank($itm->rank);
+                $orm->setParentId($itm->parentId);
+                $orm->save();
+            }
+        }
+        return new Response('OK');
+    }
+
+    /**
+     * @route("/pz/ajax/nestable/closed", name="pzAjaxNestableClosed")
+     * @return Response
+     */
+    public function pzAjaxNestableClosed()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+        $closed = $request->get('closed') ?: 0;
+        $className = $request->get('model');
+
+        $fullClassName = Db::fullClassName($className);
+        $orm = $fullClassName::getById($pdo, $id);
+        if (!$orm) {
+            throw new NotFoundHttpException();
+        }
+
+        $orm->setClosed($closed);
+        $orm->save();
+
+        return new Response('OK');
+    }
+
+    /**
      * @route("/pz/ajax/status", name="pzAjaxStatus")
      * @return Response
      */

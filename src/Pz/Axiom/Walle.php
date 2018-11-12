@@ -49,6 +49,20 @@ abstract class Walle implements \JsonSerializable
     private $status;
 
     /**
+     * @return string
+     */
+    public function getCmsOrmsTwig() {
+        return 'pz/orms.twig';
+    }
+
+    /**
+     * @return string
+     */
+    public function getCmsOrmTwig() {
+        return 'pz/orm.twig';
+    }
+
+    /**
      * Walle constructor.
      * @param \PDO $pdo
      */
@@ -340,7 +354,7 @@ abstract class Walle implements \JsonSerializable
         $tableName = static::getTableName();
         $fields = array_keys(static::getFields());
 
-        $sql = "SELECT {$options['select']} FROM {$tableName} AS m";
+        $sql = "SELECT {$options['select']} FROM `{$tableName}` AS m";
         $sql .= $options['joins'] ? ' ' . $options['joins'] : '';
         $sql .= $options['whereSql'] ? ' WHERE ' . $options['whereSql'] : '';
         $sql .= $options['groupby'] ? ' GROUP BY ' . $options['groupby'] : '';

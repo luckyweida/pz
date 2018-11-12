@@ -121,7 +121,9 @@ class _Model extends \Pz\Orm\Generated\_Model
         return array(
             'Asset picker' => '\\Pz\\Form\\Type\\AssetPicker',
             'Asset folder picker' => '\\Pz\\Form\\Type\\AssetFolderPicker',
+            'Choice tree' => '\\Pz\\Form\\Type\\ChoiceTree',
             'Choice multi json' => '\\Pz\\Form\\Type\\ChoiceMultiJson',
+            'Choice multi json tree' => '\\Pz\\Form\\Type\\ChoiceMultiJsonTree',
             'Date picker' => '\\Pz\\Form\\Type\\DatePicker',
             'Date time picker' => '\\Pz\\Form\\Type\\DateTimePicker',
             'Wysiwyg' => '\\Pz\\Form\\Type\\Wysiwyg',

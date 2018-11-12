@@ -4,4 +4,5 @@ namespace Pz\Orm;
 
 class Product extends \Pz\Orm\Generated\Product
 {
+
 }

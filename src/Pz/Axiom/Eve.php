@@ -39,7 +39,7 @@ class Eve
     public function getFields()
     {
         $fields = array();
-        $sql = 'DESCRIBE ' . $this->table;
+        $sql = "DESCRIBE `{$this->table}`";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -78,7 +78,7 @@ class Eve
     public function addColumn($column, $attrs, $lastColumn = '')
     {
         try {
-            $sql = "ALTER TABLE $this->table 
+            $sql = "ALTER TABLE `{$this->table}` 
                       ADD COLUMN `$column` $attrs" . ($lastColumn ? " AFTER $lastColumn" : '');
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute();
@@ -91,7 +91,7 @@ class Eve
     public function renameColumn($oldColumn, $newColumn, $dataType, $lastColumn = '')
     {
         try {
-            $sql = "ALTER TABLE $this->table 
+            $sql = "ALTER TABLE `{$this->table}` 
                       CHANGE `$oldColumn` `$newColumn` $dataType" . ($lastColumn ? " AFTER $lastColumn" : '');
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute();
@@ -104,7 +104,7 @@ class Eve
     public function create()
     {
         try {
-            $sql = "CREATE TABLE IF NOT EXISTS `$this->table` (
+            $sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (
                     `id` int(11) NOT NULL AUTO_INCREMENT, 
                     PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             $stmt = $this->pdo->prepare($sql);
@@ -145,7 +145,7 @@ class Eve
     public function addIndex($index, $column)
     {
         try {
-            $sql = "ALTER TABLE `$this->table` 
+            $sql = "ALTER TABLE `{$this->table}`
                       ADD INDEX `$index` (`$column` ASC);";
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute();

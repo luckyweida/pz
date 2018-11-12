@@ -4,6 +4,7 @@ namespace Pz\Controller;
 
 use Pz\Orm\_Model;
 use Pz\Axiom\Mo;
+use Pz\Orm\AssetOrm;
 use Pz\Orm\DataGroup;
 use Pz\Router\Node;
 use Pz\Service\Db;
@@ -46,6 +47,7 @@ class Cms extends Mo
         $model->setTitle('New ' . $model->getTitle());
         $model->setClassName('New' . $model->getClassName());
         $model->setId(null);
+        $model->setUniqid(uniqid());
         $params['model'] = $model;
 
         return $this->render($params['node']->getTemplate(), $params);
@@ -69,7 +71,23 @@ class Cms extends Mo
         $model = _Model::getById($pdo, $modelId);
         $fullClassName = Db::fullClassName($model->getClassName());
         $orm = $fullClassName::getById($pdo, $ormId);
+        $uniqId = $orm->getUniqid();
+
         $orm->setId(null);
+        $orm->setUniqid(uniqid());
+
+        /** @var AssetOrm[] $result */
+        $result = AssetOrm::data($pdo, array(
+            'whereSql' => 'm.modelName = ? AND m.ormId = ?',
+            'params' => array($model->getClassName(), $uniqId),
+        ));
+
+        foreach ($result as $itm) {
+            $itm->setId(null);
+            $itm->setUniqid(uniqid());
+            $itm->setOrmId($orm->getUniqid());
+            $itm->save();
+        }
 //        $orm->setTitle('New ' . $orm->getTitle());
         $params['orm'] = $orm;
 
@@ -113,6 +131,7 @@ class Cms extends Mo
             $dgNode = new Node($dgId, $dataGroup->getTitle(), 0, $dgId);
             $dgNode->addExtra('icon', $dataGroup->getIcon());
 
+            /** @var _Model[] $result */
             $result = _Model::active($pdo, array(
                 'whereSql' => 'm.dataGroups LIKE ? AND m.dataType = 0',
                 'params' => array('%"' . $dataGroup->getId() . '"%'),
@@ -122,17 +141,10 @@ class Cms extends Mo
                 $nodes[] = $dgNode;
 
                 foreach ($result as $idx => $itm) {
-                    $ormTwigFile = 'pz/orm.twig';
-                    if ($itm->getClassName() == 'FragmentBlock') {
-                        $ormTwigFile = 'pz/orm-fragmentblock.twig';
-                    } elseif ($itm->getClassName() == 'FragmentDefault') {
-                        $ormTwigFile = 'pz/orm-fragmentdefault.twig';
-                    }
-
-                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), 'pz/orms.twig');
+                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), $itm->getCmsOrmsTwig());
                     $nodes[] = $node;
 
-                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
+                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $itm->getCmsOrmTwig(), 2, 1, 1);
                     $nodes[] = $node;
                 }
             }
@@ -168,18 +180,11 @@ class Cms extends Mo
         /** @var _Model[] $modelDatabase */
         $modelDatabase = _Model::active($pdo);
         foreach ($modelDatabase as $idx => $itm) {
-            $ormTwigFile = 'pz/orm.twig';
-            if ($itm->getClassName() == 'FragmentBlock') {
-                $ormTwigFile = 'pz/orm-fragmentblock.twig';
-            } elseif ($itm->getClassName() == 'FragmentDefault') {
-                $ormTwigFile = 'pz/orm-fragmentdefault.twig';
-            }
-
             if ($itm->getDataType() == 1) {
-                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), 'pz/orms.twig');
+                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), $itm->getCmsOrmsTwig());
                 $nodes[] = $node;
 
-                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $ormTwigFile, 2, 1, 1);
+                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $itm->getCmsOrmTwig(), 2, 1, 1);
                 $nodes[] = $node;
             }
         }

@@ -1,0 +1,20 @@
+{
+    "id": "12",
+    "uniqid": "5be65018b93bf",
+    "slug": "product-categories",
+    "rank": "11",
+    "added": "2018-11-10 16:29:17",
+    "modified": "2018-11-10 18:50:13",
+    "status": "1",
+    "title": "Product Categories",
+    "className": "ProductCategory",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 2,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1541820506120\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1541820537543\",\"column\":\"extra1\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\ChoiceTree\",\"label\":\"Parent:\",\"field\":\"parentId\",\"required\":0,\"sql\":\"SELECT t1.id AS `key`, t1.title AS value, t1.parentId AS parentId FROM ProductCategory AS t1 ORDER BY t1.rank\\n\"},{\"id\":\"z1541822294789\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\HiddenType\",\"label\":\"Closed:\",\"field\":\"closed\",\"required\":0,\"sql\":\"\"}]"
+}
