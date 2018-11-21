@@ -49,20 +49,6 @@ abstract class Walle implements \JsonSerializable
     private $status;
 
     /**
-     * @return string
-     */
-    public function getCmsOrmsTwig() {
-        return 'pz/orms.twig';
-    }
-
-    /**
-     * @return string
-     */
-    public function getCmsOrmTwig() {
-        return 'pz/orm.twig';
-    }
-
-    /**
      * Walle constructor.
      * @param \PDO $pdo
      */
@@ -568,5 +554,19 @@ abstract class Walle implements \JsonSerializable
             $obj->{$field} = $this->$getMethod();
         }
         return $obj;
+    }
+
+    /**
+     * @return string
+     */
+    static public function getCmsOrmsTwig() {
+        return 'pz/orms.twig';
+    }
+
+    /**
+     * @return string
+     */
+    static public function getCmsOrmTwig() {
+        return 'pz/orm.twig';
     }
 }

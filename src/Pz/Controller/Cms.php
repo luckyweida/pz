@@ -141,10 +141,12 @@ class Cms extends Mo
                 $nodes[] = $dgNode;
 
                 foreach ($result as $idx => $itm) {
-                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), $itm->getCmsOrmsTwig());
+                    $fullClass = Db::fullClassName($itm->getClassName());
+
+                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
                     $nodes[] = $node;
 
-                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $itm->getCmsOrmTwig(), 2, 1, 1);
+                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), 2, 1, 1);
                     $nodes[] = $node;
                 }
             }
@@ -180,11 +182,13 @@ class Cms extends Mo
         /** @var _Model[] $modelDatabase */
         $modelDatabase = _Model::active($pdo);
         foreach ($modelDatabase as $idx => $itm) {
+            $fullClass = Db::fullClassName($itm->getClassName());
+
             if ($itm->getDataType() == 1) {
-                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), $itm->getCmsOrmsTwig());
+                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
                 $nodes[] = $node;
 
-                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $itm->getCmsOrmTwig(), 2, 1, 1);
+                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), 2, 1, 1);
                 $nodes[] = $node;
             }
         }

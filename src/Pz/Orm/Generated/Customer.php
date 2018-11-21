@@ -1,10 +1,10 @@
 <?php
-//Last updated: 2018-11-18 19:13:50
+//Last updated: 2018-11-18 19:14:53
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
 
-class AssetOrm extends Walle
+class Customer extends Walle
 {
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -14,22 +14,22 @@ class AssetOrm extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $modelName;
+    private $password;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $attributeName;
+    private $email;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $ormId;
+    private $firstname;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $myRank;
+    private $lastname;
     
     /**
      * @return mixed
@@ -50,65 +50,65 @@ class AssetOrm extends Walle
     /**
      * @return mixed
      */
-    public function getModelName()
+    public function getPassword()
     {
-        return $this->modelName;
+        return $this->password;
     }
     
     /**
-     * @param mixed modelName
+     * @param mixed password
      */
-    public function setModelName($modelName)
+    public function setPassword($password)
     {
-        $this->modelName = $modelName;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getAttributeName()
-    {
-        return $this->attributeName;
-    }
-    
-    /**
-     * @param mixed attributeName
-     */
-    public function setAttributeName($attributeName)
-    {
-        $this->attributeName = $attributeName;
+        $this->password = $password;
     }
     
     /**
      * @return mixed
      */
-    public function getOrmId()
+    public function getEmail()
     {
-        return $this->ormId;
+        return $this->email;
     }
     
     /**
-     * @param mixed ormId
+     * @param mixed email
      */
-    public function setOrmId($ormId)
+    public function setEmail($email)
     {
-        $this->ormId = $ormId;
+        $this->email = $email;
     }
     
     /**
      * @return mixed
      */
-    public function getMyRank()
+    public function getFirstname()
     {
-        return $this->myRank;
+        return $this->firstname;
     }
     
     /**
-     * @param mixed myRank
+     * @param mixed firstname
      */
-    public function setMyRank($myRank)
+    public function setFirstname($firstname)
     {
-        $this->myRank = $myRank;
+        $this->firstname = $firstname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+    
+    /**
+     * @param mixed lastname
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
     }
     
 }

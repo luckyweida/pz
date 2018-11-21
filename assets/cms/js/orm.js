@@ -740,9 +740,9 @@ $(function() {
                     if (block) {
                         $.each($(itmBlk).find('.js-elem'), function (idxElem, itmElem) {
                             if ($(itmElem).attr('type') == 'checkbox') {
-                                block.values[$(itmElem).attr('id')] = $(itmElem).is(':checked') ? 1 : 0;
+                                block.values[$(itmElem).data('id')] = $(itmElem).is(':checked') ? 1 : 0;
                             } else {
-                                block.values[$(itmElem).attr('id')] = $(itmElem).val();
+                                block.values[$(itmElem).data('id')] = $(itmElem).val();
                             }
                         });
                         section.blocks.push(block)

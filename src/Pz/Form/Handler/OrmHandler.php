@@ -131,10 +131,8 @@ class OrmHandler
                 throw new RedirectException($returnUrl, 301);
             }
 
-            if ($isNew) {
-                $returnUrl = '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId() . '/detail/' . $orm->getId();
-                throw new RedirectException($returnUrl, 301);
-            }
+            $returnUrl = '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId() . '/detail/' . $orm->getId();
+            throw new RedirectException($returnUrl, 301);
         }
 
         return $form->createView();

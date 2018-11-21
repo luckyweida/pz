@@ -96,7 +96,7 @@ class Db
      * @param $className
      * @return string
      */
-    public static function fullClassName($className)
+    static public function fullClassName($className)
     {
         $fullClassName = "Web\\Orm\\$className";
         if (!class_exists($fullClassName)) {

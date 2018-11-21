@@ -1,0 +1,29 @@
+{% from "pz/html/nestableNav.twig" import nest as nest %}
+{% extends 'pz/orms.twig' %}
+
+
+
+
+{% block content %}
+    {% set orms = [] %}
+    {% if model.listType == 0 %}
+        {% set orms = db.data(model.className) %}
+    {% elseif model.listType == 1 %}
+        {% set orms = db.data(model.className, {
+            whereSql: 'm.variantProduct != 1 OR m.variantProduct IS NULL',
+            page: pageNum,
+            limit: model.numberPerPage,
+            sort: model.defaultSortBy,
+            order: model.defaultOrder == 0 ? 'ASC' : 'DESC',
+        }) %}
+        {% set totalPages = db.data(model.className, {
+            count: 1,
+        }) %}
+        {% set totalPages = (totalPages.count / model.numberPerPage)|round(1, 'ceil')|number_format  %}
+    {% elseif model.listType == 2 %}
+        {% set orms = db.data(model.className) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
+

@@ -1,0 +1,20 @@
+{
+    "id": "16",
+    "uniqid": "5bf0fb6ff20c5",
+    "slug": "customers",
+    "rank": "15",
+    "added": "2018-11-18 18:41:03",
+    "modified": "2018-11-18 19:14:24",
+    "status": "1",
+    "title": "Customers",
+    "className": "Customer",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 1,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1542519562329\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1542519583700\",\"column\":\"password\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\PasswordType\",\"label\":\"Password:\",\"field\":\"password\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1542519594531\",\"column\":\"email\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Email:\",\"field\":\"email\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1542519606844\",\"column\":\"firstname\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"First name:\",\"field\":\"firstname\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1542519612391\",\"column\":\"lastname\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Last name:\",\"field\":\"lastname\",\"required\":0,\"sql\":\"\"}]"
+}

@@ -7,7 +7,7 @@ class FragmentDefault extends \Pz\Orm\Generated\FragmentDefault
     /**
      * @return string
      */
-    public function getCmsOrmTwig() {
-        return 'pz/orm-fragmentblock.twig';
+    static public function getCmsOrmTwig() {
+        return 'pz/orm-fragmentdefault.twig';
     }
 }

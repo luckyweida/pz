@@ -98,6 +98,7 @@ class Utils
             9 => 'Choice',
             10 => 'Choice multi json',
             11 => 'Placeholder',
+            12 => 'Read only text',
         );
     }
 

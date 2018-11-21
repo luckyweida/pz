@@ -7,7 +7,7 @@ class FragmentBlock extends \Pz\Orm\Generated\FragmentBlock
     /**
      * @return string
      */
-    public function getCmsOrmTwig() {
-        return 'pz/orm-block.twig';
+    static public function getCmsOrmTwig() {
+        return 'pz/orm-fragmentblock.twig';
     }
 }
