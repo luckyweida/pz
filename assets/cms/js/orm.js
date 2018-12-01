@@ -664,10 +664,10 @@ $(function() {
             }).on('ready.jstree',
                 function() {
                     setTimeout($.proxy(function () {
-                        $('.scroll-content').slimscroll({
+                        $(`.sidebar${dataId} .scroll-content`).slimscroll({
                             height: Math.min($(window).height() - 50, $(`.sidebar${dataId} .panel-body`).outerHeight()) + 'px',
                         })
-                    }, this), 100);
+                    }, this), 500);
                 }
             );
 

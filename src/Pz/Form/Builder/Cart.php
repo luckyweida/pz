@@ -5,6 +5,7 @@ namespace Pz\Form\Builder;
 use Pz\Form\Constraints\ConstraintBillingRequired;
 use Pz\Form\Constraints\ConstraintIfNotSameThenRequired;
 use Pz\Form\Type\ChoiceMultiJson;
+use Pz\Orm\Country;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -26,12 +27,26 @@ class Cart extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        $connection = $options['container']->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
+        $countries = array();
+        /** @var Country[] $result */
+        $result = Country::active($pdo, array(
+            'sort' => 'title'
+        ));
+        foreach ($result as $itm) {
+            $countries[$itm->getTitle()] = $itm->getCode();
+        }
+
+//        var_dump($countries);exit;
+
         parent::buildForm($builder, $options);
 
         $builder->add('action', TextType::class, array(
             'mapped' => false,
-            'constraints' => array(
-//                new Assert\NotBlank(),
+            'constraints' => array(//                new Assert\NotBlank(),
             )
         ))->add('email', TextType::class, array(
             'label' => 'Email address:',
@@ -39,74 +54,77 @@ class Cart extends AbstractType
                 new Assert\NotBlank(),
                 new Assert\Email(),
             )
-        ))->add('shippingFirstName', TextType::class, array(
-            'label' => 'First name:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingLastName', TextType::class, array(
-            'label' => 'Last Name:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingAddress', TextType::class, array(
-            'label' => 'Address:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingAddress2', TextType::class, array(
-            'label' => 'Address2:',
-            'constraints' => array(//                new Assert\NotBlank(),
-            )
-        ))->add('shippingSuburb', TextType::class, array(
-            'label' => 'Suburb:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingCity', TextType::class, array(
-            'label' => 'City:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingPostcode', TextType::class, array(
-            'label' => 'Postcode:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingCountry', TextType::class, array(
-            'label' => 'Country:',
-            'constraints' => array(
-                new Assert\NotBlank(),
-            )
-        ))->add('shippingSave', CheckboxType::class, array(
-            'label' => 'Save this address',
-            'constraints' => array(//                new Assert\NotBlank(),
-            )
-        ))->add('note', TextareaType::class, array(
-            'label' => 'Note:',
-            'constraints' => array(//                new Assert\NotBlank(),
-            )
-        ))->add('billingSame', CheckboxType::class, array(
-            'label' => 'Same as Shipping Address',
-            'constraints' => array(//                new Assert\NotBlank(),
-            )
         ))->add('billingFirstName', TextType::class, array(
             'label' => 'First name:',
             'constraints' => array(
-                new ConstraintIfNotSameThenRequired(array(
-                    'form' => $this,
-                    'attrToCheckIfSame' => 'billingSame',
-                )),
+                new Assert\NotBlank(),
             )
         ))->add('billingLastName', TextType::class, array(
             'label' => 'Last name:',
             'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingPhone', TextType::class, array(
+            'label' => 'Phone:',
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingAddress', TextType::class, array(
+            'label' => 'Address:',
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingAddress2', TextType::class, array(
+            'label' => 'Address2:',
+        ))->add('billingCity', TextType::class, array(
+            'label' => 'City:',
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingPostcode', TextType::class, array(
+            'label' => 'Postcode:',
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingState', TextType::class, array(
+            'label' => 'State:',
+        ))->add('billingCountry', ChoiceType::class, array(
+            'label' => 'Country:',
+            'choices' => $countries,
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
+        ))->add('billingSave', CheckboxType::class, array(
+            'label' => 'Save this address',
+        ))->add('note', TextareaType::class, array(
+            'label' => 'Note:',
+        ))->add('billingSame', CheckboxType::class, array(
+            'label' => 'Same as Billing Address',
+        ))->add('shippingFirstName', TextType::class, array(
+            'label' => 'First name:',
+            'constraints' => array(
                 new ConstraintIfNotSameThenRequired(array(
                     'form' => $this,
                     'attrToCheckIfSame' => 'billingSame',
                 )),
             )
-        ))->add('billingAddress', TextType::class, array(
+        ))->add('shippingLastName', TextType::class, array(
+            'label' => 'Last Name:',
+            'constraints' => array(
+                new ConstraintIfNotSameThenRequired(array(
+                    'form' => $this,
+                    'attrToCheckIfSame' => 'billingSame',
+                )),
+            )
+        ))->add('shippingPhone', TextType::class, array(
+            'label' => 'Phone:',
+            'constraints' => array(
+                new ConstraintIfNotSameThenRequired(array(
+                    'form' => $this,
+                    'attrToCheckIfSame' => 'billingSame',
+                )),
+            )
+        ))->add('shippingAddress', TextType::class, array(
             'label' => 'Address:',
             'constraints' => array(
                 new ConstraintIfNotSameThenRequired(array(
@@ -114,23 +132,9 @@ class Cart extends AbstractType
                     'attrToCheckIfSame' => 'billingSame',
                 )),
             )
-        ))->add('billingAddress2', TextType::class, array(
+        ))->add('shippingAddress2', TextType::class, array(
             'label' => 'Address2:',
-            'constraints' => array(
-//                new ConstraintIfNotSameThenRequired(array(
-//                    'form' => $this,
-//                    'attrToCheckIfSame' => 'billingSame',
-//                )),
-            )
-        ))->add('billingSuburb', TextType::class, array(
-            'label' => 'Suburb:',
-            'constraints' => array(
-                new ConstraintIfNotSameThenRequired(array(
-                    'form' => $this,
-                    'attrToCheckIfSame' => 'billingSame',
-                )),
-            )
-        ))->add('billingCity', TextType::class, array(
+        ))->add('shippingCity', TextType::class, array(
             'label' => 'City:',
             'constraints' => array(
                 new ConstraintIfNotSameThenRequired(array(
@@ -138,7 +142,7 @@ class Cart extends AbstractType
                     'attrToCheckIfSame' => 'billingSame',
                 )),
             )
-        ))->add('billingPostcode', TextType::class, array(
+        ))->add('shippingPostcode', TextType::class, array(
             'label' => 'Postcode:',
             'constraints' => array(
                 new ConstraintIfNotSameThenRequired(array(
@@ -146,28 +150,27 @@ class Cart extends AbstractType
                     'attrToCheckIfSame' => 'billingSame',
                 )),
             )
-        ))->add('billingCountry', TextType::class, array(
+        ))->add('shippingState', TextType::class, array(
+            'label' => 'State:',
+        ))->add('shippingCountry', ChoiceType::class, array(
             'label' => 'Country:',
+            'choices' => $countries,
             'constraints' => array(
                 new ConstraintIfNotSameThenRequired(array(
                     'form' => $this,
                     'attrToCheckIfSame' => 'billingSame',
                 )),
             )
-        ))->add('billingSave', CheckboxType::class, array(
+        ))->add('shippingSave', CheckboxType::class, array(
             'label' => 'Save this address',
-            'constraints' => array(
-//                new ConstraintIfNotSameThenRequired(array(
-//                    'form' => $this,
-//                    'attrToCheckIfSame' => 'billingSame',
-//                )),
-            )
         ));
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
-        $resolver->setDefaults(array());
+        $resolver->setDefaults(array(
+            'container' => null,
+        ));
     }
 }

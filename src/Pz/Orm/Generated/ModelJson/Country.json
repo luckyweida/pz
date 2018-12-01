@@ -1,0 +1,20 @@
+{
+    "id": "19",
+    "uniqid": "5c01e1bca26b5",
+    "slug": "shipping-countries",
+    "rank": "18",
+    "added": "2018-12-01 14:19:56",
+    "modified": "2018-12-01 14:20:20",
+    "status": "1",
+    "title": "Shipping Countries",
+    "className": "Country",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 0,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1543627168450\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1543627184203\",\"column\":\"shortdescription\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Uppercase 2 digit codes (ISO 3166-1):\",\"field\":\"code\",\"required\":0,\"sql\":\"\"}]"
+}

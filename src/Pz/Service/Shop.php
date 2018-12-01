@@ -30,11 +30,27 @@ class Shop
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
+        /** @var Order $orderContainer */
         $orderContainer = $this->container->get('session')->get('orderContainer');
-        if (!$orderContainer) {
+        if (!$orderContainer || $orderContainer->getPayStatus() == 1) {
             $orderContainer = new Order($pdo);
             $this->container->get('session')->set('orderContainer', $orderContainer);
         }
+
+
+//        var_dump($orderContainer->getOrderItems());exit;
+        foreach ($orderContainer->getOrderItems() as $orderItem) {
+            $exist = false;
+            foreach ($orderContainer->getPendingItems() as $pendingItem) {
+                if ($pendingItem->getUniqid() == $orderItem->getUniqid()) {
+                    $exist = true;
+                }
+            }
+            if (!$exist) {
+                $orderContainer->addPendingItem($orderItem);
+            }
+        }
+
         return $orderContainer;
     }
 

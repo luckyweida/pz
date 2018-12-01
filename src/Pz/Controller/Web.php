@@ -150,7 +150,7 @@ class Web extends Mo
             'whereSql' => 'm.status != 0',
         ));
         foreach ($pages as $itm) {
-            $nodes[] = new Node($itm->getId(), $itm->getTitle(), 0, $itm->getRank(), $itm->getUrl(), $itm->objPageTempalte()->getFilename(), $itm->getStatus(), $itm->getAllowExtra(), $itm->getMaxParams());
+            $nodes[] = new Node($itm->getId(), $itm->getTitle(), 0, $itm->getRank(), $itm->getUrl(), $itm->objPageTempalte()->getFilename(), $itm->getStatus(), $itm->getAllowExtra() ?: 0, $itm->getMaxParams());
         }
 
         return $nodes;

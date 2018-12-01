@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-01 11:31:38
+//Last updated: 2018-12-01 22:50:48
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -54,6 +54,11 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
+    private $shippingPhone;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
     private $shippingAddress;
     
     /**
@@ -64,17 +69,17 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $shippingSuburb;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
     private $shippingCity;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $shippingPostcode;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $shippingState;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -109,6 +114,11 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
+    private $billingPhone;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
     private $billingAddress;
     
     /**
@@ -119,17 +129,17 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $billingSuburb;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
     private $billingCity;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $billingPostcode;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $billingState;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -159,7 +169,7 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $status;
+    private $payStatus;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -175,6 +185,11 @@ class Order extends Walle
      * #pz datetime DEFAULT NULL
      */
     private $payDate;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $payToken;
     
     /**
      * @return mixed
@@ -323,6 +338,22 @@ class Order extends Walle
     /**
      * @return mixed
      */
+    public function getShippingPhone()
+    {
+        return $this->shippingPhone;
+    }
+    
+    /**
+     * @param mixed shippingPhone
+     */
+    public function setShippingPhone($shippingPhone)
+    {
+        $this->shippingPhone = $shippingPhone;
+    }
+    
+    /**
+     * @return mixed
+     */
     public function getShippingAddress()
     {
         return $this->shippingAddress;
@@ -355,22 +386,6 @@ class Order extends Walle
     /**
      * @return mixed
      */
-    public function getShippingSuburb()
-    {
-        return $this->shippingSuburb;
-    }
-    
-    /**
-     * @param mixed shippingSuburb
-     */
-    public function setShippingSuburb($shippingSuburb)
-    {
-        $this->shippingSuburb = $shippingSuburb;
-    }
-    
-    /**
-     * @return mixed
-     */
     public function getShippingCity()
     {
         return $this->shippingCity;
@@ -398,6 +413,22 @@ class Order extends Walle
     public function setShippingPostcode($shippingPostcode)
     {
         $this->shippingPostcode = $shippingPostcode;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getShippingState()
+    {
+        return $this->shippingState;
+    }
+    
+    /**
+     * @param mixed shippingState
+     */
+    public function setShippingState($shippingState)
+    {
+        $this->shippingState = $shippingState;
     }
     
     /**
@@ -499,6 +530,22 @@ class Order extends Walle
     /**
      * @return mixed
      */
+    public function getBillingPhone()
+    {
+        return $this->billingPhone;
+    }
+    
+    /**
+     * @param mixed billingPhone
+     */
+    public function setBillingPhone($billingPhone)
+    {
+        $this->billingPhone = $billingPhone;
+    }
+    
+    /**
+     * @return mixed
+     */
     public function getBillingAddress()
     {
         return $this->billingAddress;
@@ -531,22 +578,6 @@ class Order extends Walle
     /**
      * @return mixed
      */
-    public function getBillingSuburb()
-    {
-        return $this->billingSuburb;
-    }
-    
-    /**
-     * @param mixed billingSuburb
-     */
-    public function setBillingSuburb($billingSuburb)
-    {
-        $this->billingSuburb = $billingSuburb;
-    }
-    
-    /**
-     * @return mixed
-     */
     public function getBillingCity()
     {
         return $this->billingCity;
@@ -574,6 +605,22 @@ class Order extends Walle
     public function setBillingPostcode($billingPostcode)
     {
         $this->billingPostcode = $billingPostcode;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getBillingState()
+    {
+        return $this->billingState;
+    }
+    
+    /**
+     * @param mixed billingState
+     */
+    public function setBillingState($billingState)
+    {
+        $this->billingState = $billingState;
     }
     
     /**
@@ -659,17 +706,17 @@ class Order extends Walle
     /**
      * @return mixed
      */
-    public function getStatus()
+    public function getPayStatus()
     {
-        return $this->status;
+        return $this->payStatus;
     }
     
     /**
-     * @param mixed status
+     * @param mixed payStatus
      */
-    public function setStatus($status)
+    public function setPayStatus($payStatus)
     {
-        $this->status = $status;
+        $this->payStatus = $payStatus;
     }
     
     /**
@@ -718,6 +765,22 @@ class Order extends Walle
     public function setPayDate($payDate)
     {
         $this->payDate = $payDate;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPayToken()
+    {
+        return $this->payToken;
+    }
+    
+    /**
+     * @param mixed payToken
+     */
+    public function setPayToken($payToken)
+    {
+        $this->payToken = $payToken;
     }
     
 }

@@ -3,6 +3,8 @@
 namespace Pz\Form\Handler;
 
 use Cocur\Slugify\Slugify;
+use Omnipay\Common\CreditCard;
+use Omnipay\Common\GatewayFactory;
 use PayPal\Api\Address;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
@@ -17,6 +19,7 @@ use Pz\Axiom\Eve;
 use Pz\Axiom\Walle;
 use Pz\Orm\_Model;
 use Pz\Orm\DataGroup;
+use Pz\Orm\Order;
 use Pz\Redirect\RedirectException;
 use Pz\Service\Db;
 use Pz\Service\Shop;
@@ -33,81 +36,67 @@ class CartHandler
         $this->container = $container;
     }
 
-    public function handle($orm)
+    public function handle(Order $orderContainer)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         $pdo = $connection->getWrappedConnection();
 
+        $orderContainer->setBillingSame($orderContainer->getBillingSame() ? true : false);
+        $orderContainer->setBillingSave($orderContainer->getBillingSave() ? true : false);
+        $orderContainer->setShippingSave($orderContainer->getShippingSave() ? true : false);
+
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
         /** @var Form $form */
-        $form = $formFactory->create(\Pz\Form\Builder\Cart::class, $orm);
+        $form = $formFactory->create(\Pz\Form\Builder\Cart::class, $orderContainer, array(
+            'container' => $this->container,
+        ));
 
-        $shop = new Shop($this->container);
-        $orderContainer = $shop->getOrderContainer();
+
+
 
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $request->get($form->getName());
             if ($data['action'] == 'paypal') {
-                $apiContext = $this->getApiContext(getenv('PAYPAL_CLIENT_ID'), getenv('PAYPAL_CLIENT_SECRET'));
 
+                if ($orderContainer->getId()) {
 
-                $billingAddress = new Address();
-                if ($orderContainer->getBillingSame()) {
-                    $billingAddress->setLine1($orderContainer->getShippingAddress());
-                    $billingAddress->setLine2($orderContainer->getShippingAddress2());
-                    $billingAddress->setCity($orderContainer->getShippingCity());
-                    $billingAddress->setPostalCode($orderContainer->getShippingPostcode());
-                } else {
-                    $billingAddress->setLine1($orderContainer->getBillingAddress());
-                    $billingAddress->setLine2($orderContainer->getBillingAddress2());
-                    $billingAddress->setCity($orderContainer->getBillingCity());
-                    $billingAddress->setPostalCode($orderContainer->getBillingPostcode());
+                    /** @var Order $oc */
+                    $oc = Order::getById($pdo, $orderContainer->getId());
+                    if ($oc->getPayStatus() == 1) {
+                        $this->container->get('session')->set('orderContainer', null);
+                        throw new RedirectException('/cart-success?id=' . $orderContainer->getUniqid(), 301);
+                    }
+
                 }
 
-                $billingAddress->setCountryCode('NZ');
+                $gateway = static::getPaypalGateway();
+                $params = static::getPaypalParams($orderContainer);
 
-                $payerInfo = new PayerInfo();
-                $payerInfo->setEmail($orderContainer->getEmail());
-                $payerInfo->setBillingAddress($billingAddress);
+                $response = $gateway->purchase($params)->send();
 
-                $payer = new Payer();
-                $payer->setPaymentMethod("paypal");
-                $payer->setPayerInfo($payerInfo);
+                $orderContainer->setPayRequest(json_encode($response->getData()));
+                $orderContainer->setPayToken($response->getTransactionReference());
+                $orderContainer->setPayDate(date('Y-m-d H:i:s'));
+                $orderContainer->save();
 
-                $amount = new Amount();
-                $amount->setCurrency("NZD")
-                    ->setTotal(0.01);
-
-                $transaction = new Transaction();
-                $transaction->setAmount($amount)
-                    ->setDescription("Online Shoping Payment")
-                    ->setInvoiceNumber($orderContainer->getUniqid());
-
-                $baseUrl = $request->getScheme() . '://' . $request->getHost() . '/cart';
-                $redirectUrls = new RedirectUrls();
-                $redirectUrls->setReturnUrl("$baseUrl/finalise")
-                    ->setCancelUrl("$baseUrl/cancel");
-
-                $payment = new Payment();
-                $payment->setIntent("sale")
-                    ->setPayer($payer)
-                    ->setRedirectUrls($redirectUrls)
-                    ->setTransactions(array($transaction));
-
-                $request = clone $payment;
-                try {
-                    $payment->create($apiContext);
-                } catch (\Exception $ex) {
-                    while (@ob_end_clean());
-                    var_dump($ex);exit;
+                $orderItems = array();
+                foreach ($orderContainer->getPendingItems() as $itm) {
+                    $itm->save();
+                    $orderItems[] = $itm;
                 }
 
+                $orderContainer->setOrderItems($orderItems);
 
-                $approvalUrl = $payment->getApprovalLink();
-                throw new RedirectException($approvalUrl, 301);
+                if ($response->isSuccessful()) {
+                    print_r($response);
+                    exit;
+                } elseif ($response->isRedirect()) {
+                    $response->redirect();
+                }
+
 
             } else {
                 throw new RedirectException('/cart-review', 301);
@@ -119,48 +108,45 @@ class CartHandler
         return $form->createView();
     }
 
-    function getApiContext($clientId, $clientSecret)
+    static function getPaypalGateway()
     {
-        // #### SDK configuration
-        // Register the sdk_config.ini file in current directory
-        // as the configuration source.
-        /*
-        if(!defined("PP_CONFIG_PATH")) {
-            define("PP_CONFIG_PATH", __DIR__);
-        }
-        */
-        // ### Api context
-        // Use an ApiContext object to authenticate
-        // API calls. The clientId and clientSecret for the
-        // OAuthTokenCredential class can be retrieved from
-        // developer.paypal.com
-        $apiContext = new ApiContext(
-            new OAuthTokenCredential(
-                $clientId,
-                $clientSecret
-            )
-        );
-        // Comment this line out and uncomment the PP_CONFIG_PATH
-        // 'define' block if you want to use static file
-        // based configuration
-        $apiContext->setConfig(
-            array(
-                'mode' => 'live',
-                'log.LogEnabled' => true,
-                'log.FileName' => './PayPal.log',
-                'log.LogLevel' => 'DEBUG', // PLEASE USE `INFO` LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
-                'cache.enabled' => true,
-                //'cache.FileName' => '/PaypalCache' // for determining paypal cache directory
-                // 'http.CURLOPT_CONNECTTIMEOUT' => 30
-                // 'http.headers.PayPal-Partner-Attribution-Id' => '123123123'
-                //'log.AdapterFactory' => '\PayPal\Log\DefaultLogFactory' // Factory class implementing \PayPal\Log\PayPalLogFactory
-            )
-        );
-        // Partner Attribution Id
-        // Use this header if you are a PayPal partner. Specify a unique BN Code to receive revenue attribution.
-        // To learn more or to request a BN Code, contact your Partner Manager or visit the PayPal Partner Portal
-        // $apiContext->addRequestHeader('PayPal-Partner-Attribution-Id', '123123123');
-        return $apiContext;
+        $factory = new GatewayFactory();
+        $gateway = $factory->create('PayPal_Express');
+        $gateway->setUsername('ns.gresource_api1.gmail.com');
+        $gateway->setPassword('T7ZDTGU6KN3ZVHQL');
+        $gateway->setSignature('AlHocZw.D-4wIMlpxjF1YGncCpfIAicPkwVrE4CMz47JMRS0lm9rg57f');
+        $gateway->setTestMode(false);
+        return $gateway;
     }
 
+    static function getPaypalParams(Order $orderContainer)
+    {
+        $cardInput = array(
+            'firstName' => $orderContainer->getBillingFirstname(),
+            'lastName' => $orderContainer->getBillingLastname(),
+            'billingAddress1' => $orderContainer->getBillingAddress(),
+            'billingAddress2' => $orderContainer->getBillingAddress2(),
+            'billingPhone' => $orderContainer->getBillingPhone(),
+            'billingCity' => $orderContainer->getBillingCity(),
+            'billingState' => '',
+            'billingPostCode' => $orderContainer->getBillingPostcode(),
+            'email' => $orderContainer->getEmail(),
+        );
+        $card = new CreditCard($cardInput);
+
+        $request = Request::createFromGlobals();
+        $baseUrl = $request->getScheme() . '://' . $request->getHost() . '/cart';
+        $params = array(
+            'amount' => (float)$orderContainer->getTotal(),
+            'currency' => 'NZD',
+            'description' => 'Online Shopping Payment',
+            'transactionId' => $orderContainer->getUniqid(),
+            'transactionReference' => $orderContainer->getBillingFirstname() . ' ' . $orderContainer->getBillingLastname(),
+            'returnUrl' => "$baseUrl-finalise",
+            'cancelUrl' => "$baseUrl-cancel",
+            'card' => $card,
+        );
+
+        return $params;
+    }
 }

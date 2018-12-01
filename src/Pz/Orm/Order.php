@@ -4,23 +4,33 @@ namespace Pz\Orm;
 
 class Order extends \Pz\Orm\Generated\Order implements \Serializable
 {
-    /** @var OrderItemp[] $pendingItems */
+    /** @var OrderItem[] $pendingItems */
     private $pendingItems;
+
+    /** @var OrderItem[] $orderItems */
+    private $orderItems;
 
     public function __construct(\PDO $pdo)
     {
+        $this->setShippingCountry('NZ');
+        $this->setBillingCountry('NZ');
+        $this->setBillingSame(1);
+
         $this->pendingItems = array();
+        $this->orderItems = array();
+
         parent::__construct($pdo);
     }
 
-    public function addPendingItem($pendingItem) {
+    public function addPendingItem($pendingItem)
+    {
         $this->pendingItems[] = $pendingItem;
     }
 
     /**
-     * @return array
+     * @return OrderItem[]
      */
-    public function getPendingItems(): array
+    public function getPendingItems()
     {
         return $this->pendingItems;
     }
@@ -33,11 +43,24 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
         $this->pendingItems = $pendingItems;
     }
 
-    public function getOrderItems() {
-        return OrderItem::active($this->getPdo(), array(
+    /**
+     * @return OrderItem[]
+     */
+    public function getOrderItems()
+    {
+        $this->orderItems = OrderItem::active($this->getPdo(), array(
             'whereSql' => 'm.orderId = ?',
-            'params' => array($this->getId()),
+            'params' => array($this->getUniqid()),
         ));
+        return $this->orderItems;
+    }
+
+    /**
+     * @param array $pendingItems
+     */
+    public function setOrderItems(array $orderItems): void
+    {
+        $this->orderItems = $orderItems;
     }
 
     /**

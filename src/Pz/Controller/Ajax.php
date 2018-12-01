@@ -166,6 +166,9 @@ class Ajax extends Controller
             $result["cat{$pageCategory->getId()}"] = 0;
             foreach ($pages as $page) {
                 $category = json_decode($page->getCategory());
+                if (!$category) {
+                    $category = array();
+                }
                 if (in_array($pageCategory->getId(), $category)) {
                     $result["cat{$pageCategory->getId()}"]++;
                 }
