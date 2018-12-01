@@ -43,12 +43,14 @@ abstract class Mo extends Controller
                 if (!$node) {
                     $node = $this->tree->getNodeByUrl('/' . implode('/', $parts));
                 }
-                if ($node && (
-                        (!$node->getAllowExtra() && (count($fragments) - count($parts) == 0)) ||
-                        ($node->getAllowExtra() && $node->getMaxParams() >= (count($fragments) - count($parts)))
-                    )) {
-                    $args = array_values(array_diff($fragments, $parts));
-                    break;
+                if ($node) {
+                    if ((!$node->getAllowExtra() && (count($fragments) - count($parts) == 0)) ||
+                        ($node->getAllowExtra() && $node->getMaxParams() >= (count($fragments) - count($parts)))) {
+                        $args = array_values(array_diff($fragments, $parts));
+                        break;
+                    } else {
+                        throw new NotFoundHttpException();
+                    }
                 }
             }
         }

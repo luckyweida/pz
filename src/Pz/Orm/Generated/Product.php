@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-19 21:35:58
+//Last updated: 2018-11-25 18:52:58
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -15,6 +15,16 @@ class Product extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $category;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $myRank;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $productType;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -49,17 +59,22 @@ class Product extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
+    private $weight;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $variants;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
     private $gallery;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $description;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
-    private $variants;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -75,6 +90,21 @@ class Product extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $parentProductId;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $onSpecial;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $displayPrice;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $displayCompareAtPrice;
     
     /**
      * @return mixed
@@ -106,6 +136,38 @@ class Product extends Walle
     public function setCategory($category)
     {
         $this->category = $category;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getMyRank()
+    {
+        return $this->myRank;
+    }
+    
+    /**
+     * @param mixed myRank
+     */
+    public function setMyRank($myRank)
+    {
+        $this->myRank = $myRank;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getProductType()
+    {
+        return $this->productType;
+    }
+    
+    /**
+     * @param mixed productType
+     */
+    public function setProductType($productType)
+    {
+        $this->productType = $productType;
     }
     
     /**
@@ -207,6 +269,38 @@ class Product extends Walle
     /**
      * @return mixed
      */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+    
+    /**
+     * @param mixed weight
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getVariants()
+    {
+        return $this->variants;
+    }
+    
+    /**
+     * @param mixed variants
+     */
+    public function setVariants($variants)
+    {
+        $this->variants = $variants;
+    }
+    
+    /**
+     * @return mixed
+     */
     public function getGallery()
     {
         return $this->gallery;
@@ -234,22 +328,6 @@ class Product extends Walle
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getVariants()
-    {
-        return $this->variants;
-    }
-    
-    /**
-     * @param mixed variants
-     */
-    public function setVariants($variants)
-    {
-        $this->variants = $variants;
     }
     
     /**
@@ -298,6 +376,54 @@ class Product extends Walle
     public function setParentProductId($parentProductId)
     {
         $this->parentProductId = $parentProductId;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getOnSpecial()
+    {
+        return $this->onSpecial;
+    }
+    
+    /**
+     * @param mixed onSpecial
+     */
+    public function setOnSpecial($onSpecial)
+    {
+        $this->onSpecial = $onSpecial;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDisplayPrice()
+    {
+        return $this->displayPrice;
+    }
+    
+    /**
+     * @param mixed displayPrice
+     */
+    public function setDisplayPrice($displayPrice)
+    {
+        $this->displayPrice = $displayPrice;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDisplayCompareAtPrice()
+    {
+        return $this->displayCompareAtPrice;
+    }
+    
+    /**
+     * @param mixed displayCompareAtPrice
+     */
+    public function setDisplayCompareAtPrice($displayCompareAtPrice)
+    {
+        $this->displayCompareAtPrice = $displayCompareAtPrice;
     }
     
 }

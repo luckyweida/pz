@@ -1,0 +1,20 @@
+{
+    "id": "18",
+    "uniqid": "5bfcfbac14b1c",
+    "slug": "promo-codes",
+    "rank": "17",
+    "added": "2018-11-27 21:09:16",
+    "modified": "2018-11-27 21:09:16",
+    "status": "1",
+    "title": "Promo Codes",
+    "className": "PromoCode",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 0,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1543306079982\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1543306092745\",\"column\":\"startdate\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\DatePicker\",\"label\":\"Start date:\",\"field\":\"startdate\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1543306094669\",\"column\":\"enddate\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\DatePicker\",\"label\":\"End date:\",\"field\":\"enddate\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1543306116912\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\CheckboxType\",\"label\":\"%:\",\"field\":\"perc\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1543306120803\",\"column\":\"value\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Discount value:\",\"field\":\"value\",\"required\":0,\"sql\":\"\"}]"
+}

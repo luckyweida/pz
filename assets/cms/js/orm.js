@@ -497,6 +497,7 @@ $(function() {
             $(`#${dataId}`).val(cleanString(dataValue));
             $(`#${dataId}-modal-block`).modal('hide');
             render();
+            assemble();
         });
 
         $(document).on('click', `#${dataId}_container .js-delete-block`, function () {
@@ -780,6 +781,26 @@ $(function() {
     $(document).on('change', '.js-choice_multi_json', function() {
         $(this).prev('input').val(JSON.stringify($(this).val()));
     });
+
+    if ($('.js-product-type').length) {
+        var func = function(value) {
+            if (value == 1) {
+                $('.js-product-simple').removeClass('hidden');
+                $('.js-product-variants').addClass('hidden');
+            } else if (value == 2) {
+                $('.js-product-simple').addClass('hidden');
+                $('.js-product-variants').removeClass('hidden');
+            } else {
+                $('.js-product-simple').addClass('hidden');
+                $('.js-product-variants').addClass('hidden');
+            }
+        };
+
+        func($('.js-product-type').val());
+        $(document).on('change', '.js-product-type', function () {
+            func($(this).val());
+        });
+    }
 });
 
 function folderpicker(modelName, ormId, attributeName, callback) {

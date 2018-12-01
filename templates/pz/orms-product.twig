@@ -5,6 +5,7 @@
 
 
 {% block content %}
+
     {% set orms = [] %}
     {% if model.listType == 0 %}
         {% set orms = db.data(model.className) %}

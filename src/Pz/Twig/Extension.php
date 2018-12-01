@@ -49,6 +49,9 @@ class Extension extends AbstractExtension
     public function getFilters()
     {
         return array(
+            'block' => new TwigFilter('block', array($this, 'block')),
+            'section' => new TwigFilter('section', array($this, 'section')),
+            'sections' => new TwigFilter('sections', array($this, 'sections')),
             'nestable' => new TwigFilter('nestable', array($this, 'nestable')),
             'nestablePges' => new TwigFilter('nestablePges', array($this, 'nestablePges')),
         );
@@ -60,6 +63,39 @@ class Extension extends AbstractExtension
 //        while (@ob_end_clean());
 //        var_dump($this->container->getParameter('kernel.project_dir') . '/public/' . $path);exit;
         return file_get_contents($this->container->getParameter('kernel.project_dir') . '/public/' . $path);
+    }
+
+    public function block($block)
+    {
+        if (!isset($block->status) || !$block->status || $block->status == 0) {
+            return '';
+        }
+        return $this->container->get('twig')->render("fragments/{$block->twig}", (array)$block->values);
+    }
+
+    public function section($section)
+    {
+        if (!isset($section->status) || !$section->status || $section->status == 0) {
+            return '';
+        }
+        $html = '';
+        foreach ($section->blocks as $block) {
+            $html .= $this->block($block);
+        }
+        return $html;
+    }
+
+    public function sections($sections)
+    {
+        if (gettype($sections) == 'string') {
+            $sections = json_decode($sections);
+        }
+
+        $html = '';
+        foreach ($sections as $section) {
+            $html .= $this->section($section);
+        }
+        return $html;
     }
 
     /**
@@ -151,7 +187,7 @@ class Extension extends AbstractExtension
     /**
      * @param $message
      */
-    public function throwNotFoundException($message)
+    public function throwNotFoundException($message = '')
     {
         throw new NotFoundHttpException($message);
     }

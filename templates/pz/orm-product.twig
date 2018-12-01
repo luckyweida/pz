@@ -1,0 +1,39 @@
+{% extends 'pz/orm.twig' %}
+
+{% block extraHead %}
+    <style>
+        .sidebarform_variants {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block formWidgets %}
+    {{ form_row(form.title) }}
+    {{ form_row(form.category) }}
+    {{ form_row(form.sku) }}
+    {{ form_row(form.barcode) }}
+    {{ form_row(form.myRank) }}
+
+    <div class="box choice">
+        {{ form_label(form.productType) }}
+        {{ form_widget(form.productType,{attr:{class:'js-product-type'}}) }}
+        {{ form_errors(form.productType) }}
+    </div>
+
+    <div class="js-product-simple {% if form.productType.vars.value == 2 %}hidden{% endif %}">
+        <hr />
+
+        {{ form_row(form.price) }}
+        {{ form_row(form.compareAtPrice) }}
+        {{ form_row(form.stockEnabled) }}
+        {{ form_row(form.stock) }}
+        {{ form_row(form.weight) }}
+    </div>
+
+    <div class="js-product-variants {% if form.productType.vars.value == 1 %}hidden{% endif %}">
+        {{ form_row(form.variants) }}
+    </div>
+
+    {{ form_rest(form) }}
+{% endblock %}

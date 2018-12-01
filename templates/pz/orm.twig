@@ -38,7 +38,10 @@
 				<div class="ibox-content">
 					{% block form %}
 						<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}{% if app.request.get('uniqId') %}&uniqId={{ app.request.get('uniqId') }}{% endif %}" data-modelname="{{ model.className }}" data-ormid="{{ orm.uniqId }}">
-							{{ form_widget(form) }}
+							{% block formWidgets %}
+                                {{ form_widget(form) }}
+							{% endblock %}
+
 							<div style="clear: both;"></div>
 							<div>&nbsp;</div>
 							<div class="submit-container">
