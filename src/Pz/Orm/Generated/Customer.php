@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-18 19:14:53
+//Last updated: 2018-12-03 21:09:00
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -19,7 +19,7 @@ class Customer extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $email;
+    private $passwordInput;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -66,17 +66,17 @@ class Customer extends Walle
     /**
      * @return mixed
      */
-    public function getEmail()
+    public function getPasswordInput()
     {
-        return $this->email;
+        return $this->passwordInput;
     }
     
     /**
-     * @param mixed email
+     * @param mixed passwordInput
      */
-    public function setEmail($email)
+    public function setPasswordInput($passwordInput)
     {
-        $this->email = $email;
+        $this->passwordInput = $passwordInput;
     }
     
     /**

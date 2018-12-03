@@ -20,12 +20,16 @@ class Cms extends Mo
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
+        $request = Request::createFromGlobals();
+        $requestUri = rtrim($request->getPathInfo(), '/');
+        $params = $this->getParams($requestUri);
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('pz/login.twig', array(
+        return $this->render('pz/login.twig', array_merge($params, array(
             'last_username' => $lastUsername,
             'error' => $error,
-        ));
+        )));
     }
 
     /**
@@ -114,6 +118,9 @@ class Cms extends Mo
         /** @var \PDO $pdo */
         $pdo = $this->connection->getWrappedConnection();
         $nodes = array();
+
+        $node = new Node(-10, 'Login', -1, 0, '/pz/login', 'pz/login.twig');
+        $nodes[] = $node;
 
         $node = new Node(1, 'Pages', 0, 0, '/pz/pages', 'pz/pages.twig');
         $node->addExtra('icon', 'fa fa-sitemap');
