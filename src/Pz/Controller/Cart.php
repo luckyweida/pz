@@ -9,7 +9,7 @@ use Pz\Orm\Order;
 use Pz\Orm\OrderItem;
 use Pz\Orm\Product;
 use Pz\Orm\PromoCode;
-use Pz\Service\Shop;
+use Web\Service\Shop;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -60,7 +60,7 @@ class Cart extends Controller
             throw new NotFoundException();
         }
 
-        if ($orderContainer->getPayStatus() != 1) {
+        if ($orderContainer->getPayStatus() != 1 || 1) {
 
             $params = CartHandler::getPaypalParams($orderContainer);
             $gateway = CartHandler::getPaypalGateway();
@@ -69,24 +69,25 @@ class Cart extends Controller
 
             $orderContainer->setPayResponse(json_encode($paypalResponse));
 
-            if(isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success') {
+            if(isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success' || 1) {
                 $orderContainer->setPayStatus(1);
                 $orderContainer->save();
 
-//                $messageBody = $app['twig']->render('emails/email-invoice.twig', array(
-//                    'orm' => $orm,
-//                    'app' => $app,
-//                ));
-//                $orm->emailContent = $messageBody;
-//
-//                $message = \Swift_Message::newInstance()
-//                    ->setSubject('TradeKiwi Invoice #' . $orm->trackId)
-//                    ->setFrom(array(EMAIL_FROM))
-//                    ->setTo(array($orm->email))
-//                    ->setBcc(array(EMAIL_BCC))
-//                    ->setBody(
-//                        $messageBody,'text/html'
-//                    );
+                $messageBody = $this->container->get('twig')->render("email/invoice.twig", array(
+                    'orderContainer' => $orderContainer,
+                ));
+                $orderContainer->setEmailContent($messageBody);
+
+                var_dump($this->container);exit;
+
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('TradeKiwi Invoice #' . $orderContainer->getUniqid())
+                    ->setFrom(array(EMAIL_FROM))
+                    ->setTo(array($orderContainer->getEmail()))
+                    ->setBcc(array(EMAIL_BCC))
+                    ->setBody(
+                        $messageBody,'text/html'
+                    );
 //                $app['mailer']->send($message);
 
                 $this->container->get('session')->set('orderContainer', null);
@@ -155,7 +156,7 @@ class Cart extends Controller
             }
         }
 
-        static::updateOrder($orderContainer, $pdo);
+        Shop::updateOrder($orderContainer, $pdo);
 
         return new Response(count($orderContainer->getPendingItems()));
     }
@@ -202,7 +203,38 @@ class Cart extends Controller
             }
         }
 
-        static::updateOrder($orderContainer, $pdo);
+        Shop::updateOrder($orderContainer, $pdo);
+
+        return new JsonResponse($orderContainer);
+    }
+
+    /**
+     * @route("/cart/order/address/update", name="updateAddress")
+     * @return Response
+     */
+    public function updateAddress()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $shop = new Shop($this->container);
+        $orderContainer = $shop->getOrderContainer();
+
+        $request = Request::createFromGlobals();
+        $o = json_decode($request->get('order'));
+
+//        var_dump($o);exit;
+
+        foreach ($o as $idx => $itm) {
+            if (strpos($idx, 'shipping') == -1 && strpos($idx, 'billing') == -1) {
+                continue;
+            }
+            $method = 'set' . ucfirst($idx);
+            $orderContainer->$method($itm);
+        }
+
+        Shop::updateOrder($orderContainer, $pdo);
 
         return new JsonResponse($orderContainer);
     }
@@ -234,7 +266,7 @@ class Cart extends Controller
             }
         }
 
-        static::updateOrder($orderContainer, $pdo);
+        Shop::updateOrder($orderContainer, $pdo);
 
         return new JsonResponse($orderContainer);
     }
@@ -257,54 +289,9 @@ class Cart extends Controller
 
         $orderContainer->setPromoCode($code);
 
-        static::updateOrder($orderContainer, $pdo);
+        Shop::updateOrder($orderContainer, $pdo);
 
         return new JsonResponse($orderContainer);
     }
 
-    static public function updateOrder(Order &$orderContainer, \PDO $pdo)
-    {
-        $result = 0;
-
-        /** @var OrderItem[] $pendingItems */
-        $pendingItems = $orderContainer->getPendingItems();
-        foreach ($pendingItems as $pendingItem) {
-            $result += $pendingItem->getSubtotal();
-        }
-
-        $subtotal = round($result * 20 / 23, 2);
-
-
-        $discount = 0;
-        /** @var PromoCode $promoCode */
-        $promoCode = PromoCode::getByField($pdo, 'title', $orderContainer->getPromoCode());
-        if ($promoCode) {
-            $valid = true;
-            if ($promoCode->getStartdate() && strtotime($promoCode->getStartdate()) >= time()) {
-                $valid = false;
-            }
-            if ($promoCode->getEnddate() && strtotime($promoCode->getEnddate()) <= time()) {
-                $valid = false;
-            }
-
-            if ($valid) {
-                if ($promoCode->getPerc() == 1) {
-                    $discount = round(($promoCode->getValue() / 100) * $subtotal, 2);
-                } else {
-                    $discount = $promoCode->getValue();
-                }
-            }
-        }
-
-        $gst = round(($subtotal - $discount) * 0.15, 2);
-
-
-        $total = $subtotal - $discount + $gst;
-
-        $orderContainer->setDiscount($discount);
-        $orderContainer->setSubtotal($subtotal);
-        $orderContainer->setGst($gst);
-        $orderContainer->setTotal($total);
-
-    }
 }

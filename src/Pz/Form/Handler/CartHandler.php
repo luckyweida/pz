@@ -5,16 +5,6 @@ namespace Pz\Form\Handler;
 use Cocur\Slugify\Slugify;
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayFactory;
-use PayPal\Api\Address;
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\Payer;
-use PayPal\Api\PayerInfo;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction;
-use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Rest\ApiContext;
 use Pz\Axiom\Eve;
 use Pz\Axiom\Walle;
 use Pz\Orm\_Model;
@@ -22,10 +12,10 @@ use Pz\Orm\DataGroup;
 use Pz\Orm\Order;
 use Pz\Redirect\RedirectException;
 use Pz\Service\Db;
-use Pz\Service\Shop;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Web\Service\Shop;
 
 class CartHandler
 {
@@ -58,20 +48,19 @@ class CartHandler
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            Shop::updateOrder($orderContainer, $pdo);
+
+            if ($orderContainer->getId()) {
+                /** @var Order $oc */
+                $oc = Order::getById($pdo, $orderContainer->getId());
+                if ($oc->getPayStatus() == 1) {
+                    $this->container->get('session')->set('orderContainer', null);
+                    throw new RedirectException('/cart-success?id=' . $orderContainer->getUniqid(), 301);
+                }
+            }
+
             $data = $request->get($form->getName());
             if ($data['action'] == 'paypal') {
-
-                if ($orderContainer->getId()) {
-
-                    /** @var Order $oc */
-                    $oc = Order::getById($pdo, $orderContainer->getId());
-                    if ($oc->getPayStatus() == 1) {
-                        $this->container->get('session')->set('orderContainer', null);
-                        throw new RedirectException('/cart-success?id=' . $orderContainer->getUniqid(), 301);
-                    }
-
-                }
-
                 $gateway = static::getPaypalGateway();
                 $params = static::getPaypalParams($orderContainer);
 

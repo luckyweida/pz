@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-01 22:50:48
+//Last updated: 2018-12-03 14:47:39
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -24,17 +24,27 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $discount;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
     private $subtotal;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
+    private $discount;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $afterDiscount;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
     private $gst;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $deliveryFee;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -242,22 +252,6 @@ class Order extends Walle
     /**
      * @return mixed
      */
-    public function getDiscount()
-    {
-        return $this->discount;
-    }
-    
-    /**
-     * @param mixed discount
-     */
-    public function setDiscount($discount)
-    {
-        $this->discount = $discount;
-    }
-    
-    /**
-     * @return mixed
-     */
     public function getSubtotal()
     {
         return $this->subtotal;
@@ -274,6 +268,38 @@ class Order extends Walle
     /**
      * @return mixed
      */
+    public function getDiscount()
+    {
+        return $this->discount;
+    }
+    
+    /**
+     * @param mixed discount
+     */
+    public function setDiscount($discount)
+    {
+        $this->discount = $discount;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getAfterDiscount()
+    {
+        return $this->afterDiscount;
+    }
+    
+    /**
+     * @param mixed afterDiscount
+     */
+    public function setAfterDiscount($afterDiscount)
+    {
+        $this->afterDiscount = $afterDiscount;
+    }
+    
+    /**
+     * @return mixed
+     */
     public function getGst()
     {
         return $this->gst;
@@ -285,6 +311,22 @@ class Order extends Walle
     public function setGst($gst)
     {
         $this->gst = $gst;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDeliveryFee()
+    {
+        return $this->deliveryFee;
+    }
+    
+    /**
+     * @param mixed deliveryFee
+     */
+    public function setDeliveryFee($deliveryFee)
+    {
+        $this->deliveryFee = $deliveryFee;
     }
     
     /**
