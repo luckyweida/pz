@@ -63,7 +63,9 @@ class OrmHandler
                 $stmt->execute();
                 $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
 
-                $opts['choices'] = array();
+                $opts['choices'] = array(
+                    '@1' => ''
+                );
                 foreach ($result as $key => $val) {
                     $opts['choices'][$val->value] = $val->key;
                 }
@@ -91,7 +93,7 @@ class OrmHandler
 
                 $nodes = array();
                 foreach ($result as $key => $val) {
-                    $node = new Node($val->key, $val->value, $val->parentId, $key);
+                    $node = new Node($val->key, $val->value, $val->parentId ?: 0, $key);
                     $nodes[] = $node;
                 }
                 $tree = new Tree($nodes);
