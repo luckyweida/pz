@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class ConstraintIfNotSameThenRequiredValidator extends ConstraintValidator
+class ConstraintRequiredValidator extends ConstraintValidator
 {
 	public function validate($value, Constraint $constraint)
 	{
@@ -18,7 +18,7 @@ class ConstraintIfNotSameThenRequiredValidator extends ConstraintValidator
 	    $reqeust = Request::createFromGlobals();
 	    $data = $reqeust->request->get($form->getBlockPrefix());
 
-		if ((!isset($data[$constraint->attrToCheckIfSame]) || $data[$constraint->attrToCheckIfSame] != 1) && !$value) {
+		if ((!isset($data[$constraint->fieldToCheck]) || $data[$constraint->fieldToCheck] != 1) && !$value) {
 //            var_dump('errpr');
 			$this->context->addViolation(
 				$constraint->message,

@@ -3,20 +3,67 @@
 namespace Pz\Controller;
 
 
+use Http\Discovery\Exception\NotFoundException;
 use Pz\Axiom\Mo;
 use Pz\Orm\Asset;
 use Pz\Orm\AssetSize;
+use Pz\Orm\Customer;
 use Pz\Orm\Page;
 use Pz\Router\Node;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
 class Web extends Mo
 {
+    /**
+     * @route("/activate/{id}", name="activate")
+     * @return Response
+     */
+    public function activate($id)
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        /** @var Customer $customer */
+        $customer = Customer::getByField($pdo, 'uniqid', $id);
+        if (!$customer) {
+            throw new NotFoundException();
+        }
+
+        if ($customer->getIsActivated() == 1) {
+            throw new NotFoundException();
+        }
+
+        $customer->setIsActivated(1);
+        $customer->setStatus(1);
+        $customer->save();
+
+        $data = Customer::data($pdo, array(
+            'whereSql' => 'm.title = ? AND m.id != ? AND m.status = 0',
+            'params' => array($customer->getTitle(), $customer->getId()),
+        ));
+
+        foreach ($data as $itm) {
+            $itm->delete();
+        }
+
+
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());
+        $tokenStorage->setToken($token);
+        $this->get('session')->set('_security_member', serialize($token));
+        return new RedirectResponse('\member\dashboard');
+    }
+
     /**
      * @route("/assets/image/{id}/{size}", name="preview")
      * @return Response

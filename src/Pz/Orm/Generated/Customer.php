@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-03 21:09:00
+//Last updated: 2018-12-08 18:59:57
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -30,6 +30,21 @@ class Customer extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $lastname;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $resetToken;
+    
+    /**
+     * #pz datetime DEFAULT NULL
+     */
+    private $resetExpiry;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $isActivated;
     
     /**
      * @return mixed
@@ -109,6 +124,54 @@ class Customer extends Walle
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+    
+    /**
+     * @param mixed resetToken
+     */
+    public function setResetToken($resetToken)
+    {
+        $this->resetToken = $resetToken;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getResetExpiry()
+    {
+        return $this->resetExpiry;
+    }
+    
+    /**
+     * @param mixed resetExpiry
+     */
+    public function setResetExpiry($resetExpiry)
+    {
+        $this->resetExpiry = $resetExpiry;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getIsActivated()
+    {
+        return $this->isActivated;
+    }
+    
+    /**
+     * @param mixed isActivated
+     */
+    public function setIsActivated($isActivated)
+    {
+        $this->isActivated = $isActivated;
     }
     
 }
