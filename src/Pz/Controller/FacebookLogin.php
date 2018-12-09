@@ -110,12 +110,11 @@ class FacebookLogin extends Controller
             }
 
 
-            $response = new RedirectResponse($redirectUrl);
-            $request->attributes->set('_remember_me', 'on');
-            $token = new UsernamePasswordToken($orm, $orm->password, "public", $orm->getRoles());
-//        $app['security.remember_me.service.common']->loginSuccess($request, $response, $token);
-            $app['security.token_storage']->setToken($token);
-            return $response;
+            $tokenStorage = $this->container->get('security.token_storage');
+            $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());
+            $tokenStorage->setToken($token);
+            $this->get('session')->set('_security_member', serialize($token));
+            return new RedirectResponse($redirectUrl);
         }
 	}
 }
