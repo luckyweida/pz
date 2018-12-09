@@ -24,9 +24,9 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class Web extends Mo
 {
     /**
-     * @route("/activate/{id}", name="activate")
-     * @return Response
-     */
+ * @route("/activate/{id}", name="activate")
+ * @return Response
+ */
     public function activate($id)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
@@ -62,6 +62,36 @@ class Web extends Mo
         $tokenStorage->setToken($token);
         $this->get('session')->set('_security_member', serialize($token));
         return new RedirectResponse('\member\dashboard');
+    }
+
+    /**
+     * @route("/reset/{token}", name="resetPassword")
+     * @return Response
+     */
+    public function resetPassword($token)
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        /** @var Customer $customer */
+        $customer = Customer::getByField($pdo, 'resetToken', $token);
+        if (!$customer) {
+            throw new NotFoundException();
+        }
+
+        if (time() >= strtotime($customer->getResetExpiry())) {
+            throw new NotFoundException();
+        }
+
+        $customer->setResetToken('');
+//        $customer->save();
+
+        $tokenStorage = $this->container->get('security.token_storage');
+        $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());
+        $tokenStorage->setToken($token);
+        $this->get('session')->set('_security_member', serialize($token));
+        return new RedirectResponse('\member\password');
     }
 
     /**

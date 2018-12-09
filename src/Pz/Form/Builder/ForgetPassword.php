@@ -47,6 +47,7 @@ class ForgetPassword extends AbstractType
                     'pdo' => $pdo,
                     'fieldToCheck' => 'title',
                     'className' => 'Customer',
+                    'extraQuery' => 'm.isActivated = 1',
                 )),
             )
         ));

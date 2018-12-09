@@ -10,4 +10,5 @@ class ConstraintExist extends Constraint
 	public $pdo;
     public $fieldToCheck;
     public $className;
+    public $extraQuery;
 }

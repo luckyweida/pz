@@ -18,7 +18,7 @@ class ConstraintExistValidator extends ConstraintValidator
 
             $orm = $fullClassName::data($pdo, array(
                 'oneOrNull' => 1,
-                'whereSql' => "m.$fieldToCheck = ? AND m.status = 1",
+                'whereSql' => "m.$fieldToCheck = ? AND m.status = 1" . ($constraint->extraQuery ? ' AND ' . $constraint->extraQuery : ''),
                 'params' => array($value),
             ));
             if (!$orm) {
