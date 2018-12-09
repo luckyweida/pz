@@ -17,10 +17,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class GoogleLogin extends Controller
 {
-
-    const ID = '735938162621-62rfsfiahhpkkirb6mu05jv63p3h3je7.apps.googleusercontent.com';
-    const SECRET = 'R7nAU-nt2fGiJCbUbBQvJreb';
-
     /**
      * @route("/google/verify", name="verifyGoogle")
      * @return Response
@@ -29,8 +25,8 @@ class GoogleLogin extends Controller
         $request = Request::createFromGlobals();
 
         $client = new \Google_Client();
-        $client->setClientId(static::ID);
-        $client->setClientSecret(static::SECRET);
+        $client->setClientId(getenv('GOOGLE_ID'));
+        $client->setClientSecret(getenv('GOOGLE_SECRET'));
         $client->setIncludeGrantedScopes(true);
         $client->addScope(\Google_Service_Plus::USERINFO_EMAIL);
         $client->addScope(\Google_Service_Plus::USERINFO_PROFILE);

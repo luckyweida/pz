@@ -18,9 +18,6 @@ use Facebook\Facebook;
 
 class FacebookLogin extends Controller
 {
-    const ID = '358957728012867';
-    const SECRET = '201dd0de7706e50efff47323d4628e8b';
-
     /**
      * @route("/facebook/verify", name="verifyFacebook")
      * @return Response
@@ -29,8 +26,8 @@ class FacebookLogin extends Controller
         $request = Request::createFromGlobals();
 
         $fb = new Facebook(array(
-            'app_id' => static::ID,
-            'app_secret' => static::SECRET,
+            'app_id' => getenv('FACEBOOK_ID'),
+            'app_secret' => getenv('FACEBOOK_SECRET'),
             'default_graph_version' => 'v2.12',
         ));
         $helper = $fb->getRedirectLoginHelper();
@@ -61,7 +58,7 @@ class FacebookLogin extends Controller
 //				echo '<h3>Metadata</h3>';
 //				var_dump($tokenMetadata);
             // Validation (these will throw FacebookSDKException's when they fail)
-            $tokenMetadata->validateAppId(static::ID);
+            $tokenMetadata->validateAppId(getenv('FACEBOOK_ID'));
             // If you know the user ID this access token belongs to, you can validate it here
             // $tokenMetadata->validateUserId('123');
             $tokenMetadata->validateExpiration();
@@ -77,10 +74,10 @@ class FacebookLogin extends Controller
                 var_dump($accessToken->getValue());
             }
 //				$_SESSION['fb_access_token'] = (string) $accessToken;
-            $app['session']->set('fb_access_token', (string) $accessToken);
+            $this->get('session')->set('fb_access_token', (string) $accessToken);
             try {
                 // Returns a `Facebook\FacebookResponse` object
-                $response = $fb->get('/me?fields=id,name,email', $app['session']->get('fb_access_token'));
+                $response = $fb->get('/me?fields=id,name,email', $this->get('session')->get('fb_access_token'));
             } catch(Facebook\Exceptions\FacebookResponseException $e) {
                 echo 'Graph returned an error: ' . $e->getMessage();
                 exit;
@@ -89,21 +86,29 @@ class FacebookLogin extends Controller
                 exit;
             }
             $fbUser = $response->getGraphUser();
-//				var_dump($fbUser->getId(), $fbUser->getEmail(), $fbUser->getName());exit;
+
+            $names = explode(' ', $fbUser->getName());
+            $firstName = $names[0];
+            if (count($names) > 1) {
+                $lastName = join(' ' , array_slice($names, 1));
+            } else {
+                $lastName = '';
+            }
+
             $customer = Customer::data($pdo, array(
                 'whereSql' => 'm.title = ? AND m.status = 1',
-                'params' => array($userInfo->email),
+                'params' => array($fbUser->getEmail()),
                 'oneOrNull' => 1,
             ));
 
             $redirectUrl = '\member\dashboard';
             if (!$customer) {
                 $customer = new Customer($pdo);
-                $customer->setTitle($userInfo->email);
-                $customer->setFirstname($userInfo->givenName);
-                $customer->setLastname($userInfo->familyName);
-                $customer->setSource(RegisterHandler::GOOGLE);
-                $customer->setSourceId($userInfo->id);
+                $customer->setTitle($fbUser->getEmail());
+                $customer->setFirstname($firstName);
+                $customer->setLastname($lastName);
+                $customer->setSource(RegisterHandler::FACEBOOK);
+                $customer->setSourceId($fbUser->getId());
                 $customer->setIsActivated(1);
                 $customer->save();
                 $redirectUrl = '\member\password';
