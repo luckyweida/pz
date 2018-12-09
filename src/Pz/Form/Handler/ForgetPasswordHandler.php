@@ -18,12 +18,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Web\Service\Shop;
 
-class RegisterHandler
+class ForgetPasswordHandler
 {
-    const WEBSITE = 1;
-    const GOOGLE = 2;
-    const FACEBOOK = 3;
-
     private $container;
 
     public function __construct(ContainerInterface $container)
@@ -42,7 +38,7 @@ class RegisterHandler
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
         /** @var Form $form */
-        $form = $formFactory->create(\Pz\Form\Builder\Register::class, $orm, array(
+        $form = $formFactory->create(\Pz\Form\Builder\ForgetPassword::class, $orm, array(
             'container' => $this->container,
         ));
 
@@ -50,13 +46,13 @@ class RegisterHandler
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $messageBody = $this->container->get('twig')->render("email/email-activate.twig", array(
+            $messageBody = $this->container->get('twig')->render("email/email-forget.twig", array(
                 'customer' => $orm,
             ));
 
 
             $message = (new \Swift_Message())
-                ->setSubject('West Brook - Acticate your account')
+                ->setSubject('West Brook - Reset your password')
                 ->setFrom('noreply@westbrook.co.nz')
                 ->setTo($orm->getTitle())
                 ->setBody($messageBody, 'text/html');
@@ -64,10 +60,7 @@ class RegisterHandler
 
             $this->container->get('mailer')->send($message);
 
-            $orm->setSource(static::WEBSITE);
             $orm->save();
-
-            throw new RedirectException('/activation/required?id=' . $orm->getUniqid());
 
         }
 

@@ -13,4 +13,12 @@ class Page extends \Pz\Orm\Generated\Page
         $pageTemplate = PageTemplate::getById($this->getPdo(), $this->getTemplate());
         return $pageTemplate;
     }
+
+    /**
+     * @return mixed
+     */
+    public function objContent()
+    {
+        return json_decode($this->getContent());
+    }
 }

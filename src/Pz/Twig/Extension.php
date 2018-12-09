@@ -49,6 +49,7 @@ class Extension extends AbstractExtension
     public function getFilters()
     {
         return array(
+            'jsondecode' => new TwigFilter('jsondecode', array($this, 'jsondecode')),
             'block' => new TwigFilter('block', array($this, 'block')),
             'section' => new TwigFilter('section', array($this, 'section')),
             'sections' => new TwigFilter('sections', array($this, 'sections')),
@@ -63,6 +64,11 @@ class Extension extends AbstractExtension
 //        while (@ob_end_clean());
 //        var_dump($this->container->getParameter('kernel.project_dir') . '/public/' . $path);exit;
         return file_get_contents($this->container->getParameter('kernel.project_dir') . '/public/' . $path);
+    }
+
+    public function jsondecode($value)
+    {
+        return json_decode($value);
     }
 
     public function block($block)
