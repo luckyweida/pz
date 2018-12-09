@@ -95,6 +95,10 @@ class FacebookLogin extends Controller
                 $lastName = '';
             }
 
+            $connection = $this->container->get('doctrine.dbal.default_connection');
+            /** @var \PDO $pdo */
+            $pdo = $connection->getWrappedConnection();
+
             $customer = Customer::data($pdo, array(
                 'whereSql' => 'm.title = ? AND m.status = 1',
                 'params' => array($fbUser->getEmail()),
