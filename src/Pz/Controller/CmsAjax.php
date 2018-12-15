@@ -20,14 +20,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class Ajax extends Controller
+class CmsAjax extends Controller
 {
-
     /**
-     * @route("/pz/ajax/column/sort", name="pzAjaxColumnSort")
+     * @route("/pz/ajax/column/sort")
      * @return Response
      */
-    public function pzAjaxColumnSort()
+    public function cmsAjaxColumnSort()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -49,10 +48,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/nestable/sort", name="pzAjaxNestableSort")
+     * @route("/pz/ajax/nestable/sort")
      * @return Response
      */
-    public function pzAjaxNestableSort()
+    public function cmsAjaxNestableSort()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -75,10 +74,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/nestable/closed", name="pzAjaxNestableClosed")
+     * @route("/pz/ajax/nestable/closed")
      * @return Response
      */
-    public function pzAjaxNestableClosed()
+    public function cmsAjaxNestableClosed()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -102,10 +101,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/status", name="pzAjaxStatus")
+     * @route("/pz/ajax/status")
      * @return Response
      */
-    public function pzAjaxStatus()
+    public function cmsAjaxStatus()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -126,10 +125,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/delete", name="pzAjaxDelete")
+     * @route("/pz/ajax/delete")
      * @return Response
      */
-    public function pzAjaxDelete()
+    public function cmsAjaxDelete()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -149,10 +148,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/cat/count", name="pzAjaxCatCount")
+     * @route("/pz/ajax/cat/count")
      * @return Response
      */
-    public function pzAjaxCatCount()
+    public function cmsAjaxCatCount()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -187,10 +186,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/pages/sort", name="pzAjaxPagesSort")
+     * @route("/pz/ajax/pages/sort")
      * @return Response
      */
-    public function pzAjaxPagesSort()
+    public function cmsAjaxPagesSort()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -225,10 +224,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/page/change", name="pzAjaxPageChange")
+     * @route("/pz/ajax/page/change")
      * @return Response
      */
-    public function pzAjaxPageChange()
+    public function cmsAjaxPageChange()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -272,10 +271,10 @@ class Ajax extends Controller
     }
 
     /**
-     * @route("/pz/ajax/page/closed", name="pzAjaxPageClosed")
+     * @route("/pz/ajax/page/closed")
      * @return Response
      */
-    public function pzAjaxPageClosed()
+    public function cmsAjaxPageClosed()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */

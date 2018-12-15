@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Pz\Axiom\Mo;
 use Pz\Orm\_Model;
 use Pz\Orm\AssetSize;
+use Pz\Orm\Country;
 use Pz\Orm\DataGroup;
 use Pz\Orm\FragmentBlock;
 use Pz\Orm\FragmentDefault;
@@ -15,6 +16,7 @@ use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Orm\PageTemplate;
 use Pz\Orm\User;
+use Pz\Reader\Csv;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +28,7 @@ class Init extends Controller
 {
 
     /**
-     * @route("/init_pz", name="init")
+     * @route("/init_pz")
      * @return Response
      */
     public function init()
@@ -74,16 +76,22 @@ class Init extends Controller
         $this->addFragmentBlock($pdo);
         $this->addFragmentDefault($pdo);
         $this->addDataGroups($pdo);
+        $this->addCountries($pdo);
 
         $pdo->commit();
 
         return new Response('OK');
     }
 
+    /**
+     * @param $pdo
+     */
     public function addUsers($pdo)
     {
-        $orm = User::getByField($pdo, 'title', 'weida');
-        if (!$orm) {
+        $total = User::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $encoder = new MessageDigestPasswordEncoder();
             $orm = new User($pdo);
             $orm->setId(1);
@@ -92,11 +100,7 @@ class Init extends Controller
             $orm->setName('Weida');
             $orm->setEmail('luckyweida@gmail.com');
             $orm->save(true);
-        }
 
-        $orm = User::getByField($pdo, 'title', 'admin');
-        if (!$orm) {
-            $encoder = new MessageDigestPasswordEncoder();
             $orm = new User($pdo);
             $orm->setId(2);
             $orm->setTitle('admin');
@@ -107,37 +111,33 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addAssetSizes($pdo)
     {
-        $orm = AssetSize::getByField($pdo, 'title', 'full');
-        if (!$orm) {
+        $total = AssetSize::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new AssetSize($pdo);
             $orm->setId(1);
             $orm->setTitle('full');
             $orm->setWidth(1440);
             $orm->save(true);
-        }
 
-        $orm = AssetSize::getByField($pdo, 'title', 'large');
-        if (!$orm) {
             $orm = new AssetSize($pdo);
             $orm->setId(2);
             $orm->setTitle('large');
             $orm->setWidth(960);
             $orm->save(true);
-        }
 
-        $orm = AssetSize::getByField($pdo, 'title', 'medium');
-        if (!$orm) {
             $orm = new AssetSize($pdo);
             $orm->setId(3);
             $orm->setTitle('medium');
             $orm->setWidth(480);
             $orm->save(true);
-        }
 
-        $orm = AssetSize::getByField($pdo, 'title', 'small');
-        if (!$orm) {
             $orm = new AssetSize($pdo);
             $orm->setId(4);
             $orm->setTitle('small');
@@ -146,19 +146,22 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addPageCategories($pdo)
     {
-        $orm = PageCategory::getByField($pdo, 'title', 'Main nav');
-        if (!$orm) {
+
+        $total = PageCategory::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new PageCategory($pdo);
             $orm->setId(1);
             $orm->setTitle('Main nav');
             $orm->setCode('main');
             $orm->save(true);
-        }
 
-        $orm = PageCategory::getByField($pdo, 'title', 'Footer nav');
-        if (!$orm) {
             $orm = new PageCategory($pdo);
             $orm->setId(2);
             $orm->setTitle('Footer nav');
@@ -167,55 +170,45 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addPageTemplates($pdo)
     {
-        $orm = PageTemplate::getByField($pdo, 'title', 'layout.html.twig');
-        if (!$orm) {
+        $total = PageTemplate::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new PageTemplate($pdo);
             $orm->setId(1);
             $orm->setTitle('layout.html.twig');
             $orm->setFilename('layout.html.twig');
             $orm->save(true);
-        }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'home.html.twig');
-        if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(2);
             $orm->setTitle('home.html.twig');
             $orm->setFilename('home.html.twig');
             $orm->save(true);
-        }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'about.html.twig');
-        if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(3);
             $orm->setTitle('about.html.twig');
             $orm->setFilename('about.html.twig');
             $orm->save(true);
-        }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'news.html.twig');
-        if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(4);
             $orm->setTitle('news.html.twig');
             $orm->setFilename('news.html.twig');
             $orm->save(true);
-        }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'news-detail.html.twig');
-        if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(5);
             $orm->setTitle('news-detail.html.twig');
             $orm->setFilename('news-detail.html.twig');
             $orm->save(true);
-        }
 
-        $orm = PageTemplate::getByField($pdo, 'title', 'contact.html.twig');
-        if (!$orm) {
             $orm = new PageTemplate($pdo);
             $orm->setId(6);
             $orm->setTitle('contact.html.twig');
@@ -224,10 +217,15 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addPages($pdo)
     {
-        $orm = Page::getByField($pdo, 'title', 'Home');
-        if (!$orm) {
+        $total = Page::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new Page($pdo);
             $orm->setId(1);
             $orm->setTitle('Home');
@@ -238,10 +236,7 @@ class Init extends Controller
             $orm->setCategoryRank(json_encode(array("cat1" => 0)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
             $orm->save(true);
-        }
 
-        $orm = Page::getByField($pdo, 'title', 'About');
-        if (!$orm) {
             $orm = new Page($pdo);
             $orm->setId(2);
             $orm->setTitle('About');
@@ -252,10 +247,7 @@ class Init extends Controller
             $orm->setCategoryRank(json_encode(array("cat1" => 1)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
             $orm->save(true);
-        }
 
-        $orm = Page::getByField($pdo, 'title', 'News');
-        if (!$orm) {
             $orm = new Page($pdo);
             $orm->setId(3);
             $orm->setTitle('News');
@@ -266,10 +258,7 @@ class Init extends Controller
             $orm->setCategoryRank(json_encode(array("cat1" => 2)));
             $orm->setCategoryParent(json_encode(array("cat1" => 0)));
             $orm->save(true);
-        }
 
-        $orm = Page::getByField($pdo, 'title', 'News detail');
-        if (!$orm) {
             $orm = new Page($pdo);
             $orm->setId(4);
             $orm->setTitle('News detail');
@@ -281,10 +270,7 @@ class Init extends Controller
             $orm->setCategoryParent(json_encode(array("cat1" => 3)));
             $orm->setStatus(2);
             $orm->save(true);
-        }
 
-        $orm = Page::getByField($pdo, 'title', 'Contact');
-        if (!$orm) {
             $orm = new Page($pdo);
             $orm->setId(5);
             $orm->setTitle('Contact');
@@ -298,18 +284,20 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addFragmentTags($pdo)
     {
-        $orm = FragmentTag::getByField($pdo, 'title', 'Page');
-        if (!$orm) {
+        $total = FragmentTag::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new FragmentTag($pdo);
             $orm->setId(1);
             $orm->setTitle('Page');
             $orm->save(true);
-        }
 
-        $orm = FragmentTag::getByField($pdo, 'title', 'CMS');
-        if (!$orm) {
             $orm = new FragmentTag($pdo);
             $orm->setId(2);
             $orm->setTitle('CMS');
@@ -317,10 +305,15 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addFragmentBlock($pdo)
     {
-        $orm = FragmentBlock::getByField($pdo, 'title', 'Heading & Content');
-        if (!$orm) {
+        $total = FragmentBlock::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new FragmentBlock($pdo);
             $orm->setId(1);
             $orm->setTitle('Heading & Content');
@@ -331,10 +324,15 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addFragmentDefault($pdo)
     {
-        $orm = FragmentDefault::getByField($pdo, 'title', 'Page');
-        if (!$orm) {
+        $total = FragmentDefault::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new FragmentDefault($pdo);
             $orm->setId(1);
             $orm->setTitle('Page');
@@ -344,24 +342,48 @@ class Init extends Controller
         }
     }
 
+    /**
+     * @param $pdo
+     */
     public function addDataGroups($pdo)
     {
-        $orm = DataGroup::getByField($pdo, 'title', 'Database');
-        if (!$orm) {
+        $total = DataGroup::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
             $orm = new DataGroup($pdo);
             $orm->setId(1);
             $orm->setTitle('Database');
             $orm->setIcon('fa fa-database');
             $orm->save(true);
-        }
 
-        $orm = DataGroup::getByField($pdo, 'title', 'Shop');
-        if (!$orm) {
             $orm = new DataGroup($pdo);
             $orm->setId(2);
             $orm->setTitle('Shop');
             $orm->setIcon('fa fa-shopping-cart');
             $orm->save(true);
+        }
+    }
+
+    /**
+     * @param $pdo
+     */
+    public function addCountries($pdo)
+    {
+        $total = Country::data($pdo, array(
+            'count' => 1,
+        ));
+        if ($total['count'] == 0) {
+            $csv = new Csv($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/countries.csv');
+            $row = $csv->getNextRow();
+            while ($row = $csv->getNextRow()) {
+                if ($row[2]) {
+                    $orm = new Country($pdo);
+                    $orm->setTitle($row[1]);
+                    $orm->setCode($row[2]);
+                    $orm->save();
+                }
+            }
         }
     }
 }

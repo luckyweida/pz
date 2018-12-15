@@ -2,14 +2,14 @@
 
 namespace Pz\Controller;
 
-
-use Http\Discovery\Exception\NotFoundException;
 use Pz\Form\Handler\CartHandler;
 use Pz\Orm\Order;
 use Pz\Orm\OrderItem;
 use Pz\Orm\Product;
 use Pz\Orm\PromoCode;
 use Web\Service\Shop;
+
+use Http\Discovery\Exception\NotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,9 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class Cart extends Controller
 {
-
     /**
-     * @route("/cart-cancel", name="cancelOrder")
+     * @route("/cart-cancel")
      * @return Response
      */
     public function cancelOrder()
@@ -38,12 +37,15 @@ class Cart extends Controller
             throw new NotFoundException();
         }
 
+        if ($orderContainer->getPayStatus() != Order::STATUS_SUCCESS) {
+            $orderContainer->setPayStatus(Order::STATUS_UNPAID);
+        }
         $this->container->get('session')->set('orderContainer', $orderContainer);
         return new RedirectResponse('/cart');
     }
 
     /**
-     * @route("/cart-finalise", name="finaliseOrder")
+     * @route("/cart-finalise")
      * @return Response
      */
     public function finaliseOrder()
@@ -60,7 +62,7 @@ class Cart extends Controller
             throw new NotFoundException();
         }
 
-        if ($orderContainer->getPayStatus() != 1 || 1) {
+        if ($orderContainer->getPayStatus() != Order::STATUS_SUCCESS) {
 
             $params = CartHandler::getPaypalParams($orderContainer);
             $gateway = CartHandler::getPaypalGateway();
@@ -69,8 +71,8 @@ class Cart extends Controller
 
             $orderContainer->setPayResponse(json_encode($paypalResponse));
 
-            if(isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success' || 1) {
-                $orderContainer->setPayStatus(1);
+            if(isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success') {
+                $orderContainer->setPayStatus(Order::STATUS_SUCCESS);
                 $orderContainer->save();
 
                 $messageBody = $this->container->get('twig')->render("email/invoice.twig", array(
@@ -95,14 +97,13 @@ class Cart extends Controller
 
             } else {
 //                $template = 'payment-failed.twig';
-                $orderContainer->setPayStatus(0);
+                $orderContainer->setPayStatus(Order::STATUS_UNPAID);
                 $orderContainer->save();
+                $this->container->get('session')->set('orderContainer', $orderContainer);
                 return new RedirectResponse('/cart-failed?id=' . $orderContainer->getUniqid());
             }
 
-//
-
-        } else if ($orderContainer->getPayStatus() == 1) {
+        } else if ($orderContainer->getPayStatus() == Order::STATUS_SUCCESS) {
             $this->container->get('session')->set('orderContainer', null);
             return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
         }
@@ -111,9 +112,8 @@ class Cart extends Controller
         throw new NotFoundException();
     }
 
-
     /**
-     * @route("/cart/item/add/{id}/{quantity}", name="addOrderItem")
+     * @route("/cart/item/add/{id}/{quantity}")
      * @return Response
      */
     public function addOrderItem($id, $quantity)
@@ -162,7 +162,7 @@ class Cart extends Controller
     }
 
     /**
-     * @route("/cart/order", name="getOrder")
+     * @route("/cart/order")
      * @return Response
      */
     public function getOrder()
@@ -178,7 +178,7 @@ class Cart extends Controller
     }
 
     /**
-     * @route("/cart/item/qty", name="changeItemQty")
+     * @route("/cart/item/qty")
      * @return Response
      */
     public function changeItemQty()
@@ -209,7 +209,7 @@ class Cart extends Controller
     }
 
     /**
-     * @route("/cart/order/address/update", name="updateAddress")
+     * @route("/cart/order/address/update")
      * @return Response
      */
     public function updateAddress()
@@ -240,7 +240,7 @@ class Cart extends Controller
     }
 
     /**
-     * @route("/cart/item/delete", name="deleteItem")
+     * @route("/cart/item/delete")
      * @return Response
      */
     public function deleteItem()
@@ -272,7 +272,7 @@ class Cart extends Controller
     }
 
     /**
-     * @route("/cart/promo/apply", name="applyPromoCode")
+     * @route("/cart/promo/apply")
      * @return Response
      */
     public function applyPromoCode()
@@ -293,5 +293,4 @@ class Cart extends Controller
 
         return new JsonResponse($orderContainer);
     }
-
 }

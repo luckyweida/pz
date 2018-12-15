@@ -2,8 +2,9 @@
 namespace Pz\Controller;
 
 
-use Pz\Form\Handler\RegisterHandler;
 use Pz\Orm\Customer;
+use Pz\Service\Shop;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class GoogleLogin extends Controller
 {
     /**
-     * @route("/google/verify", name="verifyGoogle")
+     * @route("/google/verify")
      * @return Response
      */
 	public function verifyGoogle() {
@@ -58,18 +59,26 @@ class GoogleLogin extends Controller
                 'oneOrNull' => 1,
             ));
 
-            $redirectUrl = '\member\dashboard';
+            $redirectUrl = '/member/dashboard';
             if (!$customer) {
                 $customer = new Customer($pdo);
                 $customer->setTitle($userInfo->email);
                 $customer->setFirstname($userInfo->givenName);
                 $customer->setLastname($userInfo->familyName);
-                $customer->setSource(RegisterHandler::GOOGLE);
+                $customer->setSource(Customer::GOOGLE);
                 $customer->setSourceId($userInfo->id);
                 $customer->setIsActivated(1);
                 $customer->save();
-                $redirectUrl = '\member\password';
+                $redirectUrl = '/member/password?returnUrl=' . urlencode('/cart');
+            } else {
+                $shop = new Shop($this->container);
+                $orderContainer = $shop->getOrderContainer();
+                if (count($orderContainer->getPendingItems())) {
+                    $redirectUrl = '/member/after_login';
+                }
             }
+
+
 
             $tokenStorage = $this->container->get('security.token_storage');
             $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());

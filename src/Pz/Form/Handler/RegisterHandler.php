@@ -2,28 +2,18 @@
 
 namespace Pz\Form\Handler;
 
+use Pz\Orm\Customer;
+use Pz\Redirect\RedirectException;
+
 use Cocur\Slugify\Slugify;
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayFactory;
-use Pz\Axiom\Eve;
-use Pz\Axiom\Walle;
-use Pz\Orm\_Model;
-use Pz\Orm\Customer;
-use Pz\Orm\DataGroup;
-use Pz\Orm\Order;
-use Pz\Redirect\RedirectException;
-use Pz\Service\Db;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-use Web\Service\Shop;
 
 class RegisterHandler
 {
-    const WEBSITE = 1;
-    const GOOGLE = 2;
-    const FACEBOOK = 3;
-
     private $container;
 
     public function __construct(ContainerInterface $container)
@@ -64,7 +54,7 @@ class RegisterHandler
 
             $this->container->get('mailer')->send($message);
 
-            $orm->setSource(static::WEBSITE);
+            $orm->setSource(Customer::WEBSITE);
             $orm->save();
 
             throw new RedirectException('/activation/required?id=' . $orm->getUniqid());

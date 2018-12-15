@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-18 20:21:16
+//Last updated: 2018-12-10 20:08:54
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -14,7 +14,17 @@ class CustomerAddress extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $customerId;
+    private $firstname;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $lastname;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $phone;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -29,17 +39,17 @@ class CustomerAddress extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $Suburb;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
     private $city;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $postcode;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $state;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -54,7 +64,7 @@ class CustomerAddress extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $sourceId;
+    private $customerId;
     
     /**
      * @return mixed
@@ -75,17 +85,49 @@ class CustomerAddress extends Walle
     /**
      * @return mixed
      */
-    public function getCustomerId()
+    public function getFirstname()
     {
-        return $this->customerId;
+        return $this->firstname;
     }
     
     /**
-     * @param mixed customerId
+     * @param mixed firstname
      */
-    public function setCustomerId($customerId)
+    public function setFirstname($firstname)
     {
-        $this->customerId = $customerId;
+        $this->firstname = $firstname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+    
+    /**
+     * @param mixed lastname
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+    
+    /**
+     * @param mixed phone
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
     }
     
     /**
@@ -123,22 +165,6 @@ class CustomerAddress extends Walle
     /**
      * @return mixed
      */
-    public function getSuburb()
-    {
-        return $this->Suburb;
-    }
-    
-    /**
-     * @param mixed Suburb
-     */
-    public function setSuburb($Suburb)
-    {
-        $this->Suburb = $Suburb;
-    }
-    
-    /**
-     * @return mixed
-     */
     public function getCity()
     {
         return $this->city;
@@ -166,6 +192,22 @@ class CustomerAddress extends Walle
     public function setPostcode($postcode)
     {
         $this->postcode = $postcode;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+    
+    /**
+     * @param mixed state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
     }
     
     /**
@@ -203,17 +245,17 @@ class CustomerAddress extends Walle
     /**
      * @return mixed
      */
-    public function getSourceId()
+    public function getCustomerId()
     {
-        return $this->sourceId;
+        return $this->customerId;
     }
     
     /**
-     * @param mixed sourceId
+     * @param mixed customerId
      */
-    public function setSourceId($sourceId)
+    public function setCustomerId($customerId)
     {
-        $this->sourceId = $sourceId;
+        $this->customerId = $customerId;
     }
     
 }

@@ -21,13 +21,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class AjaxAsset extends Controller
+class AssetAjax extends Controller
 {
     /**
-     * @route("/pz/ajax/asset/files/chosen/rank", name="pzAjaxAssetFilesChosenRank")
+     * @route("/pz/ajax/asset/files/chosen/rank")
      * @return Response
      */
-    public function pzAjaxAssetFilesChosenRank()
+    public function assetAjaxFilesChosenRank()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -56,10 +56,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/chosen", name="pzAjaxAssetFilesChosen")
+     * @route("/pz/ajax/asset/files/chosen")
      * @return Response
      */
-    public function pzAjaxAssetFilesChosen()
+    public function assetAjaxFilesChosen()
     {
         $data = array();
 
@@ -89,10 +89,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files", name="pzAjaxAssetFiles")
+     * @route("/pz/ajax/asset/files")
      * @return Response
      */
-    public function pzAjaxAssetFiles()
+    public function assetAjaxFiles()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -143,10 +143,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/folders", name="pzAjaxAssetFolders")
+     * @route("/pz/ajax/asset/folders")
      * @return Response
      */
-    public function pzAjaxAssetFolders()
+    public function assetAjaxFolders()
     {
         $request = Request::createFromGlobals();
         $currentFolderId = $request->get('currentFolderId') ?: 0;
@@ -160,10 +160,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/folders/file/select", name="pzAjaxAssetFoldersFileSelect")
+     * @route("/pz/ajax/asset/folders/file/select")
      * @return Response
      */
-    public function pzAjaxAssetFoldersFileSelect()
+    public function assetAjaxFoldersFileSelect()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -224,10 +224,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/nav", name="pzAjaxAssetNav")
+     * @route("/pz/ajax/asset/nav")
      * @return Response
      */
-    public function pzAjaxAssetNav()
+    public function assetAjaxNav()
     {
         $request = Request::createFromGlobals();
         $currentFolderId = $request->get('currentFolderId') ?: 0;
@@ -243,10 +243,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/add/folder", name="pzAjaxAssetAddFolder")
+     * @route("/pz/ajax/asset/files/add/folder")
      * @return Response
      */
-    public function pzAjaxAssetAddFolder()
+    public function assetAjaxAddFolder()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -275,10 +275,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/edit/folder", name="pzAjaxAssetEditFolder")
+     * @route("/pz/ajax/asset/files/edit/folder")
      * @return Response
      */
-    public function pzAjaxAssetEditFolder()
+    public function assetAjaxEditFolder()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -298,10 +298,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/folders/update", name="pzAjaxAssetFoldersUpdate")
+     * @route("/pz/ajax/asset/folders/update")
      * @return Response
      */
-    public function pzAjaxAssetFoldersUpdate()
+    public function assetAjaxFoldersUpdate()
     {
 
         $connection = $this->container->get('doctrine.dbal.default_connection');
@@ -321,10 +321,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/file/move", name="pzAjaxAssetFileMove")
+     * @route("/pz/ajax/asset/file/move")
      * @return Response
      */
-    public function pzAjaxAssetFileMove()
+    public function assetAjaxFileMove()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -342,10 +342,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/delete/folder", name="pzAjaxAssetDeleteFolder")
+     * @route("/pz/ajax/asset/files/delete/folder")
      * @return Response
      */
-    public function pzAjaxAssetDeleteFolder()
+    public function assetAjaxDeleteFolder()
     {
         $request = Request::createFromGlobals();
         $id = $request->get('id');
@@ -363,10 +363,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/delete/file", name="pzAjaxAssetDeleteFile")
+     * @route("/pz/ajax/asset/files/delete/file")
      * @return Response
      */
-    public function pzAjaxAssetDeleteFile()
+    public function assetAjaxDeleteFile()
     {
         $request = Request::createFromGlobals();
         $id = $request->get('id');
@@ -388,10 +388,10 @@ class AjaxAsset extends Controller
     }
 
     /**
-     * @route("/pz/ajax/asset/files/upload", name="pzAjaxAssetUpload")
+     * @route("/pz/ajax/asset/files/upload")
      * @return Response
      */
-    public function pzAjaxAssetUpload()
+    public function assetAjaxUpload()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -468,7 +468,8 @@ class AjaxAsset extends Controller
     }
 
     /**
-     *
+     * @param $currentFolderId
+     * @return Node
      */
     private function getFolderRoot($currentFolderId)
     {

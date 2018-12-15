@@ -4,24 +4,53 @@ namespace Pz\Orm;
 
 class Order extends \Pz\Orm\Generated\Order implements \Serializable
 {
+    const STATUS_UNPAID = 0;
+    const STATUS_SUBMITTED = 1;
+    const STATUS_SUCCESS = 2;
+
+    const DELIVERY_HIDDEN = 0;
+    const DELIVERY_VISIBLE = 1;
+
     /** @var OrderItem[] $pendingItems */
     private $pendingItems;
 
     /** @var OrderItem[] $orderItems */
     private $orderItems;
 
+    /** @var DeliveryOption[] $deliveryOptions */
+    private $deliveryOptions;
+
     public function __construct(\PDO $pdo)
     {
-        $this->setShippingCountry('NZ');
-        $this->setBillingCountry('NZ');
         $this->setBillingSame(1);
+//        $this->setDeliveryStatus(static::DELIVERY_HIDDEN);
+//        $this->setPayStatus(static::STATUS_UNPAID);
 
         $this->pendingItems = array();
         $this->orderItems = array();
+        $this->deliveryOptions = array();
 
         parent::__construct($pdo);
     }
 
+    /**
+     * @return array|Country[]
+     */
+    public function getAvailableCountries()
+    {
+        /** @var Country[] $result */
+        $result = array();
+        /** @var DeliveryOption[] $result */
+        $deliveryOptions = DeliveryOption::active($pdo);
+        foreach ($deliveryOptions as $itm) {
+            $result = array_merge($result, $itm->objCountries());
+        }
+        return $result;
+    }
+
+    /**
+     * @param $pendingItem
+     */
     public function addPendingItem($pendingItem)
     {
         $this->pendingItems[] = $pendingItem;
@@ -61,6 +90,31 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
     public function setOrderItems(array $orderItems): void
     {
         $this->orderItems = $orderItems;
+    }
+
+    /**
+     * @return DeliveryOption[]
+     */
+    public function getDeliveryOptions()
+    {
+        /** @var Country[] $result */
+        $result = array();
+        /** @var DeliveryOption[] $result */
+        $deliveryOptions = DeliveryOption::active($pdo);
+//        var_dump($this->getCou)
+        foreach ($deliveryOptions as $itm) {
+            $result = array_merge($result, $itm->objCountries());
+        }
+        return $result;
+        return $this->deliveryOptions;
+    }
+
+    /**
+     * @param array $deliveryOptions
+     */
+    public function setDeliveryOptions(array $deliveryOptions): void
+    {
+        $this->deliveryOptions = $deliveryOptions;
     }
 
     /**

@@ -2,14 +2,12 @@
 
 namespace Pz\Form\Builder;
 
-use Pz\Form\Constraints\ConstraintBillingRequired;
 use Pz\Form\Constraints\ConstraintRequired;
-use Pz\Form\Type\ChoiceMultiJson;
 use Pz\Orm\Country;
+use Pz\Orm\DeliveryOption;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,13 +30,19 @@ class Cart extends AbstractType
         $pdo = $connection->getWrappedConnection();
 
         $countries = array();
+
         /** @var Country[] $result */
-        $result = Country::active($pdo, array(
-            'sort' => 'title'
-        ));
+        $result = array();
+        /** @var DeliveryOption[] $result */
+        $deliveryOptions = DeliveryOption::active($pdo);
+        foreach ($deliveryOptions as $itm) {
+            $result = array_merge($result, $itm->objCountries());
+        }
         foreach ($result as $itm) {
             $countries[$itm->getTitle()] = $itm->getCode();
         }
+
+        ksort($countries);
 
 //        var_dump($countries);exit;
 
@@ -46,8 +50,6 @@ class Cart extends AbstractType
 
         $builder->add('action', TextType::class, array(
             'mapped' => false,
-            'constraints' => array(//                new Assert\NotBlank(),
-            )
         ))->add('email', TextType::class, array(
             'label' => 'Email address:',
             'constraints' => array(
@@ -89,6 +91,8 @@ class Cart extends AbstractType
         ))->add('billingState', TextType::class, array(
             'label' => 'State:',
         ))->add('billingCountry', ChoiceType::class, array(
+            'required'   => false,
+            'empty_data' => 'Choose a country',
             'label' => 'Country:',
             'choices' => $countries,
             'constraints' => array(
@@ -153,6 +157,8 @@ class Cart extends AbstractType
         ))->add('shippingState', TextType::class, array(
             'label' => 'State:',
         ))->add('shippingCountry', ChoiceType::class, array(
+            'required'   => false,
+            'empty_data' => 'Choose a country',
             'label' => 'Country:',
             'choices' => $countries,
             'constraints' => array(

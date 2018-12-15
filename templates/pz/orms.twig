@@ -11,7 +11,7 @@
 
 {% set totalPages = 0 %}
 {% set pageNum = app.request.get('pageNum') ?: 1 %}
-{% set url = '/pz/admin/' ~ model.id %}
+{% set url = '/pz/' ~ (model.dataType == 0 ? 'database' : 'admin') ~ '/' ~ model.id %}
 
 {% set orms = [] %}
 {% if model.listType == 0 %}

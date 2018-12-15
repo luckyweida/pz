@@ -2,8 +2,9 @@
 namespace Pz\Controller;
 
 
-use Pz\Form\Handler\RegisterHandler;
 use Pz\Orm\Customer;
+use Pz\Service\Shop;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ use Facebook\Facebook;
 class FacebookLogin extends Controller
 {
     /**
-     * @route("/facebook/verify", name="verifyFacebook")
+     * @route("/facebook/verify")
      * @return Response
      */
 	public function verifyFacebook() {
@@ -105,17 +106,23 @@ class FacebookLogin extends Controller
                 'oneOrNull' => 1,
             ));
 
-            $redirectUrl = '\member\dashboard';
+            $redirectUrl = '/member/dashboard';
             if (!$customer) {
                 $customer = new Customer($pdo);
                 $customer->setTitle($fbUser->getEmail());
                 $customer->setFirstname($firstName);
                 $customer->setLastname($lastName);
-                $customer->setSource(RegisterHandler::FACEBOOK);
+                $customer->setSource(Customer::FACEBOOK);
                 $customer->setSourceId($fbUser->getId());
                 $customer->setIsActivated(1);
                 $customer->save();
-                $redirectUrl = '\member\password';
+                $redirectUrl = '/member/password?returnUrl=' . urlencode('/cart');
+            } else {
+                $shop = new Shop($this->container);
+                $orderContainer = $shop->getOrderContainer();
+                if (count($orderContainer->getPendingItems())) {
+                    $redirectUrl = '/member/after_login';
+                }
             }
 
 

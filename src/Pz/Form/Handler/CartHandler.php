@@ -2,30 +2,34 @@
 
 namespace Pz\Form\Handler;
 
-use Cocur\Slugify\Slugify;
-use Omnipay\Common\CreditCard;
-use Omnipay\Common\GatewayFactory;
-use Pz\Axiom\Eve;
-use Pz\Axiom\Walle;
-use Pz\Orm\_Model;
-use Pz\Orm\DataGroup;
 use Pz\Orm\Order;
 use Pz\Redirect\RedirectException;
-use Pz\Service\Db;
+use Web\Service\Shop;
+
+use Omnipay\Common\CreditCard;
+use Omnipay\Common\GatewayFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-use Web\Service\Shop;
 
 class CartHandler
 {
     private $container;
 
+    /**
+     * CartHandler constructor.
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param Order $orderContainer
+     * @return \Symfony\Component\Form\FormView
+     * @throws RedirectException
+     */
     public function handle(Order $orderContainer)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
@@ -42,9 +46,6 @@ class CartHandler
             'container' => $this->container,
         ));
 
-
-
-
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +54,7 @@ class CartHandler
             if ($orderContainer->getId()) {
                 /** @var Order $oc */
                 $oc = Order::getById($pdo, $orderContainer->getId());
-                if ($oc->getPayStatus() == 1) {
+                if ($oc->getPayStatus() == Order::STATUS_SUCCESS) {
                     $this->container->get('session')->set('orderContainer', null);
                     throw new RedirectException('/cart-success?id=' . $orderContainer->getUniqid(), 301);
                 }
@@ -66,17 +67,18 @@ class CartHandler
 
                 $response = $gateway->purchase($params)->send();
 
+                $orderContainer->setPayStatus(Order::STATUS_SUBMITTED);
                 $orderContainer->setPayRequest(json_encode($response->getData()));
                 $orderContainer->setPayToken($response->getTransactionReference());
                 $orderContainer->setPayDate(date('Y-m-d H:i:s'));
                 $orderContainer->save();
 
+                //ORDER: Save order items
                 $orderItems = array();
                 foreach ($orderContainer->getPendingItems() as $itm) {
                     $itm->save();
                     $orderItems[] = $itm;
                 }
-
                 $orderContainer->setOrderItems($orderItems);
 
                 if ($response->isSuccessful()) {
@@ -97,6 +99,9 @@ class CartHandler
         return $form->createView();
     }
 
+    /**
+     * @return \Omnipay\Common\GatewayInterface
+     */
     static function getPaypalGateway()
     {
         $factory = new GatewayFactory();
@@ -108,6 +113,10 @@ class CartHandler
         return $gateway;
     }
 
+    /**
+     * @param Order $orderContainer
+     * @return array
+     */
     static function getPaypalParams(Order $orderContainer)
     {
         $cardInput = array(

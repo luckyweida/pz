@@ -10,6 +10,7 @@ use Pz\Orm\AssetSize;
 use Pz\Orm\Customer;
 use Pz\Orm\Page;
 use Pz\Router\Node;
+use Pz\Service\Shop;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,9 +25,47 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class Web extends Mo
 {
     /**
- * @route("/activate/{id}", name="activate")
- * @return Response
- */
+     * @route("/login")
+     * @return Response
+     */
+    public function member_login(AuthenticationUtils $authenticationUtils)
+    {
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+        return $this->render('login.html.twig', array(
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ));
+    }
+
+    /**
+     * @route("/member/after_login")
+     * @return Response
+     */
+    public function member_after_login()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+
+        $redirectUrl = '/member/dashboard';
+        $shop = new Shop($this->container);
+        $orderContainer = $shop->getOrderContainer();
+        if (!$orderContainer->getEmail()) {
+            $orderContainer->setEmail($this->getUser()->getTitle());
+        }
+        if (count($orderContainer->getPendingItems())) {
+            $redirectUrl = '/cart';
+        }
+
+        return new RedirectResponse($redirectUrl);
+    }
+
+    /**
+     * @route("/activate/{id}")
+     * @return Response
+     */
     public function activate($id)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
@@ -65,7 +104,7 @@ class Web extends Mo
     }
 
     /**
-     * @route("/reset/{token}", name="resetPassword")
+     * @route("/reset/{token}")
      * @return Response
      */
     public function resetPassword($token)
@@ -95,7 +134,7 @@ class Web extends Mo
     }
 
     /**
-     * @route("/assets/image/{id}/{size}", name="preview")
+     * @route("/assets/image/{id}/{size}")
      * @return Response
      */
     public function preview($id, $size)
@@ -170,7 +209,7 @@ class Web extends Mo
     }
 
     /**
-     * @route("/assets/download/{id}", name="download")
+     * @route("/assets/download/{id}")
      * @return Response
      */
     public function download($id)
@@ -201,7 +240,7 @@ class Web extends Mo
     }
 
     /**
-     * @route("/{page}", requirements={"page" = ".*"}, name="web")
+     * @route("/{page}", requirements={"page" = ".*"})
      * @return Response
      */
     public function web()

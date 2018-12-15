@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class Cms extends Mo
 {
     /**
-     * @route("/pz/login", name="login")
+     * @route("/pz/login")
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
@@ -33,7 +33,7 @@ class Cms extends Mo
     }
 
     /**
-     * @route("/pz/admin/models/{type}/copy/{modelId}", requirements={"type" = "customised|built-in"}, name="copyModel")
+     * @route("/pz/admin/models/{type}/copy/{modelId}", requirements={"type" = "customised|built-in"})
      * @return Response
      */
     public function copyModel($modelId)
@@ -58,7 +58,7 @@ class Cms extends Mo
     }
 
     /**
-     * @route("/pz/{section}/{modelId}/copy/{ormId}", requirements={"section" = "database|admin"}, name="copyOrm")
+     * @route("/pz/{section}/{modelId}/copy/{ormId}", requirements={"section" = "database|admin"})
      * @return Response
      */
     public function copyOrm($modelId, $ormId)
@@ -99,7 +99,7 @@ class Cms extends Mo
     }
 
     /**
-     * @route("/pz/{page}", requirements={"page" = ".*"}, name="cms")
+     * @route("/pz/{page}", requirements={"page" = ".*"})
      * @return Response
      */
     public function cms()

@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-03 14:47:39
+//Last updated: 2018-12-15 17:13:55
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -200,6 +200,21 @@ class Order extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $payToken;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $deliveryDescription;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $deliveryId;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $deliveryStatus;
     
     /**
      * @return mixed
@@ -823,6 +838,54 @@ class Order extends Walle
     public function setPayToken($payToken)
     {
         $this->payToken = $payToken;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDeliveryDescription()
+    {
+        return $this->deliveryDescription;
+    }
+    
+    /**
+     * @param mixed deliveryDescription
+     */
+    public function setDeliveryDescription($deliveryDescription)
+    {
+        $this->deliveryDescription = $deliveryDescription;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDeliveryId()
+    {
+        return $this->deliveryId;
+    }
+    
+    /**
+     * @param mixed deliveryId
+     */
+    public function setDeliveryId($deliveryId)
+    {
+        $this->deliveryId = $deliveryId;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDeliveryStatus()
+    {
+        return $this->deliveryStatus;
+    }
+    
+    /**
+     * @param mixed deliveryStatus
+     */
+    public function setDeliveryStatus($deliveryStatus)
+    {
+        $this->deliveryStatus = $deliveryStatus;
     }
     
 }

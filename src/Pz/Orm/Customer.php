@@ -9,6 +9,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class Customer extends \Pz\Orm\Generated\Customer implements UserInterface, EquatableInterface, \Serializable
 {
+    const WEBSITE = 1;
+    const GOOGLE = 2;
+    const FACEBOOK = 3;
+
+    public function objAddresses() {
+
+        return CustomerAddress::active($this->getPdo(), array(
+            'whereSql' => 'm.customerId = ?',
+            'params' => [$this->getId()],
+        ));
+    }
+
     public function save($doubleCheck = false)
     {
         if ($this->getPasswordInput()) {

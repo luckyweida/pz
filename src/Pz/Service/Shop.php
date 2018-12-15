@@ -2,20 +2,16 @@
 
 namespace Pz\Service;
 
-use Pz\Form\Type\ContentBlock;
-use Pz\Orm\FragmentBlock;
 use Pz\Orm\Order;
 use Pz\Orm\OrderItem;
-use Pz\Orm\PageCategory;
-use Pz\Orm\PageTemplate;
 use Pz\Orm\Product;
 use Pz\Orm\ProductCategory;
-use Pz\Router\Node;
-use Pz\Router\Tree;
+
 use Symfony\Component\DependencyInjection\Container;
 
 class Shop
 {
+
     /**
      * Shop constructor.
      * @param Container $container
@@ -25,6 +21,10 @@ class Shop
         $this->container = $container;
     }
 
+    /**
+     * @return Order
+     * @throws \Exception
+     */
     public function getOrderContainer() {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -32,13 +32,13 @@ class Shop
 
         /** @var Order $orderContainer */
         $orderContainer = $this->container->get('session')->get('orderContainer');
-        if (!$orderContainer || $orderContainer->getPayStatus() == 1) {
+        if (!$orderContainer || $orderContainer->getPayStatus() != Order::STATUS_UNPAID) {
             $orderContainer = new Order($pdo);
             $this->container->get('session')->set('orderContainer', $orderContainer);
         }
 
 
-//        var_dump($orderContainer->getOrderItems());exit;
+        //ORDER: Load order items
         foreach ($orderContainer->getOrderItems() as $orderItem) {
             $exist = false;
             foreach ($orderContainer->getPendingItems() as $pendingItem) {
@@ -51,23 +51,17 @@ class Shop
             }
         }
 
+//        var_dump($orderContainer);exit;
         return $orderContainer;
     }
 
-    public function total($selectedCategories, $options = array())
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $params = $this->getBasicParams($selectedCategories, $options);
-        $result = Product::active($pdo, array_merge($params, array(
-            'count' => 1,
-        )));
-        return $result['count'];
-    }
-
-    public function products($selectedCategories, $options = array())
+    /**
+     * @param $selectedCategories
+     * @param array $options
+     * @return array|null
+     * @throws \Exception
+     */
+    public function getProducts($selectedCategories, $options = array())
     {
         $pagination = isset($options['pagination']) ? $options['pagination'] : 1;
         $limit = isset($options['limit']) ? $options['limit'] : 12;
@@ -85,7 +79,32 @@ class Shop
         )));
     }
 
-    public function getBasicParams($selectedCategories, $options = array())
+    /**
+     * @param $selectedCategories
+     * @param array $options
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getProductsTotal($selectedCategories, $options = array())
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $params = $this->getBasicParams($selectedCategories, $options);
+        $result = Product::active($pdo, array_merge($params, array(
+            'count' => 1,
+        )));
+        return $result['count'];
+    }
+
+    /**
+     * @param $selectedCategories
+     * @param array $options
+     * @return array
+     * @throws \Exception
+     */
+    private function getBasicParams($selectedCategories, $options = array())
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
