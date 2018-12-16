@@ -1,7 +1,7 @@
 <?php
 namespace Pz\Form\Constraints;
 
-use Pz\Service\Db;
+use Pz\Service\DbService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Web\ORMs\Customer;
@@ -14,7 +14,7 @@ class ConstraintUniqueValidator extends ConstraintValidator
             $pdo = $constraint->pdo;
             $fieldToCheck = $constraint->fieldToCheck;
             $className = $constraint->className;
-            $fullClassName = Db::fullClassName($className);
+            $fullClassName = DbService::fullClassName($className);
 
             $orm = $fullClassName::data($pdo, array(
                 'oneOrNull' => 1,

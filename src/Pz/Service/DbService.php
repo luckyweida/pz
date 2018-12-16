@@ -2,10 +2,10 @@
 
 namespace Pz\Service;
 
-class Db
+class DbService
 {
     /**
-     * Db constructor.
+     * DbService constructor.
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(\Doctrine\DBAL\Connection $connection)

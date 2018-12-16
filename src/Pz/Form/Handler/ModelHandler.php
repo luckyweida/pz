@@ -8,7 +8,7 @@ use Pz\Axiom\Walle;
 use Pz\Orm\_Model;
 use Pz\Orm\DataGroup;
 use Pz\Redirect\RedirectException;
-use Pz\Service\Db;
+use Pz\Service\DbService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,7 +28,7 @@ class ModelHandler
         $pdo = $connection->getWrappedConnection();
 
         /** @var Walle $fullClassName */
-        $fullClassName = Db::fullClassName($model->getClassName());
+        $fullClassName = DbService::fullClassName($model->getClassName());
         $fullClassName::sync($pdo);
     }
 
@@ -161,7 +161,7 @@ EOD;
         file_put_contents($file, $str);
 
         if ($model->getId()) {
-            $db = new Db($connection);
+            $db = new DbService($connection);
             /** @var _Model $model */
             $model = $db->getById('_Model', $model->getId());
             if ($model) {

@@ -7,13 +7,13 @@ use Pz\Axiom\Mo;
 use Pz\Orm\AssetOrm;
 use Pz\Orm\DataGroup;
 use Pz\Router\Node;
-use Pz\Service\Db;
+use Pz\Service\DbService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class Cms extends Mo
+class CmsController extends Mo
 {
     /**
      * @route("/pz/login")
@@ -73,7 +73,7 @@ class Cms extends Mo
         $pdo = $connection->getWrappedConnection();
         /** @var _Model $model */
         $model = _Model::getById($pdo, $modelId);
-        $fullClassName = Db::fullClassName($model->getClassName());
+        $fullClassName = DbService::fullClassName($model->getClassName());
         $orm = $fullClassName::getById($pdo, $ormId);
         $uniqId = $orm->getUniqid();
 
@@ -148,7 +148,7 @@ class Cms extends Mo
                 $nodes[] = $dgNode;
 
                 foreach ($result as $idx => $itm) {
-                    $fullClass = Db::fullClassName($itm->getClassName());
+                    $fullClass = DbService::fullClassName($itm->getClassName());
 
                     $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
                     $nodes[] = $node;
@@ -189,7 +189,7 @@ class Cms extends Mo
         /** @var _Model[] $modelDatabase */
         $modelDatabase = _Model::active($pdo);
         foreach ($modelDatabase as $idx => $itm) {
-            $fullClass = Db::fullClassName($itm->getClassName());
+            $fullClass = DbService::fullClassName($itm->getClassName());
 
             if ($itm->getDataType() == 1) {
                 $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), $fullClass::getCmsOrmsTwig());

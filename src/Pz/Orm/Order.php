@@ -2,15 +2,10 @@
 //Last updated: 2018-11-10 16:54:41
 namespace Pz\Orm;
 
+use Web\Service\CartService;
+
 class Order extends \Pz\Orm\Generated\Order implements \Serializable
 {
-    const STATUS_UNPAID = 0;
-    const STATUS_SUBMITTED = 1;
-    const STATUS_SUCCESS = 2;
-
-    const DELIVERY_HIDDEN = 0;
-    const DELIVERY_VISIBLE = 1;
-
     /** @var OrderItem[] $pendingItems */
     private $pendingItems;
 
@@ -23,8 +18,8 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
     public function __construct(\PDO $pdo)
     {
         $this->setBillingSame(1);
-//        $this->setDeliveryStatus(static::DELIVERY_HIDDEN);
-//        $this->setPayStatus(static::STATUS_UNPAID);
+        $this->setDeliveryStatus(CartService::DELIVERY_HIDDEN());
+        $this->setPayStatus(CartService::STATUS_UNPAID());
 
         $this->pendingItems = array();
         $this->orderItems = array();

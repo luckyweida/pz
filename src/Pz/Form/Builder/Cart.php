@@ -92,7 +92,7 @@ class Cart extends AbstractType
             'label' => 'State:',
         ))->add('billingCountry', ChoiceType::class, array(
             'required'   => false,
-            'empty_data' => 'Choose a country',
+            'empty_data' => null,
             'label' => 'Country:',
             'choices' => $countries,
             'constraints' => array(
@@ -158,7 +158,7 @@ class Cart extends AbstractType
             'label' => 'State:',
         ))->add('shippingCountry', ChoiceType::class, array(
             'required'   => false,
-            'empty_data' => 'Choose a country',
+            'empty_data' => null,
             'label' => 'Country:',
             'choices' => $countries,
             'constraints' => array(

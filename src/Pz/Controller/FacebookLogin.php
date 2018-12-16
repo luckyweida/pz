@@ -3,7 +3,7 @@ namespace Pz\Controller;
 
 
 use Pz\Orm\Customer;
-use Pz\Service\Shop;
+use Web\Service\CartService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -118,8 +118,8 @@ class FacebookLogin extends Controller
                 $customer->save();
                 $redirectUrl = '/member/password?returnUrl=' . urlencode('/cart');
             } else {
-                $shop = new Shop($this->container);
-                $orderContainer = $shop->getOrderContainer();
+                $cart = new CartService($this->container);
+                $orderContainer = $cart->getOrderContainer();
                 if (count($orderContainer->getPendingItems())) {
                     $redirectUrl = '/member/after_login';
                 }

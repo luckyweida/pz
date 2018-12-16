@@ -9,10 +9,10 @@ use Pz\Orm\PageTemplate;
 use Pz\Router\Node;
 use Pz\Router\Tree;
 
-class Utils
+class UtilsService
 {
     /**
-     * Db constructor.
+     * UtilsService constructor.
      * @param \Doctrine\DBAL\Connection $connection
      */
     public function __construct(\Doctrine\DBAL\Connection $connection)

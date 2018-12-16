@@ -10,7 +10,7 @@ use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Router\Node;
 use Pz\Router\Tree;
-use Pz\Service\Db;
+use Pz\Service\DbService;
 use Pz\Twig\Extension;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class CmsAjax extends Controller
+class CmsAjaxController extends Controller
 {
     /**
      * @route("/pz/ajax/column/sort")
@@ -36,7 +36,7 @@ class CmsAjax extends Controller
         $data = json_decode($request->get('data'));
         $className = $request->get('className');
 
-        $fullClassName = Db::fullClassName($className);
+        $fullClassName = DbService::fullClassName($className);
         foreach ($data as $idx => $itm) {
             $orm = $fullClassName::getById($pdo, $itm);
             if ($orm) {
@@ -61,7 +61,7 @@ class CmsAjax extends Controller
         $data = json_decode($request->get('data'));
         $className = $request->get('model');
 
-        $fullClassName = Db::fullClassName($className);
+        $fullClassName = DbService::fullClassName($className);
         foreach ($data as $idx => $itm) {
             $orm = $fullClassName::getById($pdo, $itm->id);
             if ($orm) {
@@ -88,7 +88,7 @@ class CmsAjax extends Controller
         $closed = $request->get('closed') ?: 0;
         $className = $request->get('model');
 
-        $fullClassName = Db::fullClassName($className);
+        $fullClassName = DbService::fullClassName($className);
         $orm = $fullClassName::getById($pdo, $id);
         if (!$orm) {
             throw new NotFoundHttpException();
@@ -115,7 +115,7 @@ class CmsAjax extends Controller
         $id = $request->get('id');
         $className = $request->get('className');
 
-        $fullClassName = Db::fullClassName($className);
+        $fullClassName = DbService::fullClassName($className);
         $orm = $fullClassName::getById($pdo, $id);
         if ($orm) {
             $orm->setStatus($status);
@@ -139,7 +139,7 @@ class CmsAjax extends Controller
         $id = $request->get('id');
         $className = $request->get('className');
 
-        $fullClassName = Db::fullClassName($className);
+        $fullClassName = DbService::fullClassName($className);
         $orm = $fullClassName::getById($pdo, $id);
         if ($orm) {
             $orm->delete();

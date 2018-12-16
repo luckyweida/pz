@@ -11,7 +11,6 @@ use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
 use Pz\Router\Node;
 use Pz\Router\Tree;
-use Pz\Service\Db;
 use Pz\Twig\Extension;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class AssetAjax extends Controller
+class AssetAjaxController extends Controller
 {
     /**
      * @route("/pz/ajax/asset/files/chosen/rank")
