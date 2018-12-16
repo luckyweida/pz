@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-15 12:59:19
+//Last updated: 2018-12-16 17:55:00
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -10,11 +10,6 @@ class DeliveryOption extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $title;
-    
-    /**
-     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
-     */
-    private $subtitle;
     
     /**
      * #pz mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -45,22 +40,6 @@ class DeliveryOption extends Walle
     public function setTitle($title)
     {
         $this->title = $title;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getSubtitle()
-    {
-        return $this->subtitle;
-    }
-    
-    /**
-     * @param mixed subtitle
-     */
-    public function setSubtitle($subtitle)
-    {
-        $this->subtitle = $subtitle;
     }
     
     /**

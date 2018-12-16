@@ -4,7 +4,7 @@
     "slug": "delivery-options",
     "rank": "19",
     "added": "2018-12-12 22:00:22",
-    "modified": "2018-12-15 12:54:16",
+    "modified": "2018-12-15 14:47:06",
     "status": "1",
     "title": "Delivery Options",
     "className": "DeliveryOption",
@@ -16,5 +16,5 @@
     "numberPerPage": "50",
     "defaultSortBy": "id",
     "defaultOrder": 1,
-    "columnsJson": "[{\"id\":\"z1544604339307\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544605204589\",\"column\":\"shortdescription\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Subtitle:\",\"field\":\"subtitle\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544827072148\",\"column\":\"content\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\ContentBlock\",\"label\":\"Content:\",\"field\":\"content\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544605127177\",\"column\":\"fax\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Information URL heading:\",\"field\":\"infoHeading\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544605115219\",\"column\":\"url\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"information URL:\",\"field\":\"infoUrl\",\"required\":0,\"sql\":\"\"}]"
+    "columnsJson": "[{\"id\":\"z1544604339307\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544827072148\",\"column\":\"content\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\ContentBlock\",\"label\":\"Content:\",\"field\":\"content\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544605127177\",\"column\":\"fax\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Information URL heading:\",\"field\":\"infoHeading\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1544605115219\",\"column\":\"url\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"information URL:\",\"field\":\"infoUrl\",\"required\":0,\"sql\":\"\"}]"
 }

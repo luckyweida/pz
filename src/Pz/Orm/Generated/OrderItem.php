@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-11-26 22:05:34
+//Last updated: 2018-12-16 21:54:45
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -35,6 +35,16 @@ class OrderItem extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $subtotal;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $weight;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $totalWeight;
     
     /**
      * @return mixed
@@ -130,6 +140,38 @@ class OrderItem extends Walle
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+    
+    /**
+     * @param mixed weight
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getTotalWeight()
+    {
+        return $this->totalWeight;
+    }
+    
+    /**
+     * @param mixed totalWeight
+     */
+    public function setTotalWeight($totalWeight)
+    {
+        $this->totalWeight = $totalWeight;
     }
     
 }

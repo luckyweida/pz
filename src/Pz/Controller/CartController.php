@@ -36,9 +36,6 @@ class CartController extends Controller
 
         $cart = new CartService($this->container);
         $orderContainer = $cart->getOrderContainer();
-        $orderContainer->setBillingSame($orderContainer->getBillingSame() ? true : false);
-        $orderContainer->setBillingSave($orderContainer->getBillingSave() ? true : false);
-        $orderContainer->setShippingSave($orderContainer->getShippingSave() ? true : false);
 
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
@@ -85,9 +82,6 @@ class CartController extends Controller
 
         $cart = new CartService($this->container);
         $orderContainer = $cart->getOrderContainer();
-        $orderContainer->setBillingSame($orderContainer->getBillingSame() ? true : false);
-        $orderContainer->setBillingSave($orderContainer->getBillingSave() ? true : false);
-        $orderContainer->setShippingSave($orderContainer->getShippingSave() ? true : false);
 
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
@@ -148,6 +142,52 @@ class CartController extends Controller
         return $this->render('cart-review.html.twig', array(
             'orderContainer' => $orderContainer,
             'form' => $form,
+        ));
+    }
+
+    /**
+     * @route("/cart-success")
+     * @return Response
+     */
+    public function cartSuccess()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+        /** @var Order $orderContainer */
+        $orderContainer = Order::getByField($pdo, 'uniqid', $id);
+        if (!$orderContainer || $orderContainer->getPayStatus() != CartService::STATUS_SUCCESS()) {
+            throw new NotFoundException();
+        }
+
+        return $this->render('cart-success.html.twig', array(
+            'orderContainer' => $orderContainer,
+        ));
+    }
+
+    /**
+     * @route("/cart-failed")
+     * @return Response
+     */
+    public function cartFailed()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $id = $request->get('id');
+        /** @var Order $orderContainer */
+        $orderContainer = Order::getByField($pdo, 'uniqid', $id);
+        if (!$orderContainer || $orderContainer->getPayStatus() == CartService::STATUS_SUCCESS()) {
+            throw new NotFoundException();
+        }
+
+        return $this->render('cart-failed.html.twig', array(
+            'orderContainer' => $orderContainer,
         ));
     }
 
@@ -391,7 +431,8 @@ class CartController extends Controller
                 $orderItem->setPrice($product->getPrice());
                 $orderItem->setQuantity($quantity);
                 $orderItem->setSubtotal($product->getPrice() * $orderItem->getQuantity());
-
+                $orderItem->setWeight($product->getWeight());
+                $orderItem->setTotalWeight($product->getWeight() * $quantity);
                 $orderContainer->addPendingItem($orderItem);
             }
         }
@@ -440,6 +481,7 @@ class CartController extends Controller
             if ($pendingItem->getUniqid() == $id) {
                 $pendingItem->setQuantity($qty);
                 $pendingItem->setSubtotal($pendingItem->getPrice() * $pendingItem->getQuantity());
+                $pendingItem->setTotalWeight($pendingItem->getWeight() * $pendingItem->getQuantity());
             }
         }
 
@@ -473,6 +515,29 @@ class CartController extends Controller
             $method = 'set' . ucfirst($idx);
             $orderContainer->$method($itm);
         }
+
+        CartService::updateOrder($orderContainer, $pdo);
+
+        return new JsonResponse($orderContainer);
+    }
+
+    /**
+     * @route("/xhr/cart/order/delivery/update")
+     * @return Response
+     */
+    public function xhrUpdateDeliveryOption()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $shop = new CartService($this->container);
+        $orderContainer = $shop->getOrderContainer();
+
+        $request = Request::createFromGlobals();
+        $deliverOptionId = json_decode($request->get('id'));
+
+        $orderContainer->setDeliveryOptionId($deliverOptionId);
 
         CartService::updateOrder($orderContainer, $pdo);
 

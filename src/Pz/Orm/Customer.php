@@ -32,6 +32,14 @@ class Customer extends \Pz\Orm\Generated\Customer implements UserInterface, Equa
     }
 
     /**
+     * @return mixed|string
+     */
+    public function getPassword()
+    {
+        return parent::getPassword() ?: '';
+    }
+
+    /**
      * The equality comparison should neither be done by referential equality
      * nor by comparing identities (i.e. getId() === getId()).
      *

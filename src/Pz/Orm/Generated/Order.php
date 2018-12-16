@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2018-12-15 17:13:55
+//Last updated: 2018-12-16 18:11:05
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -204,17 +204,17 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $deliveryDescription;
+    private $deliveryOptionDescription;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $deliveryId;
+    private $deliveryOptionId;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $deliveryStatus;
+    private $deliveryOptionStatus;
     
     /**
      * @return mixed
@@ -843,49 +843,49 @@ class Order extends Walle
     /**
      * @return mixed
      */
-    public function getDeliveryDescription()
+    public function getDeliveryOptionDescription()
     {
-        return $this->deliveryDescription;
+        return $this->deliveryOptionDescription;
     }
     
     /**
-     * @param mixed deliveryDescription
+     * @param mixed deliveryOptionDescription
      */
-    public function setDeliveryDescription($deliveryDescription)
+    public function setDeliveryOptionDescription($deliveryOptionDescription)
     {
-        $this->deliveryDescription = $deliveryDescription;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getDeliveryId()
-    {
-        return $this->deliveryId;
-    }
-    
-    /**
-     * @param mixed deliveryId
-     */
-    public function setDeliveryId($deliveryId)
-    {
-        $this->deliveryId = $deliveryId;
+        $this->deliveryOptionDescription = $deliveryOptionDescription;
     }
     
     /**
      * @return mixed
      */
-    public function getDeliveryStatus()
+    public function getDeliveryOptionId()
     {
-        return $this->deliveryStatus;
+        return $this->deliveryOptionId;
     }
     
     /**
-     * @param mixed deliveryStatus
+     * @param mixed deliveryOptionId
      */
-    public function setDeliveryStatus($deliveryStatus)
+    public function setDeliveryOptionId($deliveryOptionId)
     {
-        $this->deliveryStatus = $deliveryStatus;
+        $this->deliveryOptionId = $deliveryOptionId;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDeliveryOptionStatus()
+    {
+        return $this->deliveryOptionStatus;
+    }
+    
+    /**
+     * @param mixed deliveryOptionStatus
+     */
+    public function setDeliveryOptionStatus($deliveryOptionStatus)
+    {
+        $this->deliveryOptionStatus = $deliveryOptionStatus;
     }
     
 }

@@ -15,10 +15,14 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
     /** @var DeliveryOption[] $deliveryOptions */
     private $deliveryOptions;
 
+    /**
+     * Order constructor.
+     * @param \PDO $pdo
+     */
     public function __construct(\PDO $pdo)
     {
         $this->setBillingSame(1);
-        $this->setDeliveryStatus(CartService::DELIVERY_HIDDEN());
+        $this->setDeliveryOptionStatus(CartService::DELIVERY_HIDDEN());
         $this->setPayStatus(CartService::STATUS_UNPAID());
 
         $this->pendingItems = array();
@@ -29,6 +33,18 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
     }
 
     /**
+     * @return int|mixed
+     */
+    public function getTotalWeight() {
+        $totalWeight = 0;
+        $pendingItems = $this->getPendingItems();
+        foreach ($pendingItems as $pendingItem) {
+            $totalWeight += $pendingItem->getTotalWeight();
+        }
+        return $totalWeight;
+    }
+
+    /**
      * @return array|Country[]
      */
     public function getAvailableCountries()
@@ -36,7 +52,7 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
         /** @var Country[] $result */
         $result = array();
         /** @var DeliveryOption[] $result */
-        $deliveryOptions = DeliveryOption::active($pdo);
+        $deliveryOptions = DeliveryOption::active($this->getPdo());
         foreach ($deliveryOptions as $itm) {
             $result = array_merge($result, $itm->objCountries());
         }
@@ -88,19 +104,49 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
     }
 
     /**
+     * @return mixed
+     */
+    public function getCountryCode()
+    {
+        return $this->getBillingSame() ? $this->getBillingCountry() : $this->getShippingCountry();
+    }
+
+    /**
      * @return DeliveryOption[]
      */
     public function getDeliveryOptions()
     {
-        /** @var Country[] $result */
-        $result = array();
+
         /** @var DeliveryOption[] $result */
-        $deliveryOptions = DeliveryOption::active($pdo);
-//        var_dump($this->getCou)
-        foreach ($deliveryOptions as $itm) {
-            $result = array_merge($result, $itm->objCountries());
+        $result = DeliveryOption::active($this->getPdo());
+        /** @var DeliveryOption[] $deliveryOptions */
+        $deliveryOptions = $result;
+
+        $countryCode = $this->getCountryCode();
+        if ($countryCode) {
+            /** @var Country $country */
+            $country = Country::getByField($this->getPdo(), 'code', $countryCode);
+            if ($country) {
+                $deliveryOptions = array();
+                foreach ($result as $deliveryOption) {
+                    $deliveryOption->calculatePrice($this);
+                    $valid = false;
+                    $objContent = $deliveryOption->objContent();
+                    foreach ($objContent as $section) {
+                        foreach ($section->blocks as $block) {
+                            if (in_array($country->getId(), $block->values->countries)) {
+                                $valid = true;
+                            }
+                        }
+                    }
+                    if ($valid) {
+                        $deliveryOptions[] = $deliveryOption;
+                    }
+                }
+
+            }
         }
-        return $result;
+        $this->deliveryOptions = $deliveryOptions;
         return $this->deliveryOptions;
     }
 
@@ -129,6 +175,7 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
             $obj->{$field} = $this->$getMethod();
         }
         $obj->pendingItems = $this->getPendingItems();
+        $obj->deliveryOptions = $this->getDeliveryOptions();
         return serialize($obj);
     }
 
@@ -149,6 +196,7 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
             $this->$setMethod($itm);
         }
         $this->setPendingItems($obj->pendingItems);
+        $this->setDeliveryOptions($obj->deliveryOptions);
 
         $conn = \Doctrine\DBAL\DriverManager::getConnection(array(
             'url' => getenv('DATABASE_URL'),
@@ -173,6 +221,7 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
             $obj->{$field} = $this->$getMethod();
         }
         $obj->pendingItems = $this->getPendingItems();
+        $obj->deliveryOptions = $this->getDeliveryOptions();
         return $obj;
     }
 }
