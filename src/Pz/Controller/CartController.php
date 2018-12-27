@@ -2,6 +2,7 @@
 
 namespace Pz\Controller;
 
+use Pz\Orm\Customer;
 use Pz\Orm\Order;
 use Pz\Orm\OrderItem;
 use Pz\Orm\Product;
@@ -64,7 +65,7 @@ class CartController extends Controller
 
         $form = $form->createView();
 
-        return $this->render('cart.html.twig', array(
+        return $this->render('cart/cart.html.twig', array(
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -111,24 +112,23 @@ class CartController extends Controller
 
                     $response = $gateway->purchase($params)->send();
 
-                    $orderContainer->setPayStatus(CartService::STATUS_SUBMITTED());
-                    $orderContainer->setPayRequest(json_encode($response->getData()));
-                    $orderContainer->setPayToken($response->getTransactionReference());
-                    $orderContainer->setPayDate(date('Y-m-d H:i:s'));
-                    $orderContainer->save();
-
-                    //ORDER: Save order items
-                    $orderItems = array();
-                    foreach ($orderContainer->getPendingItems() as $itm) {
-                        $itm->save();
-                        $orderItems[] = $itm;
-                    }
-                    $orderContainer->setOrderItems($orderItems);
-
                     if ($response->isSuccessful()) {
                         print_r($response);
                         exit;
                     } elseif ($response->isRedirect()) {
+                        //ORDER: Save order items
+                        $orderItems = array();
+                        foreach ($orderContainer->getPendingItems() as $itm) {
+                            $itm->save();
+                            $orderItems[] = $itm;
+                        }
+                        $orderContainer->setOrderItems($orderItems);
+
+                        $orderContainer->setPayStatus(CartService::STATUS_SUBMITTED());
+                        $orderContainer->setPayRequest(json_encode($response->getData()));
+                        $orderContainer->setPayToken($response->getTransactionReference());
+                        $orderContainer->setPayDate(date('Y-m-d H:i:s'));
+                        $orderContainer->save();
                         $response->redirect();
                     }
                 }
@@ -139,7 +139,7 @@ class CartController extends Controller
 
         $form = $form->createView();
 
-        return $this->render('cart-review.html.twig', array(
+        return $this->render('cart/cart-review.html.twig', array(
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -163,7 +163,7 @@ class CartController extends Controller
             throw new NotFoundException();
         }
 
-        return $this->render('cart-success.html.twig', array(
+        return $this->render('cart/cart-success.html.twig', array(
             'orderContainer' => $orderContainer,
         ));
     }
@@ -186,7 +186,7 @@ class CartController extends Controller
             throw new NotFoundException();
         }
 
-        return $this->render('cart-failed.html.twig', array(
+        return $this->render('cart/cart-failed.html.twig', array(
             'orderContainer' => $orderContainer,
         ));
     }
@@ -290,13 +290,62 @@ class CartController extends Controller
      * @route("/login")
      * @return Response
      */
-    public function member_login(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils)
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('login.html.twig', array(
+        return $this->render('cart/login.html.twig', array(
             'last_username' => $lastUsername,
             'error' => $error,
+        ));
+    }
+
+    /**
+     * @route("/register")
+     * @return Response
+     */
+    public function register()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
+        $orm = new Customer($pdo);
+        $orm->setStatus(0);
+
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        /** @var Form $form */
+        $form = $formFactory->create(\Pz\Form\Builder\Register::class, $orm, array(
+            'container' => $this->container,
+        ));
+
+
+        $request = Request::createFromGlobals();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $messageBody = $this->container->get('twig')->render("email/email-activate.twig", array(
+                'customer' => $orm,
+            ));
+
+
+            $message = (new \Swift_Message())
+                ->setSubject('West Brook - Acticate your account')
+                ->setFrom('noreply@westbrook.co.nz')
+                ->setTo($orm->getTitle())
+                ->setBody($messageBody, 'text/html');
+
+
+            $this->container->get('mailer')->send($message);
+
+            $orm->setSource(Customer::WEBSITE);
+            $orm->save();
+
+            return new RedirectResponse('/activation/required?id=' . $orm->getUniqid());
+
+        }
+
+        return $this->render('cart/register.html.twig', array(
+            'form' => $form->createView(),
         ));
     }
 
@@ -609,7 +658,7 @@ class CartController extends Controller
         $gateway->setUsername(getenv('PAYPAL_USERNAME'));
         $gateway->setPassword(getenv('PAYPAL_PASSWORD'));
         $gateway->setSignature(getenv('PAYPAL_SIGNATURE'));
-        $gateway->setTestMode(getenv('PAYPAL_TESTMODE'));
+        $gateway->setTestMode(getenv('PAYPAL_TESTMODE') == 'true' ? true : false);
         return $gateway;
     }
 
