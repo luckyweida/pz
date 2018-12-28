@@ -350,6 +350,71 @@ class CartController extends Controller
     }
 
     /**
+     * @route("/activation/required")
+     * @return Response
+     */
+    public function activationRequired()
+    {
+        return $this->render('cart/confirmation.html.twig');
+    }
+
+    /**
+     * @route("/forget-password")
+     * @return Response
+     */
+    public function forgetPassword()
+    {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
+
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        /** @var Form $form */
+        $form = $formFactory->create(\Pz\Form\Builder\ForgetPassword::class, null, array(
+            'container' => $this->container,
+        ));
+
+        $request = Request::createFromGlobals();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $orm = Customer::getByField($pdo, 'title', $data['title']);
+            $orm->setResetToken(md5($orm->getUsername() . time() . uniqid()));
+            $orm->setResetExpiry(date('Y-m-d H:i:s', strtotime('+24 hours')));
+            $orm->save();
+
+            $messageBody = $this->container->get('twig')->render("email/email-forget.twig", array(
+                'customer' => $orm,
+            ));
+            $message = (new \Swift_Message())
+                ->setSubject('West Brook - Reset your password')
+                ->setFrom('noreply@westbrook.co.nz')
+                ->setTo($orm->getTitle())
+                ->setBody($messageBody, 'text/html');
+
+
+            $this->container->get('mailer')->send($message);
+
+            return new RedirectResponse('/reset-password-email-sent?id=' . $orm->getUniqid());
+
+        }
+
+        return $this->render('cart/forget-password.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @route("/reset-password-email-sent")
+     * @return Response
+     */
+    public function resetPasswordEmailSent()
+    {
+        return $this->render('cart/confirmation.html.twig');
+    }
+
+    /**
      * @route("/member/after_login")
      * @return Response
      */
