@@ -177,11 +177,10 @@ class CmsAjaxController extends Controller
         $result["cat0"] = 0;
         foreach ($pages as $page) {
             $category = json_decode($page->getCategory());
-            if (count($category) == 0) {
+            if (in_array(0, $category)) {
                 $result["cat0"]++;
             }
         }
-
         return new JsonResponse($result);
     }
 

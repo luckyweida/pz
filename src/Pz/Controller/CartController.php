@@ -66,6 +66,15 @@ class CartController extends Controller
         $form = $form->createView();
 
         return $this->render('cart/cart.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Cart',
+                    )
+                )
+            ),
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -140,6 +149,15 @@ class CartController extends Controller
         $form = $form->createView();
 
         return $this->render('cart/cart-review.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Cart',
+                    )
+                )
+            ),
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -164,6 +182,15 @@ class CartController extends Controller
         }
 
         return $this->render('cart/cart-success.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Cart',
+                    )
+                )
+            ),
             'orderContainer' => $orderContainer,
         ));
     }
@@ -187,6 +214,15 @@ class CartController extends Controller
         }
 
         return $this->render('cart/cart-failed.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Cart',
+                    )
+                )
+            ),
             'orderContainer' => $orderContainer,
         ));
     }
@@ -295,6 +331,15 @@ class CartController extends Controller
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('cart/login.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Login',
+                    )
+                )
+            ),
             'last_username' => $lastUsername,
             'error' => $error,
         ));
@@ -345,6 +390,15 @@ class CartController extends Controller
         }
 
         return $this->render('cart/register.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Register',
+                    )
+                )
+            ),
             'form' => $form->createView(),
         ));
     }
@@ -355,7 +409,17 @@ class CartController extends Controller
      */
     public function activationRequired()
     {
-        return $this->render('cart/confirmation.html.twig');
+        return $this->render('cart/confirmation.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Activation Required',
+                    )
+                )
+            ),
+        ));
     }
 
     /**
@@ -401,6 +465,15 @@ class CartController extends Controller
         }
 
         return $this->render('cart/forget-password.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Forget Password',
+                    )
+                )
+            ),
             'form' => $form->createView(),
         ));
     }
@@ -411,14 +484,24 @@ class CartController extends Controller
      */
     public function resetPasswordEmailSent()
     {
-        return $this->render('cart/confirmation.html.twig');
+        return $this->render('cart/confirmation.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'Reset Password Email Sent',
+                    )
+                )
+            ),
+        ));
     }
 
     /**
      * @route("/member/after_login")
      * @return Response
      */
-    public function member_after_login()
+    public function memberAfterLogin()
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -433,6 +516,162 @@ class CartController extends Controller
         }
 
         return new RedirectResponse($redirectUrl);
+    }
+
+    /**
+     * @route("/member/dashboard")
+     * @return Response
+     */
+    public function memberDashboard()
+    {
+        return $this->render('cart/member-dashboard.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/orders")
+     * @return Response
+     */
+    public function memberOrders()
+    {
+        return $this->render('cart/member-orders.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/order-detail")
+     * @return Response
+     */
+    public function memberOrder()
+    {
+        return $this->render('cart/member-order.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/favourites")
+     * @return Response
+     */
+    public function memberFavourites()
+    {
+        if (getenv('MEMBER_FAV_ENABLED') != 1) {
+            throw new NotFoundException();
+        }
+
+        return $this->render('cart/member-favourites.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/addresses")
+     * @return Response
+     */
+    public function memberAddresses()
+    {
+        return $this->render('cart/member-addresses.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/address-detail")
+     * @return Response
+     */
+    public function memberAddress()
+    {
+        return $this->render('cart/member-address.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/password")
+     * @return Response
+     */
+    public function memberPassword()
+    {
+        return $this->render('cart/member-password.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
+    }
+
+    /**
+     * @route("/member/profile")
+     * @return Response
+     */
+    public function memberProfile()
+    {
+        return $this->render('cart/member-profile.html.twig', array(
+            'node' => array(
+                'extras' => array(
+                    'page' => array(
+                        'description' => '',
+                        'pageTitle' => '',
+                        'title' => 'My Account',
+                    )
+                )
+            ),
+        ));
     }
 
     /**
