@@ -1,8 +1,8 @@
 "use strict";
-require('../../pz/css/nestable.css');
 
 require("./main.js");
 require('nestable');
+require('../../pz/css/nestable.css');
 
 $(function() {
     if (_listType == 2) {
