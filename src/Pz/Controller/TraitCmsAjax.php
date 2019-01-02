@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class CmsAjaxController extends Controller
+trait TraitCmsAjax
 {
     /**
      * @route("/pz/ajax/column/sort")

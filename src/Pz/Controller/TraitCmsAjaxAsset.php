@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class AssetAjaxController extends Controller
+trait TraitCmsAjaxAsset
 {
     /**
      * @route("/pz/ajax/asset/files/chosen/rank")

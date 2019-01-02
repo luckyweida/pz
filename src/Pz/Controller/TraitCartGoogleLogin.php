@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class GoogleLogin extends Controller
+trait TraitCartGoogleLogin
 {
     /**
      * @route("/google/verify")

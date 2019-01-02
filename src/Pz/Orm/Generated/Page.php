@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-02 15:44:06
+//Last updated: 2019-01-02 16:07:20
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -33,7 +33,7 @@ class Page extends Walle implements InterfaceNode
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $template;
+    private $templateFile;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -146,17 +146,17 @@ class Page extends Walle implements InterfaceNode
     /**
      * @return mixed
      */
-    public function getTemplate()
+    public function getTemplateFile()
     {
-        return $this->template;
+        return $this->templateFile;
     }
     
     /**
-     * @param mixed template
+     * @param mixed templateFile
      */
-    public function setTemplate($template)
+    public function setTemplateFile($templateFile)
     {
-        $this->template = $template;
+        $this->templateFile = $templateFile;
     }
     
     /**

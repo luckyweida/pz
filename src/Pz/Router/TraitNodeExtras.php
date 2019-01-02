@@ -102,4 +102,86 @@ trait TraitNodeExtras
         }
         return false;
     }
+
+    /**
+     * @return array
+     */
+    public function getIdAndDescendantIds()
+    {
+        $result = array($this->getId());
+        $decendants = $this->getDescendants();
+        return array_merge($result, array_unique(array_map(function ($itm) {
+            return $itm->getId();
+        }, $decendants)));
+    }
+
+    /**
+     * @return array
+     */
+    public function getDescendantIds()
+    {
+        $decendants = $this->getDescendants();
+        return array_unique(array_map(function ($itm) {
+            return $itm->getId();
+        }, $decendants));
+    }
+
+    /**
+     * @return array
+     */
+    public function getDescendants()
+    {
+        return static::_getDescendants($this);
+    }
+
+    /**
+     * @param $node
+     * @return array
+     */
+    static public function _getDescendants($node)
+    {
+        $result = array();
+
+        /** @var Node[] $children */
+        $children = $node->getChildren();
+        foreach ($children as $child) {
+            $result[] = $child;
+            $result = array_merge($result, static::_getDescendants($child));
+        }
+        return $result;
+    }
+
+    /**
+     * @param $selected
+     * @return bool
+     */
+    public function hasSelected($selected, $compareFunc)
+    {
+        return static::_hasSelected($this, $compareFunc, $selected ?: array());
+    }
+
+    /**
+     * @param $node
+     * @param $selected
+     * @return bool
+     */
+    static public function _hasSelected($node, $compareFunc, $selected)
+    {
+        $result = false;
+
+        /** @var Node[] $children */
+        $children = $node->getChildren();
+        foreach ($children as $child) {
+            if (in_array($child->{$compareFunc}(), $selected)) {
+                $result = true;
+            }
+            if (!$result) {
+                $r = static::_hasSelected($child, $compareFunc, $selected);
+                if ($r) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
 }

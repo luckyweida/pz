@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 
-class InitController extends Controller
+trait TraitInit
 {
 
     /**

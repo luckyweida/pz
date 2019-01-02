@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Facebook\Facebook;
 
-class FacebookLogin extends Controller
+trait TraitCartFacebookLogin
 {
     /**
      * @route("/facebook/verify")

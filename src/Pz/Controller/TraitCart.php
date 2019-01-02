@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CartController extends Controller
+trait TraitCart
 {
     /**
      * @route("/cart")
@@ -67,13 +67,9 @@ class CartController extends Controller
 
         return $this->render('cart/cart.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Cart',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Cart',
             ),
             'orderContainer' => $orderContainer,
             'form' => $form,
@@ -150,13 +146,9 @@ class CartController extends Controller
 
         return $this->render('cart/cart-review.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Cart',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Cart',
             ),
             'orderContainer' => $orderContainer,
             'form' => $form,
@@ -183,13 +175,9 @@ class CartController extends Controller
 
         return $this->render('cart/cart-success.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Cart',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Cart',
             ),
             'orderContainer' => $orderContainer,
         ));
@@ -215,13 +203,9 @@ class CartController extends Controller
 
         return $this->render('cart/cart-failed.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Cart',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Cart',
             ),
             'orderContainer' => $orderContainer,
         ));
@@ -332,13 +316,9 @@ class CartController extends Controller
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('cart/login.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Login',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Login',
             ),
             'last_username' => $lastUsername,
             'error' => $error,
@@ -391,13 +371,9 @@ class CartController extends Controller
 
         return $this->render('cart/register.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Register',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Register',
             ),
             'form' => $form->createView(),
         ));
@@ -411,13 +387,9 @@ class CartController extends Controller
     {
         return $this->render('cart/confirmation.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Activation Required',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Activation Required',
             ),
         ));
     }
@@ -466,13 +438,9 @@ class CartController extends Controller
 
         return $this->render('cart/forget-password.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Forget Password',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Forget Password',
             ),
             'form' => $form->createView(),
         ));
@@ -486,13 +454,9 @@ class CartController extends Controller
     {
         return $this->render('cart/confirmation.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'Reset Password Email Sent',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'Reset Password Email Sent',
             ),
         ));
     }
@@ -526,13 +490,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-dashboard.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -545,13 +505,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-orders.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -564,13 +520,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-order.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -587,13 +539,9 @@ class CartController extends Controller
 
         return $this->render('cart/member-favourites.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -606,13 +554,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-addresses.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -625,13 +569,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-address.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -644,13 +584,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-password.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
@@ -663,13 +599,9 @@ class CartController extends Controller
     {
         return $this->render('cart/member-profile.html.twig', array(
             'node' => array(
-                'extras' => array(
-                    'page' => array(
-                        'description' => '',
-                        'pageTitle' => '',
-                        'title' => 'My Account',
-                    )
-                )
+                'description' => '',
+                'pageTitle' => '',
+                'title' => 'My Account',
             ),
         ));
     }
