@@ -120,7 +120,7 @@ trait TraitCms
         $nodes = array();
         $nodes[] = new NodePage(-10, -1, 0, 1, 'Login', '/pz/login', 'pz/login.twig');
         $nodes[] = new NodePage(1, null, 0, 1, 'Pages', '/pz/pages', 'pz/pages.twig', 'fa fa-sitemap');
-        $nodes[] = new NodePage(11, 1, 0, 0, 'Page', '/pz/admin/6/detail', 'pz/orm.twig');
+        $nodes[] = new NodePage(11, 1, 0, 0, 'Page', '/pz/admin/6/detail', 'pz/orm.twig', '', 1, 1);
 
         /** @var DataGroup[] $dataGroups */
         $dataGroups = DataGroup::active($pdo);

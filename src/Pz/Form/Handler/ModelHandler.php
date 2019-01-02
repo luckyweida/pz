@@ -194,9 +194,27 @@ EOD;
     private function setCustomFile(_Model $model)
     {
         $path = $this->container->getParameter('kernel.project_dir') . ($model->getModelType() == 0 ? '' : '/vendor/pozoltd/pz') . '/src/' . str_replace('\\', '/', $model->getNamespace()) . '/';
+
+        if ($model->getModelType() == 1) {
+            $file = $path . 'OrmTrait/Trait' . $model->getClassName() . '.php';
+            if (!file_exists($file)) {
+                $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom_trait.txt');
+                $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
+                $str = str_replace('{namespace}', $model->getNamespace(), $str);
+                $str = str_replace('{classname}', $model->getClassName(), $str);
+
+                $dir = dirname($file);
+                if (!file_exists($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                file_put_contents($file, $str);
+            }
+        }
+
         $file = $path . $model->getClassName() . '.php';
         if (!file_exists($file)) {
-            $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_custom.txt');
+            $custom_file = $model->getModelType() == 1 ? 'orm_custom_pz.txt' : 'orm_custom.txt';
+            $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/' . $custom_file);
             $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
             $str = str_replace('{namespace}', $model->getNamespace(), $str);
             $str = str_replace('{classname}', $model->getClassName(), $str);
