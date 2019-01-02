@@ -1,11 +1,20 @@
 <?php
-//Last updated: 2018-11-18 19:12:20
+//Last updated: 2019-01-02 15:37:15
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
+use Pz\Router\InterfaceNode;
+use Pz\Router\TraitNodeExtras;
 
-class Asset extends Walle
+class Asset extends Walle implements InterfaceNode
 {
+    use TraitNodeExtras;
+
+    /**
+     * @var array
+     */
+    private $children = array();
+
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */

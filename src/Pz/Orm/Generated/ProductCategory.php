@@ -1,11 +1,20 @@
 <?php
-//Last updated: 2018-11-18 19:14:01
+//Last updated: 2019-01-02 14:47:07
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
+use Pz\Router\InterfaceNode;
+use Pz\Router\TraitNodeExtras;
 
-class ProductCategory extends Walle
+class ProductCategory extends Walle implements InterfaceNode
 {
+    use TraitNodeExtras;
+
+    /**
+     * @var array
+     */
+    private $children = array();
+
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */

@@ -2,10 +2,11 @@
 
 namespace Pz\Twig;
 
+use Pz\Orm\_Model;
 use Pz\Orm\Page;
 use Pz\Redirect\RedirectException;
-use Pz\Router\Node;
 use Pz\Router\Tree;
+use Pz\Service\DbService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -105,30 +106,20 @@ class Extension extends AbstractExtension
     }
 
     /**
-     * @param $orms
-     * @return Node
+     * @param array $orms
+     * @param _Model $model
+     * @return \Pz\Router\InterfaceNode
      */
-    public static function nestable($orms)
+    public static function nestable(array $orms, _Model $model)
     {
-        $nodes = array();
-        foreach ($orms as $orm) {
-            $node = new Node($orm->getId(), $orm->getTitle(), $orm->getParentId() ?: 0, $orm->getRank(), '', '', $orm->getStatus());
-            $node->setExtras(array(
-                'orm' => $orm,
-                'model' => $orm->getModel(),
-                'closed' => $orm->getClosed(),
-            ));
-            $nodes[] = $node;
-        }
-        $tree = new Tree($nodes);
+        $tree = new Tree($orms);
         return $tree->getRoot();
     }
 
-
     /**
-     * @param Page[] $pages
+     * @param $pages
      * @param $cat
-     * @return Node
+     * @return \Pz\Router\InterfaceNode
      */
     public static function nestablePges($pages, $cat)
     {
@@ -146,26 +137,11 @@ class Extension extends AbstractExtension
             $categoryRankValue = isset($categoryRank["cat$cat"]) ? $categoryRank["cat$cat"] : 0;
             $categoryClosedValue = isset($categoryClosed["cat$cat"]) ? $categoryClosed["cat$cat"] : 0;
 
-            $node = new Node(
-                $page->getId(),
-                $page->getTitle(),
-                $categoryParentValue,
-                $categoryRankValue,
-                $page->getUrl(),
-                $page->objPageTempalte()->getId(),
-                $page->getStatus(),
-                $page->getAllowExtra(),
-                $page->getMaxParams()
-            );
+            $page->setParentId($categoryParentValue);
+            $page->setRank($categoryRankValue);
+            $page->setClosed($categoryClosedValue);
 
-
-            $node->setExtras(array(
-                'orm' => $page,
-                'model' => $page->getModel(),
-                'closed' => $categoryClosedValue,
-            ));
-
-            $nodes[] = $node;
+            $nodes[] =$page;
         }
 
         $tree = new Tree($nodes);

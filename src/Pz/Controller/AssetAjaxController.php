@@ -9,7 +9,7 @@ use Pz\Orm\Asset;
 use Pz\Orm\AssetOrm;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
-use Pz\Router\Node;
+use Pz\Router\NodeAsset;
 use Pz\Router\Tree;
 use Pz\Twig\Extension;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -468,7 +468,7 @@ class AssetAjaxController extends Controller
 
     /**
      * @param $currentFolderId
-     * @return Node
+     * @return \Pz\Router\InterfaceNode
      */
     private function getFolderRoot($currentFolderId)
     {
@@ -490,28 +490,17 @@ class AssetAjaxController extends Controller
             }
             $childrenCount[$itm->getParentId()]++;
 
-            $node = new Node($itm->getId(), $itm->getTitle() ?: 'Home', $itm->getParentId() ?: 0, $itm->getRank(), $baseurl . $itm->getId());
-            $node->setText($itm->getTitle());
-            $node->setState(array('opened' => true, 'selected' => $currentFolderId == $itm->getId()));
-            $nodes[] = $node;
+            $nodes[] = new NodeAsset($itm->getId(), $itm->getParentId() ?: 0, $itm->getRank(), 1,$itm->getTitle() ?: 'Home', $baseurl . $itm->getId(), array('opened' => true, 'selected' => $currentFolderId == $itm->getId()));
         }
 
-        /** @var Node[] $nodes */
+        /** @var NodeAsset[] $nodes */
         foreach ($nodes as &$itm) {
             if (isset($childrenCount[$itm->getId()]) && $childrenCount[$itm->getId()] >= $folderOpenMaxLimit && $itm->getId() != $currentFolderId) {
                 $itm->setStateValue('opened', false);
             }
         }
         $tree = new Tree($nodes);
-
-        $root = $tree->getRoot();
-        $root->setTitle('Home');
-        $root->setText('Home');
-        $root->setUrl($baseurl . 0);
-        $root->setState(array('opened' => true, 'selected' => false));
-        if ($currentFolderId === 0) {
-            $root->setStateValue('selected', 1);
-        }
+        $root = $tree->getRootFromNode(new NodeAsset(0, null, 0, 1, 'Home', $baseurl . 0, array('opened' => true, 'selected' => $currentFolderId === 0 ? true : false)));
         return $root;
     }
 }

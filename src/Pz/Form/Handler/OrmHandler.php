@@ -91,8 +91,7 @@ class OrmHandler
 
                 $nodes = array();
                 foreach ($result as $key => $val) {
-                    $node = new Node($val->key, $val->value, $val->parentId ?: 0, $key);
-                    $nodes[] = $node;
+                    $nodes[] = new Node($val->key, $val->parentId ?: 0, $key, 1, $val->value);
                 }
                 $tree = new Tree($nodes);
                 $root = $tree->getRoot();

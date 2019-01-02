@@ -19,6 +19,10 @@ class Tree
         $this->nodes = $nodes;
     }
 
+    /**
+     * @param $url
+     * @return null
+     */
     public function getNodeByUrl($url)
     {
         foreach ($this->nodes as $node) {
@@ -29,27 +33,54 @@ class Tree
         return null;
     }
 
-    public function getRoot()
+    /**
+     * @param $node
+     * @return InterfaceNode
+     */
+    public function getRootFromNode($node)
     {
-        return static::_getRoot(new Node(0, 'root'));
+        return static::_getRoot($node);
     }
 
-    public function _getRoot(Node $node)
+    /**
+     * @return InterfaceNode
+     */
+    public function getRoot()
+    {
+        return static::_getRoot(new Node(0));
+    }
+
+    /**
+     * @param InterfaceNode $node
+     * @return InterfaceNode
+     */
+    public function _getRoot(InterfaceNode $node)
     {
         foreach ($this->nodes as $itm) {
-            if ($itm->getParentId() === $node->getId()) {
+            if (($itm->getParentId() . '') === ($node->getId() . '') || ($itm->getParentId() === null && $node->getId() === 0)) {
                 $node->addChild($this->_getRoot($itm));
             }
         }
         return $node;
     }
 
+    /**
+     * @param $root
+     * @param $needleId
+     * @return array
+     */
     public static function getChildrenAndSelfAsArray($root, $needleId)
     {
         return static::_getChildrenAndSelfAsArray($root, $needleId, 0);
     }
 
-    private static function _getChildrenAndSelfAsArray(Node $node, $needleId, $added)
+    /**
+     * @param InterfaceNode $node
+     * @param $needleId
+     * @param $added
+     * @return array
+     */
+    private static function _getChildrenAndSelfAsArray(InterfaceNode $node, $needleId, $added)
     {
         $result = array();
         if ($node->getId() == $needleId || $added) {

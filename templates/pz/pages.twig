@@ -55,7 +55,7 @@
                         <div class="dd" id="nestable">
                             <ol class="dd-list">
                                 {% for itm in pageRoot.children %}
-                                    {{ nest(itm, 1) }}
+                                    {{ nest(itm, model, 1) }}
                                 {% endfor %}
                             </ol>
                         </div>

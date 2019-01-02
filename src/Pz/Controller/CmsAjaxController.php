@@ -8,7 +8,6 @@ use Pz\Axiom\Mo;
 use Pz\Orm\Asset;
 use Pz\Orm\Page;
 use Pz\Orm\PageCategory;
-use Pz\Router\Node;
 use Pz\Router\Tree;
 use Pz\Service\DbService;
 use Pz\Twig\Extension;
@@ -177,7 +176,7 @@ class CmsAjaxController extends Controller
         $result["cat0"] = 0;
         foreach ($pages as $page) {
             $category = json_decode($page->getCategory());
-            if (in_array(0, $category)) {
+            if (in_array(0, $category) || !count($category)) {
                 $result["cat0"]++;
             }
         }
@@ -241,7 +240,7 @@ class CmsAjaxController extends Controller
         $nodes = Tree::getChildrenAndSelfAsArray($root, $id);
         foreach ($nodes as $node) {
             /** @var Page $orm */
-            $orm = $node->getExtras()['orm'];
+            $orm = $node;
 
             $category = $orm->getCategory() ? (array)json_decode($orm->getCategory()) : array();
             $category = array_filter($category, function ($itm) use ($oldCat) {

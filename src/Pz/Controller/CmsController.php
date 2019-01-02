@@ -6,7 +6,7 @@ use Pz\Orm\_Model;
 use Pz\Axiom\Mo;
 use Pz\Orm\AssetOrm;
 use Pz\Orm\DataGroup;
-use Pz\Router\Node;
+use Pz\Router\NodePage;
 use Pz\Service\DbService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -118,25 +118,16 @@ class CmsController extends Mo
         /** @var \PDO $pdo */
         $pdo = $this->connection->getWrappedConnection();
         $nodes = array();
-
-        $node = new Node(-10, 'Login', -1, 0, '/pz/login', 'pz/login.twig');
-        $nodes[] = $node;
-
-        $node = new Node(1, 'Pages', 0, 0, '/pz/pages', 'pz/pages.twig');
-        $node->addExtra('icon', 'fa fa-sitemap');
-        $nodes[] = $node;
-
-        $node = new Node(11, 'Page', 1, 0, '/pz/admin/6/detail', 'pz/orm.twig', 2, 1, 1);
-        $nodes[] = $node;
-
+        $nodes[] = new NodePage(-10, -1, 0, 1, 'Login', '/pz/login', 'pz/login.twig');
+        $nodes[] = new NodePage(1, null, 0, 1, 'Pages', '/pz/pages', 'pz/pages.twig', 'fa fa-sitemap');
+        $nodes[] = new NodePage(11, 1, 0, 0, 'Page', '/pz/admin/6/detail', 'pz/orm.twig');
 
         /** @var DataGroup[] $dataGroups */
         $dataGroups = DataGroup::active($pdo);
         foreach ($dataGroups as $dgIdx => $dataGroup) {
             $dgId = 2 + $dgIdx;
 
-            $dgNode = new Node($dgId, $dataGroup->getTitle(), 0, $dgId);
-            $dgNode->addExtra('icon', $dataGroup->getIcon());
+            $dgNode = new NodePage($dgId, null, $dgId, 1, $dataGroup->getTitle(), '', '', $dataGroup->getIcon());
 
             /** @var _Model[] $result */
             $result = _Model::active($pdo, array(
@@ -149,54 +140,28 @@ class CmsController extends Mo
 
                 foreach ($result as $idx => $itm) {
                     $fullClass = DbService::fullClassName($itm->getClassName());
-
-                    $node = new Node($dgId . '-' . $itm->getId(), $itm->getTitle(), $dgId, $idx, "/pz/database/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
-                    $nodes[] = $node;
-
-                    $node = new Node($dgId . '-' . $itm->getId() . '-1', $itm->getTitle(), $dgId . '-' . $itm->getId(), 0, "/pz/database/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), 2, 1, 1);
-                    $nodes[] = $node;
+                    $nodes[] = new NodePage($dgId . '-' . $itm->getId(), $dgId, $idx, 1, $itm->getTitle(), "/pz/database/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
+                    $nodes[] = new NodePage($dgId . '-' . $itm->getId() . '-1', $dgId . '-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/database/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), '', 2, 1);
                 }
             }
         }
 
-        $node = new Node(30, 'Files', 0, 30, '/pz/files', 'pz/files.twig');
-        $node->addExtra('icon', 'fa fa-file-image-o');
-        $nodes[] = $node;
-
-        $node = new Node(40, 'Admin', 0, 40);
-        $node->addExtra('icon', 'fa fa-cogs');
-        $nodes[] = $node;
-
-        $node = new Node(41, 'Customised Models', 40, 998, '/pz/admin/models/customised', 'pz/models.twig');
-        $nodes[] = $node;
-
-        $node = new Node(411, 'Customised Model', 41, 0, '/pz/admin/models/customised/detail', 'pz/model.twig', 2, 1, 1);;
-        $nodes[] = $node;
-
-        $node = new Node(42, 'Built-in Models', 40, 999, '/pz/admin/models/built-in', 'pz/models.twig');
-        $nodes[] = $node;
-
-        $node = new Node(421, 'Built-in Model', 42, 0, '/pz/admin/models/built-in/detail', 'pz/model.twig', 2, 1, 1);
-        $nodes[] = $node;
-
-
-        $node = new Node(412, 'Sync Model', 41, 0, '/pz/admin/models/customised/sync', 'pz/model-sync.twig', 2, 1, 1);
-        $nodes[] = $node;
-
-        $node = new Node(422, 'Sync Model', 42, 0, '/pz/admin/models/built-in/sync', 'pz/model-sync.twig', 2, 1, 1);
-        $nodes[] = $node;
+        $nodes[] = new NodePage(30, null, 30, 1, 'Files', '/pz/files', 'pz/files.twig', 'fa fa-file-image-o');
+        $nodes[] = new NodePage(40, null, 40, 1, 'Admin', '', '', 'fa fa-cogs');
+        $nodes[] = new NodePage(41, 40, 998, 1, 'Customised Models', '/pz/admin/models/customised', 'pz/models.twig');
+        $nodes[] = new NodePage(411, 41, 0, 0, 'Customised Model', '/pz/admin/models/customised/detail', 'pz/model.twig', '', 2, 1);;
+        $nodes[] = new NodePage(42, 40, 999, 1, 'Built-in Models', '/pz/admin/models/built-in', 'pz/models.twig');
+        $nodes[] = new NodePage(421, 42, 0, 0, 'Built-in Model', '/pz/admin/models/built-in/detail', 'pz/model.twig', '', 2, 1);
+        $nodes[] = new NodePage(412, 41, 0, 0, 'Sync Model', '/pz/admin/models/customised/sync', 'pz/model-sync.twig', '', 2, 1);
+        $nodes[] = new NodePage(422, 42, 0, 0, 'Sync Model', '/pz/admin/models/built-in/sync', 'pz/model-sync.twig', '', 2, 1);
 
         /** @var _Model[] $modelDatabase */
         $modelDatabase = _Model::active($pdo);
         foreach ($modelDatabase as $idx => $itm) {
             $fullClass = DbService::fullClassName($itm->getClassName());
-
             if ($itm->getDataType() == 1) {
-                $node = new Node('40-' . $itm->getId(), $itm->getTitle(), 40, $idx, "/pz/admin/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
-                $nodes[] = $node;
-
-                $node = new Node('40-' . $itm->getId() . '-1', $itm->getTitle(), '40-' . $itm->getId(), 0, "/pz/admin/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), 2, 1, 1);
-                $nodes[] = $node;
+                $nodes[] = new NodePage('40-' . $itm->getId(), 40, $idx, 1, $itm->getTitle(), "/pz/admin/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
+                $nodes[] = new NodePage('40-' . $itm->getId() . '-1', '40-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/admin/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), '', 2, 1);
             }
         }
 

@@ -31,10 +31,6 @@
     {% set orms = db.data(model.className) %}
 {% endif %}
 
-{% block extraHead %}
-    <link href="{{ getenv('CDN') }}/pz/css/nestable.css" rel="stylesheet">
-{% endblock %}
-
 {% block extraHeaderLeft %}
     <h2>Manage <label class="label label-warning-light">{{ model.title }}</label></h2>
 {% endblock %}
@@ -106,9 +102,9 @@
                         <div class="nestable-lists">
                             <div class="dd" id="nestable">
                                 <ol class="dd-list">
-                                    {% set root = orms|nestable %}
+                                    {% set root = orms|nestable(model) %}
                                     {% for itm in root.children %}
-                                        {{ nest(itm, 1) }}
+                                        {{ nest(itm, model, 1) }}
                                     {% endfor %}
                                 </ol>
                             </div>

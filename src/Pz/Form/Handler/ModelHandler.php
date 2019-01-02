@@ -137,7 +137,8 @@ EOD;
 EOD;
         }, $columnsJson);
 
-        $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/orm_generated.txt');
+        $generated_file = $model->getListType() == 2 ? 'orm_generated_node.txt' : 'orm_generated.txt';
+        $str = file_get_contents($this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/files/' . $generated_file);
         $str = str_replace('{time}', date('Y-m-d H:i:s'), $str);
         $str = str_replace('{namespace}', $model->getNamespace() . '\\Generated', $str);
         $str = str_replace('{classname}', $model->getClassName(), $str);

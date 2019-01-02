@@ -9,7 +9,6 @@ use Pz\Orm\Asset;
 use Pz\Orm\AssetSize;
 use Pz\Orm\Customer;
 use Pz\Orm\Page;
-use Pz\Router\Node;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -148,28 +147,10 @@ class WebController extends Mo
     {
         /** @var \PDO $pdo */
         $pdo = $this->connection->getWrappedConnection();
-        return static::getPageNodes($pdo);
-    }
-
-    /**
-     * @param $pdo
-     * @return array
-     */
-    static public function getPageNodes($pdo) {
-        $nodes = array();
 
         /** @var Page[] $pages */
-        $pages = Page::data($pdo, array(
+        return Page::data($pdo, array(
             'whereSql' => 'm.status != 0',
         ));
-        foreach ($pages as $itm) {
-            $node = new Node($itm->getId(), $itm->getTitle(), 0, $itm->getRank(), $itm->getUrl(), $itm->objPageTempalte()->getFilename(), $itm->getStatus(), $itm->getAllowExtra() ?: 0, $itm->getMaxParams());
-            $node->setExtras(array(
-                'page' => $itm,
-            ));
-            $nodes[] = $node;
-        }
-
-        return $nodes;
     }
 }
