@@ -16,4 +16,7 @@ class Order extends \Pz\Orm\Generated\Order implements \Serializable
 
     /** @var DeliveryOption[] $deliveryOptions */
     private $deliveryOptions;
+
+    /** @var string $orderItemClass */
+    protected $orderItemClass;
 }

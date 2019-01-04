@@ -2,19 +2,14 @@
 
 namespace Pz\Controller;
 
-use Pz\Orm\Customer;
-use Pz\Orm\Order;
-use Pz\Orm\OrderItem;
-use Pz\Orm\Product;
-use Pz\Orm\PromoCode;
-use Web\Service\CartService;
+use Pz\Service\CartService;
 
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayFactory;
 
-use Http\Discovery\Exception\NotFoundException;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,8 +30,7 @@ trait TraitCart
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
-        $cart = new CartService($this->container);
-        $orderContainer = $cart->getOrderContainer();
+        $orderContainer = $this->cartService->getOrderContainer();
 
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
@@ -49,16 +43,12 @@ trait TraitCart
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                if ($orderContainer->getId()) {
-                    /** @var Order $oc */
-                    $oc = Order::getById($pdo, $orderContainer->getId());
-                    if ($oc->getPayStatus() == CartService::STATUS_SUCCESS()) {
-                        $this->container->get('session')->set('orderContainer', null);
-                        return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
-                    }
+                $oc = $this->cartService->getOrderContainerFromDb('uniqid', $orderContainer->getUniqid());
+                if ($oc && $oc->getPayStatus() == CartService::STATUS_SUCCESS) {
+                    $this->container->get('session')->set('orderContainer', null);
+                    return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
                 }
-                CartService::updateOrder($orderContainer, $pdo);
-
+                $orderContainer->update();
                 return new RedirectResponse('/cart-review');
             }
         }
@@ -86,8 +76,7 @@ trait TraitCart
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
-        $cart = new CartService($this->container);
-        $orderContainer = $cart->getOrderContainer();
+        $orderContainer = $this->cartService->getOrderContainer();
 
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
@@ -100,15 +89,12 @@ trait TraitCart
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                if ($orderContainer->getId()) {
-                    /** @var Order $oc */
-                    $oc = Order::getById($pdo, $orderContainer->getId());
-                    if ($oc->getPayStatus() == CartService::STATUS_SUCCESS()) {
-                        $this->container->get('session')->set('orderContainer', null);
-                        return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
-                    }
+                $oc = $this->cartService->getOrderContainerFromDb('uniqid', $orderContainer->getUniqid());
+                if ($oc && $oc->getPayStatus() == CartService::STATUS_SUCCESS) {
+                    $this->container->get('session')->set('orderContainer', null);
+                    return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
                 }
-                CartService::updateOrder($orderContainer, $pdo);
+                $orderContainer->update();
 
                 $data = $request->get($form->getName());
                 if ($data['action'] == 'paypal') {
@@ -129,7 +115,7 @@ trait TraitCart
                         }
                         $orderContainer->setOrderItems($orderItems);
 
-                        $orderContainer->setPayStatus(CartService::STATUS_SUBMITTED());
+                        $orderContainer->setPayStatus(CartService::STATUS_SUBMITTED);
                         $orderContainer->setPayRequest(json_encode($response->getData()));
                         $orderContainer->setPayToken($response->getTransactionReference());
                         $orderContainer->setPayDate(date('Y-m-d H:i:s'));
@@ -167,10 +153,10 @@ trait TraitCart
 
         $request = Request::createFromGlobals();
         $id = $request->get('id');
-        /** @var Order $orderContainer */
-        $orderContainer = Order::getByField($pdo, 'uniqid', $id);
-        if (!$orderContainer || $orderContainer->getPayStatus() != CartService::STATUS_SUCCESS()) {
-            throw new NotFoundException();
+
+        $orderContainer = $this->cartService->getOrderContainerFromDb('uniqid', $id);
+        if (!$orderContainer || $orderContainer->getPayStatus() != CartService::STATUS_SUCCESS) {
+            throw new NotFoundHttpException();
         }
 
         return $this->render('cart/cart-success.html.twig', array(
@@ -195,10 +181,10 @@ trait TraitCart
 
         $request = Request::createFromGlobals();
         $id = $request->get('id');
-        /** @var Order $orderContainer */
-        $orderContainer = Order::getByField($pdo, 'uniqid', $id);
-        if (!$orderContainer || $orderContainer->getPayStatus() == CartService::STATUS_SUCCESS()) {
-            throw new NotFoundException();
+
+        $orderContainer = $this->cartService->getOrderContainerFromDb('uniqid', $id);
+        if (!$orderContainer || $orderContainer->getPayStatus() == CartService::STATUS_SUCCESS) {
+            throw new NotFoundHttpException();
         }
 
         return $this->render('cart/cart-failed.html.twig', array(
@@ -223,14 +209,14 @@ trait TraitCart
 
         $request = Request::createFromGlobals();
         $token = $request->get('token');
-        /** @var Order $orderContainer */
-        $orderContainer = Order::getByField($pdo, 'payToken', $token);
+
+        $orderContainer = $this->cartService->getOrderContainerFromDb('payToken', $token);
         if (!$orderContainer) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException();
         }
 
-        if ($orderContainer->getPayStatus() != CartService::STATUS_SUCCESS()) {
-            $orderContainer->setPayStatus(CartService::STATUS_UNPAID());
+        if ($orderContainer->getPayStatus() != CartService::STATUS_SUCCESS) {
+            $orderContainer->setPayStatus(CartService::STATUS_UNPAID);
         }
         $this->container->get('session')->set('orderContainer', $orderContainer);
         return new RedirectResponse('/cart');
@@ -248,13 +234,13 @@ trait TraitCart
 
         $request = Request::createFromGlobals();
         $token = $request->get('token');
-        /** @var Order $orderContainer */
-        $orderContainer = Order::getByField($pdo, 'payToken', $token);
+
+        $orderContainer = $this->cartService->getOrderContainerFromDb('payToken', $token);
         if (!$orderContainer) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException();
         }
 
-        if ($orderContainer->getPayStatus() != CartService::STATUS_SUCCESS()) {
+        if ($orderContainer->getPayStatus() != CartService::STATUS_SUCCESS) {
 
             $params = static::getPaypalParams($orderContainer);
             $gateway = static::getPaypalGateway();
@@ -264,7 +250,7 @@ trait TraitCart
             $orderContainer->setPayResponse(json_encode($paypalResponse));
 
             if (isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success') {
-                $orderContainer->setPayStatus(CartService::STATUS_SUCCESS());
+                $orderContainer->setPayStatus(CartService::STATUS_SUCCESS);
                 $orderContainer->save();
 
 //                $messageBody = $this->container->get('twig')->render("email/invoice.twig", array(
@@ -291,598 +277,21 @@ trait TraitCart
 
             } else {
 //                $template = 'payment-failed.twig';
-                $orderContainer->setPayStatus(CartService::STATUS_UNPAID());
+                $orderContainer->setPayStatus(CartService::STATUS_UNPAID);
                 $orderContainer->save();
                 $this->container->get('session')->set('orderContainer', $orderContainer);
                 return new RedirectResponse('/cart-failed?id=' . $orderContainer->getUniqid());
             }
 
-        } else if ($orderContainer->getPayStatus() == CartService::STATUS_SUCCESS()) {
+        } else if ($orderContainer->getPayStatus() == CartService::STATUS_SUCCESS) {
             $this->container->get('session')->set('orderContainer', null);
             return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());
         }
 
 
-        throw new NotFoundException();
+        throw new NotFoundHttpException();
     }
 
-    /**
-     * @route("/login")
-     * @return Response
-     */
-    public function login(AuthenticationUtils $authenticationUtils)
-    {
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('cart/login.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Login',
-            ),
-            'last_username' => $lastUsername,
-            'error' => $error,
-        ));
-    }
-
-    /**
-     * @route("/register")
-     * @return Response
-     */
-    public function register()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        $pdo = $connection->getWrappedConnection();
-
-        $orm = new Customer($pdo);
-        $orm->setStatus(0);
-
-        /** @var FormFactory $formFactory */
-        $formFactory = $this->container->get('form.factory');
-        /** @var Form $form */
-        $form = $formFactory->create(\Pz\Form\Builder\Register::class, $orm, array(
-            'container' => $this->container,
-        ));
-
-
-        $request = Request::createFromGlobals();
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $messageBody = $this->container->get('twig')->render("email/email-activate.twig", array(
-                'customer' => $orm,
-            ));
-
-
-            $message = (new \Swift_Message())
-                ->setSubject('West Brook - Acticate your account')
-                ->setFrom('noreply@westbrook.co.nz')
-                ->setTo($orm->getTitle())
-                ->setBody($messageBody, 'text/html');
-
-
-            $this->container->get('mailer')->send($message);
-
-            $orm->setSource(Customer::WEBSITE);
-            $orm->save();
-
-            return new RedirectResponse('/activation/required?id=' . $orm->getUniqid());
-
-        }
-
-        return $this->render('cart/register.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Register',
-            ),
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * @route("/activation/required")
-     * @return Response
-     */
-    public function activationRequired()
-    {
-        return $this->render('cart/confirmation.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Activation Required',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/forget-password")
-     * @return Response
-     */
-    public function forgetPassword()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        $pdo = $connection->getWrappedConnection();
-
-
-        /** @var FormFactory $formFactory */
-        $formFactory = $this->container->get('form.factory');
-        /** @var Form $form */
-        $form = $formFactory->create(\Pz\Form\Builder\ForgetPassword::class, null, array(
-            'container' => $this->container,
-        ));
-
-        $request = Request::createFromGlobals();
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $orm = Customer::getByField($pdo, 'title', $data['title']);
-            $orm->setResetToken(md5($orm->getUsername() . time() . uniqid()));
-            $orm->setResetExpiry(date('Y-m-d H:i:s', strtotime('+24 hours')));
-            $orm->save();
-
-            $messageBody = $this->container->get('twig')->render("email/email-forget.twig", array(
-                'customer' => $orm,
-            ));
-            $message = (new \Swift_Message())
-                ->setSubject('West Brook - Reset your password')
-                ->setFrom('noreply@westbrook.co.nz')
-                ->setTo($orm->getTitle())
-                ->setBody($messageBody, 'text/html');
-
-
-            $this->container->get('mailer')->send($message);
-
-            return new RedirectResponse('/reset-password-email-sent?id=' . $orm->getUniqid());
-
-        }
-
-        return $this->render('cart/forget-password.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Forget Password',
-            ),
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * @route("/reset-password-email-sent")
-     * @return Response
-     */
-    public function resetPasswordEmailSent()
-    {
-        return $this->render('cart/confirmation.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Reset Password Email Sent',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/after_login")
-     * @return Response
-     */
-    public function memberAfterLogin()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-
-        $redirectUrl = '/member/dashboard';
-        $cart = new CartService($this->container);
-        $orderContainer = $cart->getOrderContainer();
-        if (count($orderContainer->getPendingItems())) {
-            $redirectUrl = '/cart';
-        }
-
-        return new RedirectResponse($redirectUrl);
-    }
-
-    /**
-     * @route("/member/dashboard")
-     * @return Response
-     */
-    public function memberDashboard()
-    {
-        return $this->render('cart/member-dashboard.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/orders")
-     * @return Response
-     */
-    public function memberOrders()
-    {
-        return $this->render('cart/member-orders.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/order-detail")
-     * @return Response
-     */
-    public function memberOrder()
-    {
-        return $this->render('cart/member-order.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/favourites")
-     * @return Response
-     */
-    public function memberFavourites()
-    {
-        if (getenv('MEMBER_FAV_ENABLED') != 1) {
-            throw new NotFoundException();
-        }
-
-        return $this->render('cart/member-favourites.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/addresses")
-     * @return Response
-     */
-    public function memberAddresses()
-    {
-        return $this->render('cart/member-addresses.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/address-detail")
-     * @return Response
-     */
-    public function memberAddress()
-    {
-        return $this->render('cart/member-address.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/password")
-     * @return Response
-     */
-    public function memberPassword()
-    {
-        return $this->render('cart/member-password.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/member/profile")
-     * @return Response
-     */
-    public function memberProfile()
-    {
-        return $this->render('cart/member-profile.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
-        ));
-    }
-
-    /**
-     * @route("/activate/{id}")
-     * @return Response
-     */
-    public function activate($id)
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        /** @var Customer $customer */
-        $customer = Customer::getByField($pdo, 'uniqid', $id);
-        if (!$customer) {
-            throw new NotFoundException();
-        }
-
-        if ($customer->getIsActivated() == 1) {
-            throw new NotFoundException();
-        }
-
-        $customer->setIsActivated(1);
-        $customer->setStatus(1);
-        $customer->save();
-
-        $data = Customer::data($pdo, array(
-            'whereSql' => 'm.title = ? AND m.id != ? AND m.status = 0',
-            'params' => array($customer->getTitle(), $customer->getId()),
-        ));
-
-        foreach ($data as $itm) {
-            $itm->delete();
-        }
-
-
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());
-        $tokenStorage->setToken($token);
-        $this->get('session')->set('_security_member', serialize($token));
-        return new RedirectResponse('\member\dashboard');
-    }
-
-    /**
-     * @route("/reset/{token}")
-     * @return Response
-     */
-    public function resetPassword($token)
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        /** @var Customer $customer */
-        $customer = Customer::getByField($pdo, 'resetToken', $token);
-        if (!$customer) {
-            throw new NotFoundException();
-        }
-
-        if (time() >= strtotime($customer->getResetExpiry())) {
-            throw new NotFoundException();
-        }
-
-        $customer->setResetToken('');
-//        $customer->save();
-
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = new UsernamePasswordToken($customer, $customer->getPassword(), "public", $customer->getRoles());
-        $tokenStorage->setToken($token);
-        $this->get('session')->set('_security_member', serialize($token));
-        return new RedirectResponse('\member\password');
-    }
-
-    /**
-     * @route("/xhr/cart/item/add/{id}/{quantity}")
-     * @return Response
-     */
-    public function xhrAddOrderItem($id, $quantity)
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $cart = new CartService($this->container);
-        $orderContainer = $cart->getOrderContainer();
-
-        $exist = false;
-        /** @var OrderItem[] $pendingItems */
-        $pendingItems = $orderContainer->getPendingItems();
-        foreach ($pendingItems as $pendingItem) {
-            if ($pendingItem->getProductId() == $id) {
-                $product = Product::getById($pdo, $id);
-                if ($product) {
-                    $pendingItem->setQuantity($pendingItem->getQuantity() + $quantity);
-                    $pendingItem->setSubtotal($product->getPrice() * $pendingItem->getQuantity());
-                    $exist = true;
-                    break;
-                }
-            }
-        }
-
-        if (!$exist) {
-            /** @var Product $product */
-            $product = Product::getById($pdo, $id);
-            if ($product) {
-                $orderItem = new OrderItem($pdo);
-                $orderItem->setTitle(($product->getVariantProduct() ? $product->getParentProductId() . ' - ' : '') . $product->getTitle());
-                $orderItem->setOrderId($orderContainer->getUniqid());
-                $orderItem->setProductId($id);
-                $orderItem->setPrice($product->getPrice());
-                $orderItem->setQuantity($quantity);
-                $orderItem->setSubtotal($product->getPrice() * $orderItem->getQuantity());
-                $orderItem->setWeight($product->getWeight());
-                $orderItem->setTotalWeight($product->getWeight() * $quantity);
-                $orderContainer->addPendingItem($orderItem);
-            }
-        }
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new Response(count($orderContainer->getPendingItems()));
-    }
-
-    /**
-     * @route("/xhr/cart/order")
-     * @return Response
-     */
-    public function xhrGetOrder()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        return new JsonResponse($orderContainer);
-    }
-
-    /**
-     * @route("/xhr/cart/item/qty")
-     * @return Response
-     */
-    public function xhrChangeItemQty()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        $request = Request::createFromGlobals();
-        $id = $request->get('id');
-        $qty = $request->get('qty');
-
-        /** @var OrderItem[] $pendingItems */
-        $pendingItems = $orderContainer->getPendingItems();
-        foreach ($pendingItems as $pendingItem) {
-            if ($pendingItem->getUniqid() == $id) {
-                $pendingItem->setQuantity($qty);
-                $pendingItem->setSubtotal($pendingItem->getPrice() * $pendingItem->getQuantity());
-                $pendingItem->setTotalWeight($pendingItem->getWeight() * $pendingItem->getQuantity());
-            }
-        }
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new JsonResponse($orderContainer);
-    }
-
-    /**
-     * @route("/xhr/cart/order/address/update")
-     * @return Response
-     */
-    public function xhrUpdateAddress()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        $request = Request::createFromGlobals();
-        $o = json_decode($request->get('order'));
-
-//        var_dump($o);exit;
-
-        foreach ($o as $idx => $itm) {
-            if (strpos($idx, 'shipping') == -1 && strpos($idx, 'billing') == -1) {
-                continue;
-            }
-            $method = 'set' . ucfirst($idx);
-            $orderContainer->$method($itm);
-        }
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new JsonResponse($orderContainer);
-    }
-
-    /**
-     * @route("/xhr/cart/order/delivery/update")
-     * @return Response
-     */
-    public function xhrUpdateDeliveryOption()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        $request = Request::createFromGlobals();
-        $deliverOptionId = json_decode($request->get('id'));
-
-        $orderContainer->setDeliveryOptionId($deliverOptionId);
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new JsonResponse($orderContainer);
-    }
-
-    /**
-     * @route("/xhr/cart/item/delete")
-     * @return Response
-     */
-    public function xhrDeleteItem()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        $request = Request::createFromGlobals();
-        $id = $request->get('id');
-
-        /** @var OrderItem[] $pendingItems */
-        $pendingItems = $orderContainer->getPendingItems();
-        foreach ($pendingItems as $idx => $pendingItem) {
-            if ($pendingItem->getUniqid() == $id) {
-                array_splice($pendingItems, $idx, 1);
-                $orderContainer->setPendingItems($pendingItems);
-                $pendingItem->delete();
-                break;
-            }
-        }
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new JsonResponse($orderContainer);
-    }
-
-    /**
-     * @route("/xhr/cart/promo/apply")
-     * @return Response
-     */
-    public function xhrApplyPromoCode()
-    {
-        $connection = $this->container->get('doctrine.dbal.default_connection');
-        /** @var \PDO $pdo */
-        $pdo = $connection->getWrappedConnection();
-
-        $shop = new CartService($this->container);
-        $orderContainer = $shop->getOrderContainer();
-
-        $request = Request::createFromGlobals();
-        $code = $request->get('code');
-
-        $orderContainer->setPromoCode($code);
-
-        CartService::updateOrder($orderContainer, $pdo);
-
-        return new JsonResponse($orderContainer);
-    }
 
     /**
      * @return \Omnipay\Common\GatewayInterface
@@ -899,10 +308,10 @@ trait TraitCart
     }
 
     /**
-     * @param Order $orderContainer
+     * @param $orderContainer
      * @return array
      */
-    static function getPaypalParams(Order $orderContainer)
+    static function getPaypalParams($orderContainer)
     {
         $cardInput = array(
             'firstName' => $orderContainer->getBillingFirstname(),

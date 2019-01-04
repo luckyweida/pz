@@ -3,7 +3,7 @@ namespace Pz\Controller;
 
 
 use Pz\Orm\Customer;
-use Web\Service\CartService;
+use Pz\Service\CartService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -65,7 +65,7 @@ trait TraitCartGoogleLogin
                 $customer->setTitle($userInfo->email);
                 $customer->setFirstname($userInfo->givenName);
                 $customer->setLastname($userInfo->familyName);
-                $customer->setSource(Customer::GOOGLE);
+                $customer->setSource(CartService::CUSTOMER_GOOGLE);
                 $customer->setSourceId($userInfo->id);
                 $customer->setIsActivated(1);
                 $customer->save();

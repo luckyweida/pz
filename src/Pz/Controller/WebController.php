@@ -6,5 +6,5 @@ use Pz\Axiom\Mo;
 
 class WebController extends Mo
 {
-    use TraitCart, TraitCartFacebookLogin, TraitCartGoogleLogin, TraitWeb;
+    use TraitWeb;
 }

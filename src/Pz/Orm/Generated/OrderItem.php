@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-02 17:26:53
+//Last updated: 2019-01-03 15:03:24
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;

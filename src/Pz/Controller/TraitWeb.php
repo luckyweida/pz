@@ -2,13 +2,9 @@
 
 namespace Pz\Controller;
 
-
-use Http\Discovery\Exception\NotFoundException;
-use Pz\Axiom\Mo;
 use Pz\Orm\Asset;
 use Pz\Orm\AssetSize;
-use Pz\Orm\Customer;
-use Pz\Orm\Page;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -145,12 +141,6 @@ trait TraitWeb
      */
     public function getNodes()
     {
-        /** @var \PDO $pdo */
-        $pdo = $this->connection->getWrappedConnection();
-
-        /** @var Page[] $pages */
-        return Page::data($pdo, array(
-            'whereSql' => 'm.status != 0',
-        ));
+        return $this->pageService->getPages();
     }
 }

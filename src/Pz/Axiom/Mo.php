@@ -4,6 +4,7 @@ namespace Pz\Axiom;
 
 use Doctrine\DBAL\Connection;
 use Pz\Router\Tree;
+use Pz\Service\PageService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -14,20 +15,33 @@ abstract class Mo extends Controller
      * @var Connection
      */
     protected $connection;
+
+    /**
+     * @var PageService
+     */
+    protected $pageService;
+
     /**
      * @var Tree
      */
-    private $tree;
+    protected $tree;
 
     /**
      * Mo constructor.
+     * @param Connection $connection
+     * @param PageService $pageService
      */
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, PageService $pageService)
     {
         $this->connection = $connection;
+        $this->pageService = $pageService;
         $this->tree = new Tree($this->getNodes());
     }
 
+    /**
+     * @param $requestUri
+     * @return array
+     */
     function getParams($requestUri)
     {
         $fragments = explode('/', trim($requestUri, '/'));

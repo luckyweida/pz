@@ -5,19 +5,20 @@ namespace Pz\Orm\OrmTrait;
 use Pz\Orm\Country;
 use Pz\Orm\DeliveryOption;
 use Pz\Orm\OrderItem;
-use Web\Service\CartService;
+use Pz\Orm\PromoCode;
+use Pz\Service\CartService;
 
 trait TraitOrder
 {
     /**
-     * Order constructor.
+     * TraitOrder constructor.
      * @param \PDO $pdo
      */
     public function __construct(\PDO $pdo)
     {
         $this->setBillingSame(1);
-        $this->setDeliveryOptionStatus(CartService::DELIVERY_HIDDEN());
-        $this->setPayStatus(CartService::STATUS_UNPAID());
+        $this->setDeliveryOptionStatus(CartService::DELIVERY_HIDDEN);
+        $this->setPayStatus(CartService::STATUS_UNPAID);
 
         $this->pendingItems = array();
         $this->orderItems = array();
@@ -62,7 +63,7 @@ trait TraitOrder
     }
 
     /**
-     * @return OrderItem[]
+     * @return array
      */
     public function getPendingItems()
     {
@@ -78,7 +79,7 @@ trait TraitOrder
     }
 
     /**
-     * @return OrderItem[]
+     * @return array
      */
     public function getOrderItems()
     {
@@ -150,6 +151,82 @@ trait TraitOrder
     public function setDeliveryOptions(array $deliveryOptions): void
     {
         $this->deliveryOptions = $deliveryOptions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function update() {
+        $result = 0;
+
+        $pendingItems = $this->getPendingItems();
+        foreach ($pendingItems as $pendingItem) {
+            $result += $pendingItem->getSubtotal();
+        }
+        $subtotal = round($result * 20 / 23, 2);
+
+        $discount = 0;
+
+        /** @var PromoCode $promoCode */
+        $promoCode = PromoCode::getByField($this->getPdo(), 'title', $this->getPromoCode());
+        if ($promoCode) {
+            $valid = true;
+            if ($promoCode->getStartdate() && strtotime($promoCode->getStartdate()) >= time()) {
+                $valid = false;
+            }
+            if ($promoCode->getEnddate() && strtotime($promoCode->getEnddate()) <= time()) {
+                $valid = false;
+            }
+
+            if ($valid) {
+                if ($promoCode->getPerc() == 1) {
+                    $discount = round(($promoCode->getValue() / 100) * $subtotal, 2);
+                } else {
+                    $discount = $promoCode->getValue();
+                }
+            }
+        }
+
+        $afterDiscount = $subtotal - $discount;
+        $gst = round($afterDiscount * 0.15, 2);
+
+
+        $deliveryFee = 0;
+
+        $countryCode = $this->getCountryCode();
+        $deliveryOptions = $this->getDeliveryOptions();
+        if ($countryCode) {
+            /** @var DeliveryOption $firstDeliveryOption */
+            $selectedDeliveryOption = $deliveryOptions[0];
+            $deliveryOptionId = $this->getDeliveryOptionId();
+
+            foreach ($deliveryOptions as $deliveryOption) {
+                if ($deliveryOption->getId() == $deliveryOptionId) {
+                    $selectedDeliveryOption = $deliveryOption;
+                }
+            }
+
+            $deliveryFee = $selectedDeliveryOption->getPrice();
+
+            $this->setDeliveryOptionDescription($selectedDeliveryOption->getTitle());
+            $this->setDeliveryOptionId($selectedDeliveryOption->getId());
+            $this->setDeliveryOptionStatus(CartService::DELIVERY_VISIBLE);
+        } else {
+            $this->setDeliveryOptionDescription('');
+            $this->setDeliveryOptionId(null);
+            $this->setDeliveryOptionStatus(CartService::DELIVERY_HIDDEN);
+        }
+
+        $total = $subtotal - $discount + $gst + max($deliveryFee, 0);
+
+        $this->setDeliveryFee($deliveryFee);
+        $this->setDiscount($discount);
+        $this->setAfterDiscount($afterDiscount);
+        $this->setSubtotal($subtotal);
+        $this->setGst($gst);
+        $this->setTotal($total);
+
+        return true;
     }
 
     /**

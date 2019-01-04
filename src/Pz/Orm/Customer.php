@@ -9,8 +9,4 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class Customer extends \Pz\Orm\Generated\Customer implements UserInterface, EquatableInterface, \Serializable
 {
     use TraitCustomer;
-
-    const WEBSITE = 1;
-    const GOOGLE = 2;
-    const FACEBOOK = 3;
 }

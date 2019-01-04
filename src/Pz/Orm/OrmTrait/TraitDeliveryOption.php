@@ -3,14 +3,13 @@
 namespace Pz\Orm\OrmTrait;
 
 use Pz\Orm\Country;
-use Pz\Orm\Order;
 
 trait TraitDeliveryOption
 {
     /**
      * @param Order $orderContainer
      */
-    public function calculatePrice(Order $orderContainer): void
+    public function calculatePrice($orderContainer): void
     {
 
 
@@ -120,7 +119,7 @@ trait TraitDeliveryOption
      * @param Order $orderContainer
      * @return bool
      */
-    public function hasDeliveryPrice(Order $orderContainer)
+    public function hasDeliveryPrice($orderContainer)
     {
         return $orderContainer->getCountryCode() ? true : false;
     }

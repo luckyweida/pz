@@ -2,187 +2,212 @@
 
 namespace Pz\Service;
 
-use Pz\Orm\Customer;
-use Pz\Orm\DeliveryOption;
-use Pz\Orm\Order;
-use Pz\Orm\OrderItem;
-use Pz\Orm\Product;
-use Pz\Orm\ProductCategory;
-use Pz\Orm\PromoCode;
-
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class CartService
 {
+    const STATUS_UNPAID = 0;
+    const STATUS_SUBMITTED = 1;
+    const STATUS_SUCCESS = 2;
+
+    const DELIVERY_HIDDEN = 0;
+    const DELIVERY_VISIBLE = 1;
+
+    const CUSTOMER_WEBSITE = 1;
+    const CUSTOMER_GOOGLE = 2;
+    const CUSTOMER_FACEBOOK = 3;
+
+    protected $orderContainer;
+
     /**
      * Shop constructor.
      * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, $productClass, $orderClass, $orderItemClass, $customerClass, $customerAddressClass)
     {
         $this->container = $container;
+        $this->productClass = $productClass;
+        $this->orderClass = $orderClass;
+        $this->orderItemClass = $orderItemClass;
+        $this->customerClass = $customerClass;
+        $this->customerAddressClass = $customerAddressClass;
+        $this->orderContainer = null;
     }
 
     /**
-     * @return Order
+     * @return mixed
+     */
+    public function getCustomerAddressClass()
+    {
+        return $this->customerAddressClass;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerClass()
+    {
+        return $this->customerClass;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrderClass()
+    {
+        return $this->orderClass;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrderItemClass()
+    {
+        return $this->orderItemClass;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductClass()
+    {
+        return $this->productClass;
+    }
+
+    /**
+     * @return mixed
      * @throws \Exception
      */
     public function getOrderContainer() {
+        if (!$this->orderContainer) {
+            $connection = $this->container->get('doctrine.dbal.default_connection');
+            /** @var \PDO $pdo */
+            $pdo = $connection->getWrappedConnection();
+
+            $this->orderContainer = $this->container->get('session')->get('orderContainer');
+            if (!$this->orderContainer || $this->orderContainer->getPayStatus() != static::STATUS_UNPAID) {
+                $this->orderContainer = new $this->orderClass($pdo);
+                $this->container->get('session')->set('orderContainer', $this->orderContainer);
+            }
+
+            //convert 1/0 to boolean
+            $this->orderContainer->setBillingSame($this->orderContainer->getBillingSame() ? true : false);
+            $this->orderContainer->setBillingSave($this->orderContainer->getBillingSave() ? true : false);
+            $this->orderContainer->setShippingSave($this->orderContainer->getShippingSave() ? true : false);
+
+            //attach customer email to order
+            /** @var TokenStorage $tokenStorage */
+            $tokenStorage = $this->container->get('security.token_storage');
+            $customer = $tokenStorage->getToken()->getUser();
+            if (!$this->orderContainer->getEmail() && gettype($customer) == 'object') {
+                $this->orderContainer->setEmail($customer->getTitle());
+            }
+
+            //sync order items
+            foreach ($this->orderContainer->getOrderItems() as $orderItem) {
+                $exist = false;
+                foreach ($this->orderContainer->getPendingItems() as $pendingItem) {
+                    if ($pendingItem->getUniqid() == $orderItem->getUniqid()) {
+                        $exist = true;
+                    }
+                }
+                if (!$exist) {
+                    $this->orderContainer->addPendingItem($orderItem);
+                }
+            }
+        }
+
+        return $this->orderContainer;
+    }
+
+    /**
+     * @param $field
+     * @param $value
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getOrderContainerFromDb($field, $value) {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
-        /** @var Order $orderContainer */
-        $orderContainer = $this->container->get('session')->get('orderContainer');
-        if (!$orderContainer || $orderContainer->getPayStatus() != CartService::STATUS_UNPAID()) {
-            $orderContainer = new Order($pdo);
-            $this->container->get('session')->set('orderContainer', $orderContainer);
+        $orderContainer = $this->orderClass::active($pdo, array(
+            'whereSql' => "m.$field = ?",
+            'params' => [$value],
+            'oneOrNull' => 1,
+        ));
+        if ($orderContainer) {
+            $this->orderContainer = $orderContainer;
+            $this->container->get('session')->set('orderContainer', $this->orderContainer);
         }
-
-        $orderContainer->setBillingSame($orderContainer->getBillingSame() ? true : false);
-        $orderContainer->setBillingSave($orderContainer->getBillingSave() ? true : false);
-        $orderContainer->setShippingSave($orderContainer->getShippingSave() ? true : false);
-
-        /** @var TokenStorage $tokenStorage */
-        $tokenStorage = $this->container->get('security.token_storage');
-        /** @var Customer $customer */
-        $customer = $tokenStorage->getToken()->getUser();
-        if (!$orderContainer->getEmail() && gettype($customer) == 'object') {
-            $orderContainer->setEmail($customer->getTitle());
-        }
-
-        //ORDER: Load order items
-        foreach ($orderContainer->getOrderItems() as $orderItem) {
-            $exist = false;
-            foreach ($orderContainer->getPendingItems() as $pendingItem) {
-                if ($pendingItem->getUniqid() == $orderItem->getUniqid()) {
-                    $exist = true;
-                }
-            }
-            if (!$exist) {
-                $orderContainer->addPendingItem($orderItem);
-            }
-        }
-
-//        var_dump($orderContainer);exit;
         return $orderContainer;
     }
 
     /**
-     * @param Order $orderContainer
-     * @param \PDO $pdo
+     * @param $id
+     * @return mixed
+     * @throws \Exception
      */
-    static public function updateOrder(Order &$orderContainer, \PDO $pdo)
-    {
-        $result = 0;
+    public function getProductById($id) {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
 
-        /** @var OrderItem[] $pendingItems */
-        $pendingItems = $orderContainer->getPendingItems();
-        foreach ($pendingItems as $pendingItem) {
-            $result += $pendingItem->getSubtotal();
+        return $this->productClass::getById($pdo, $id);
+    }
+
+
+    public function addOrderItem($productId, $productQty) {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        if (!$this->orderContainer) {
+            $this->orderContainer = $this->getOrderContainer();
         }
 
-        $subtotal = round($result * 20 / 23, 2);
-
-
-        $discount = 0;
-        /** @var PromoCode $promoCode */
-        $promoCode = PromoCode::getByField($pdo, 'title', $orderContainer->getPromoCode());
-        if ($promoCode) {
-            $valid = true;
-            if ($promoCode->getStartdate() && strtotime($promoCode->getStartdate()) >= time()) {
-                $valid = false;
-            }
-            if ($promoCode->getEnddate() && strtotime($promoCode->getEnddate()) <= time()) {
-                $valid = false;
-            }
-
-            if ($valid) {
-                if ($promoCode->getPerc() == 1) {
-                    $discount = round(($promoCode->getValue() / 100) * $subtotal, 2);
-                } else {
-                    $discount = $promoCode->getValue();
-                }
-            }
-        }
-
-        $afterDiscount = $subtotal - $discount;
-        $gst = round($afterDiscount * 0.15, 2);
-
-
-        $deliveryFee = 0;
-
-        $countryCode = $orderContainer->getCountryCode();
-        $deliveryOptions = $orderContainer->getDeliveryOptions();
-        if ($countryCode) {
-            /** @var DeliveryOption $firstDeliveryOption */
-            $selectedDeliveryOption = $deliveryOptions[0];
-            $deliveryOptionId = $orderContainer->getDeliveryOptionId();
-
-            foreach ($deliveryOptions as $deliveryOption) {
-                if ($deliveryOption->getId() == $deliveryOptionId) {
-                    $selectedDeliveryOption = $deliveryOption;
+        $product = $this->getProductById($productId);
+        if ($product) {
+            $exist = false;
+            $pendingItems = $this->orderContainer->getPendingItems();
+            foreach ($pendingItems as $pendingItem) {
+                if ($pendingItem->getProductId() == $productId) {
+                    $pendingItem->setQuantity($pendingItem->getQuantity() + $productQty);
+                    $pendingItem->setSubtotal($product->getPrice() * $pendingItem->getQuantity());
+                    $exist = true;
+                    break;
                 }
             }
 
-            $deliveryFee = $selectedDeliveryOption->getPrice();
-
-            $orderContainer->setDeliveryOptionDescription($selectedDeliveryOption->getTitle());
-            $orderContainer->setDeliveryOptionId($selectedDeliveryOption->getId());
-            $orderContainer->setDeliveryOptionStatus(static::DELIVERY_VISIBLE());
-        } else {
-            $orderContainer->setDeliveryOptionDescription('');
-            $orderContainer->setDeliveryOptionId(null);
-            $orderContainer->setDeliveryOptionStatus(static::DELIVERY_HIDDEN());
+            if (!$exist) {
+                $orderItem = new $this->orderItemClass($pdo);
+                $orderItem->setTitle(($product->getVariantProduct() ? $product->getParentProductId() . ' - ' : '') . $product->getTitle());
+                $orderItem->setOrderId($this->orderContainer->getUniqid());
+                $orderItem->setProductId($productId);
+                $orderItem->setPrice($product->getPrice());
+                $orderItem->setQuantity($productQty);
+                $orderItem->setSubtotal($product->getPrice() * $orderItem->getQuantity());
+                $orderItem->setWeight($product->getWeight());
+                $orderItem->setTotalWeight($product->getWeight() * $productQty);
+                $this->orderContainer->addPendingItem($orderItem);
+            }
+            $this->orderContainer->update();
         }
-
-        $orderContainer->setDeliveryFee($deliveryFee);
-
-
-
-        $total = $subtotal - $discount + $gst + max($deliveryFee, 0);
-
-        $orderContainer->setDiscount($discount);
-        $orderContainer->setAfterDiscount($afterDiscount);
-        $orderContainer->setSubtotal($subtotal);
-        $orderContainer->setGst($gst);
-        $orderContainer->setTotal($total);
-
+        return $this->orderContainer;
     }
 
     /**
      * @return int
      */
-    static public function STATUS_UNPAID() {
-        return 0;
+    public function DELIVERY_HIDDEN() {
+        return static::DELIVERY_HIDDEN;
     }
 
     /**
      * @return int
      */
-    static public function STATUS_SUBMITTED() {
-        return 1;
-    }
-
-    /**
-     * @return int
-     */
-    static public function STATUS_SUCCESS() {
-        return 2;
-    }
-
-    /**
-     * @return int
-     */
-    static public function DELIVERY_HIDDEN() {
-        return 0;
-    }
-
-    /**
-     * @return int
-     */
-    static public function DELIVERY_VISIBLE() {
-        return 1;
+    public function DELIVERY_VISIBLE() {
+        return static::DELIVERY_VISIBLE;
     }
 }

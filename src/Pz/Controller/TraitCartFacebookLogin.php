@@ -3,7 +3,7 @@ namespace Pz\Controller;
 
 
 use Pz\Orm\Customer;
-use Web\Service\CartService;
+use Pz\Service\CartService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -112,7 +112,7 @@ trait TraitCartFacebookLogin
                 $customer->setTitle($fbUser->getEmail());
                 $customer->setFirstname($firstName);
                 $customer->setLastname($lastName);
-                $customer->setSource(Customer::FACEBOOK);
+                $customer->setSource(CartService::CUSTOMER_FACEBOOK);
                 $customer->setSourceId($fbUser->getId());
                 $customer->setIsActivated(1);
                 $customer->save();

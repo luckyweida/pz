@@ -2,6 +2,7 @@
 
 namespace Pz\Service;
 
+use Cocur\Slugify\Slugify;
 use Pz\Form\Type\ContentBlock;
 use Pz\Orm\FragmentBlock;
 use Pz\Orm\PageCategory;
@@ -17,6 +18,15 @@ class UtilsService
     public function __construct(\Doctrine\DBAL\Connection $connection)
     {
         $this->connection = $connection;
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    public function slugify($string) {
+        $slugify = new Slugify(['trim' => false]);
+        return $slugify->slugify($string);
     }
 
     /**

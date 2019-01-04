@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-02 17:27:01
+//Last updated: 2019-01-03 17:22:32
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -30,6 +30,11 @@ class Customer extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $lastname;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $description;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -134,6 +139,22 @@ class Customer extends Walle
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+    
+    /**
+     * @param mixed description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
     
     /**
