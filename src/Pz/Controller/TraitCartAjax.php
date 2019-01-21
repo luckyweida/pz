@@ -2,9 +2,6 @@
 
 namespace Pz\Controller;
 
-use Pz\Orm\OrderItem;
-use Pz\Orm\Product;
-
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayFactory;
 

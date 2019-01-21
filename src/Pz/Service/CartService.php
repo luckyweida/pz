@@ -24,31 +24,13 @@ class CartService
      * Shop constructor.
      * @param Container $container
      */
-    public function __construct(Container $container, $productClass, $orderClass, $orderItemClass, $customerClass, $customerAddressClass)
+    public function __construct(Container $container, $productClass, $orderClass, $orderItemClass)
     {
         $this->container = $container;
         $this->productClass = $productClass;
         $this->orderClass = $orderClass;
         $this->orderItemClass = $orderItemClass;
-        $this->customerClass = $customerClass;
-        $this->customerAddressClass = $customerAddressClass;
         $this->orderContainer = null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerAddressClass()
-    {
-        return $this->customerAddressClass;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerClass()
-    {
-        return $this->customerClass;
     }
 
     /**
@@ -88,6 +70,7 @@ class CartService
             $this->orderContainer = $this->container->get('session')->get('orderContainer');
             if (!$this->orderContainer || $this->orderContainer->getPayStatus() != static::STATUS_UNPAID) {
                 $this->orderContainer = new $this->orderClass($pdo);
+                $this->orderContainer->setOrderItemClass($this->getOrderItemClass());
                 $this->container->get('session')->set('orderContainer', $this->orderContainer);
             }
 
@@ -185,9 +168,9 @@ class CartService
                 $orderItem->setTitle(($product->getVariantProduct() ? $product->getParentProductId() . ' - ' : '') . $product->getTitle());
                 $orderItem->setOrderId($this->orderContainer->getUniqid());
                 $orderItem->setProductId($productId);
-                $orderItem->setPrice($product->getPrice());
+                $orderItem->setPrice(round(($product->getPrice() * 20) / 23, 2));
                 $orderItem->setQuantity($productQty);
-                $orderItem->setSubtotal($product->getPrice() * $orderItem->getQuantity());
+                $orderItem->setSubtotal($orderItem->getPrice() * $orderItem->getQuantity());
                 $orderItem->setWeight($product->getWeight());
                 $orderItem->setTotalWeight($product->getWeight() * $productQty);
                 $this->orderContainer->addPendingItem($orderItem);

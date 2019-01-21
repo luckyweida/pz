@@ -43,7 +43,7 @@ class CustomerProvider implements UserProviderInterface
     {
 
         $pdo = $this->conn->getWrappedConnection();
-        /** @var User $user */
+        /** @var Customer $user */
         $user = Customer::getByField($pdo, 'title', $username);
 
         if (!$user) {

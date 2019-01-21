@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-03 15:02:20
+//Last updated: 2019-01-20 17:43:40
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -20,6 +20,11 @@ class Product extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $myRank;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $featured;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -152,6 +157,22 @@ class Product extends Walle
     public function setMyRank($myRank)
     {
         $this->myRank = $myRank;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getFeatured()
+    {
+        return $this->featured;
+    }
+    
+    /**
+     * @param mixed featured
+     */
+    public function setFeatured($featured)
+    {
+        $this->featured = $featured;
     }
     
     /**

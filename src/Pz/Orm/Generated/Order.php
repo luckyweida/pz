@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-03 15:02:52
+//Last updated: 2019-01-13 15:39:24
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -104,7 +104,7 @@ class Order extends Walle
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
-    private $Note;
+    private $note;
     
     /**
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
@@ -215,6 +215,11 @@ class Order extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $deliveryOptionStatus;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $orderItemClass;
     
     /**
      * @return mixed
@@ -525,15 +530,15 @@ class Order extends Walle
      */
     public function getNote()
     {
-        return $this->Note;
+        return $this->note;
     }
     
     /**
-     * @param mixed Note
+     * @param mixed note
      */
-    public function setNote($Note)
+    public function setNote($note)
     {
-        $this->Note = $Note;
+        $this->note = $note;
     }
     
     /**
@@ -886,6 +891,22 @@ class Order extends Walle
     public function setDeliveryOptionStatus($deliveryOptionStatus)
     {
         $this->deliveryOptionStatus = $deliveryOptionStatus;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getOrderItemClass()
+    {
+        return $this->orderItemClass;
+    }
+    
+    /**
+     * @param mixed orderItemClass
+     */
+    public function setOrderItemClass($orderItemClass)
+    {
+        $this->orderItemClass = $orderItemClass;
     }
     
 }

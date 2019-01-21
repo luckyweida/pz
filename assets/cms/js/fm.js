@@ -5,6 +5,7 @@ fm = {
     init: function (options = {}) {
         window.__currentFolderId = $('#currentFolderId').length ? $('#currentFolderId').val() : 0;
         fm.currentFolderId = window.__currentFolderId;
+        fm.currentFolderId = isNaN(fm.currentFolderId) ? 0 : fm.currentFolderId;
 
         fm.options = options;
         fm.mode = options.mode;
@@ -90,8 +91,12 @@ fm = {
 
         $('#popup-container').on('click', '.jstree-anchor', function () {
             fm.currentFolderId = $(this).parent().attr('id');
+            fm.currentFolderId = isNaN(fm.currentFolderId) ? 0 : fm.currentFolderId;
             window.__currentFolderId = fm.currentFolderId;
             $('#currentFolderId').val(window.__currentFolderId);
+
+            $('.js-nav .pz-tools').html('');
+
             fm.getFiles();
             fm.getNav();
             return false;
@@ -99,6 +104,10 @@ fm = {
 
         $('#popup-container').on('click', '.js-nav .pz-nav a', function () {
             fm.currentFolderId = $(this).data('id');
+            fm.currentFolderId = isNaN(fm.currentFolderId) ? 0 : fm.currentFolderId;
+
+            $('.js-nav .pz-tools').html('');
+
             fm.getFolders();
             fm.getFiles();
             fm.getNav();
@@ -172,6 +181,8 @@ fm = {
             then((willDelete) => {
                 if (willDelete) {
                     fm.currentFolderId = $(_this).data('parent');
+                    fm.currentFolderId = isNaN(fm.currentFolderId) ? 0 : fm.currentFolderId;
+
                     $.ajax({
                         type: 'GET',
                         url: '/pz/ajax/asset/files/delete/folder?id=' + $(_this).data('id'),

@@ -1,0 +1,935 @@
+{% extends 'base.html.twig' %}
+{% block bodyClass %}cart{% endblock %}
+
+{% form_theme form 'form.twig' %}
+
+{% block contentWrapper %}
+    {% set savedAddresses = app.user ? app.user.objAddresses : [] %}
+
+    <div class="section section-white" style="padding-top: 100px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="title">My Shopping Cart</h1>
+                </div>
+                <div class="col-md-10 ml-auto mr-auto">
+                    <div class="table-responsive">
+                        <table class="table table-shopping">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"></th>
+                                    <th></th>
+                                    <th class="text-right">Price</th>
+                                    <th class="text-right">Quantity</th>
+                                    <th class="text-right" style="width: 10em;">Total</th>
+                                    <th class="text-right">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody class="js-cart-items">
+                                {% for itm in orderContainer.pendingItems if itm.objProduct %}
+                                    <tr data-id="{{ itm.uniqid }}">
+                                        <td>
+                                            <div class="img-container">
+                                                <a href="/wine-detail/{{ itm.objProduct.slug }}/{{ itm.objProduct.id }}">
+                                                    <div class="card-back-image" style="background-image: url({% if itm.objProduct and itm.objProduct.thumbnail %}/assets/image/{{ itm.objProduct.thumbnail }}/small{% else %}/images/image-placeholder1.jpg{% endif %});">&nbsp;</div>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td class="td-product">
+                                            <p>{{ itm.title }}</p>
+                                        </td>
+                                        <td class="td-price">
+                                            {#{% if itm.objProduct.displayCompareAtPrice %}#}
+                                                {#<small>#}
+                                                    {#<del>${{ itm.objProduct.displayCompareAtPrice|number_format(2, '.', ',') }}</del>#}
+                                                {#</small>#}
+                                            {#{% endif %}#}
+                                            <small>$</small>
+                                            {{ itm.price|number_format(2, '.', ',') }}
+                                            <div><small>+{{ getenv('TAX_WORDING') }}</small></div>
+                                        </td>
+                                        <td class="td-number td-quantity">
+                                            <input class="form-control qty js-oi-qty" type="text" value="{{ itm.quantity }}">
+                                        </td>
+                                        <td class="td-number">
+                                            <small>$</small>
+                                            {{ itm.subtotal|number_format(2, '.', ',') }}
+                                            <div><small>+{{ getenv('TAX_WORDING') }}</small></div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-just-icon js-oi-delete"><i class="nc-icon nc-simple-remove" aria-hidden="true"></i></button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tbody class="js-cart-total">
+                                <tr class="calc-row">
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td class="td-total">
+
+                                    </td>
+                                    <td class="td-total" colspan="2">
+                                        <p>Promo Code</p>
+                                        <input class="form-control js-cart-promo-code" placeholder="Promo Code" type="text" value="{{ orderContainer.promoCode }}">
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1 js-cart-promo-apply">Apply</button>
+                                    </td>
+                                </tr>
+                                <tr class="calc-row">
+                                    <td colspan="2"></td>
+                                    <td></td>
+                                    <td class="td-total">
+                                        Subtotal (Ex. {{ getenv('TAX_WORDING') }})
+                                    </td>
+                                    <td class="td-total" colspan="2">
+                                        <small>$</small>
+                                        {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                {% if orderContainer.discount %}
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            Discount
+                                        </td>
+                                        <td class="td-total" colspan="2">
+                                            -
+                                            <small>$</small>
+                                            {{ orderContainer.discount|number_format(2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            After discount
+                                        </td>
+                                        <td class="td-total" colspan="2">
+                                            <small>$</small>
+                                            {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="order-info" class="container mb-5">
+        {% if not app.user %}
+            <div class="alert alert-danger alert-with-icon" data-notify="container">
+                <div class="container">
+                    <div class="alert-wrapper">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <i class="nc-icon nc-simple-remove"></i>
+                        </button>
+                        <div class="message"><i class="nc-icon nc-bell-55"></i> You can purchase as a guest but we highly recommend you to <a class="text-white font-weight-bold" href="/login">login</a> or <a class="text-white font-weight-bold" href="/register">register</a> to take the full advantage of membership.  </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" class="settings-form" action="#order-info" novalidate autocomplete="off">
+            <div style="display: none;">
+                {{ form_widget(form.action, {attr:{value:'review'}}) }}
+            </div>
+            <div class="row">
+                <div class="col-md-6 js-billing">
+                    <h3 class="mb-3">Send invoice to</h3>
+                    <div class="form-group pb-3">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email, {attr:{class:'form-control border-input'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <h3 class="mb-3">Billing Address</h3>
+
+                    {% if app.user and savedAddresses|length %}
+                        <div class="form-group">
+                            <label>Choose from saved addresses</label>
+                            <select class="form-control js-saved-address">
+                                <option>Select an option below...</option>
+                                {% for itm in savedAddresses %}
+                                    <option
+                                            data-firstname="{{ itm.firstname }}"
+                                            data-lastname="{{ itm.lastname }}"
+                                            data-phone="{{ itm.phone }}"
+                                            data-address="{{ itm.address }}"
+                                            data-suburb="{{ itm.address2 }}"
+                                            data-city="{{ itm.city }}"
+                                            data-postcode="{{ itm.postcode }}"
+                                            data-state="{{ itm.state }}"
+                                            data-country="{{ itm.country }}"
+                                        >
+                                        {{ itm.__toString }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingFirstName) }}
+                                {{ form_widget(form.billingFirstName, {attr:{class:'form-control border-input js-firstname'}}) }}
+                                {{ form_errors(form.billingFirstName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingLastName) }}
+                                {{ form_widget(form.billingLastName, {attr:{class:'form-control border-input js-lastname'}}) }}
+                                {{ form_errors(form.billingLastName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingPhone) }}
+                                {{ form_widget(form.billingPhone, {attr:{class:'form-control border-input js-phone'}}) }}
+                                {{ form_errors(form.billingPhone) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.billingAddress) }}
+                        {{ form_widget(form.billingAddress, {attr:{class:'form-control border-input js-address'}}) }}
+                        {{ form_errors(form.billingAddress) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.billingAddress2) }}
+                        {{ form_widget(form.billingAddress2, {attr:{class:'form-control border-input js-suburb'}}) }}
+                        {{ form_errors(form.billingAddress2) }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingCity) }}
+                                {{ form_widget(form.billingCity, {attr:{class:'form-control border-input js-city'}}) }}
+                                {{ form_errors(form.billingCity) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingPostcode) }}
+                                {{ form_widget(form.billingPostcode, {attr:{class:'form-control border-input js-postcode'}}) }}
+                                {{ form_errors(form.billingPostcode) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingState) }}
+                                {{ form_widget(form.billingState, {attr:{class:'form-control border-input js-state'}}) }}
+                                {{ form_errors(form.billingState) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                {{ form_label(form.billingCountry) }}
+                                {{ form_widget(form.billingCountry, {attr:{class:'form-control border-input js-country'}}) }}
+                                {{ form_errors(form.billingCountry) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check" {% if not app.user %}style="display: none;"{% endif %}>
+                        <label class="form-check-label">
+                            {{ form_widget(form.billingSave, {attr:{class:'form-check-input'}}) }}
+                            <span class="form-check-sign"></span>
+                            {{ form.billingSave.vars.label }}
+                        </label>
+                        {{ form_errors(form.billingSave) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.note) }}
+                        {{ form_widget(form.note, {attr:{class:'form-control border-input'}}) }}
+                        {{ form_errors(form.note) }}
+                    </div>
+                </div>
+                <div class="col-md-6 js-shipping">
+                    <h3 class="mb-3">Shipping Address</h3>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            {{ form_widget(form.billingSame, {attr:{class:'form-check-input js-same-as-shipping-button'}}) }}
+                            <span class="form-check-sign"></span>
+                            {{ form.billingSame.vars.label }}
+                        </label>
+                        {{ form_errors(form.billingSame) }}
+                    </div>
+                    <div class="settings-form js-same-as-shipping-container mt-4" {% if form.billingSame.vars.checked %}style="display: none;"{% endif %}>
+                        {% if app.user and savedAddresses|length %}
+                            <div class="form-group">
+                                <label>Choose from saved addresses</label>
+                                <select class="form-control js-saved-address">
+                                    <option>Select an option below...</option>
+                                    {% for itm in savedAddresses %}
+                                        <option
+                                                data-firstname="{{ itm.firstname }}"
+                                                data-lastname="{{ itm.lastname }}"
+                                                data-phone="{{ itm.phone }}"
+                                                data-address="{{ itm.address }}"
+                                                data-suburb="{{ itm.address2 }}"
+                                                data-city="{{ itm.city }}"
+                                                data-postcode="{{ itm.postcode }}"
+                                                data-state="{{ itm.state }}"
+                                                data-country="{{ itm.country }}"
+                                        >
+                                            {{ itm.__toString }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingFirstName) }}
+                                    {{ form_widget(form.shippingFirstName, {attr:{class:'form-control border-input js-firstname'}}) }}
+                                    {{ form_errors(form.shippingFirstName) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingLastName) }}
+                                    {{ form_widget(form.shippingLastName, {attr:{class:'form-control border-input js-lastname'}}) }}
+                                    {{ form_errors(form.shippingLastName) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingPhone) }}
+                                    {{ form_widget(form.shippingPhone, {attr:{class:'form-control border-input js-phone'}}) }}
+                                    {{ form_errors(form.shippingPhone) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.shippingAddress) }}
+                            {{ form_widget(form.shippingAddress, {attr:{class:'form-control border-input js-address'}}) }}
+                            {{ form_errors(form.shippingAddress) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.shippingAddress2) }}
+                            {{ form_widget(form.shippingAddress2, {attr:{class:'form-control border-input js-suburb'}}) }}
+                            {{ form_errors(form.shippingAddress2) }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingCity) }}
+                                    {{ form_widget(form.shippingCity, {attr:{class:'form-control border-input, js-city'}}) }}
+                                    {{ form_errors(form.shippingCity) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingPostcode) }}
+                                    {{ form_widget(form.shippingPostcode, {attr:{class:'form-control border-input js-postcode'}}) }}
+                                    {{ form_errors(form.shippingPostcode) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingState) }}
+                                    {{ form_widget(form.shippingState, {attr:{class:'form-control border-input js-state'}}) }}
+                                    {{ form_errors(form.shippingState) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    {{ form_label(form.shippingCountry) }}
+                                    {{ form_widget(form.shippingCountry, {attr:{class:'form-control border-input js-country'}}) }}
+                                    {{ form_errors(form.shippingCountry) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-check" {% if not app.user %}style="display: none;"{% endif %}>
+                            <label class="form-check-label">
+                                {{ form_widget(form.shippingSave, {attr:{class:'form-check-input'}}) }}
+                                <span class="form-check-sign"></span>
+                                {{ form.shippingSave.vars.label }}
+                            </label>
+                            {{ form_errors(form.shippingSave) }}
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-4 pt-2 ml-auto">
+                    <div class="title">
+                        <h3>Choose a delivery option</h3>
+                    </div>
+                    <div class="js-cart-delivery-options">
+                        {% if orderContainer.deliveryOptionStatus == cart.DELIVERY_HIDDEN %}<p class="text-danger">Complete your address...</p>{% endif %}
+                        {% for deliveryOption in orderContainer.deliveryOptions %}
+                            <div class="form-check-radio">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="deliveryOption" value="{{ deliveryOption.id }}" {% if orderContainer.deliveryOptionId == deliveryOption.id %}checked{% endif %} {% if orderContainer.deliveryOptionStatus == cart.DELIVERY_HIDDEN %}disabled{% endif %}>
+                                    <span class="form-check-sign"></span>
+                                    {{ deliveryOption.title }} {% if orderContainer.deliveryOptionStatus == cart.DELIVERY_VISIBLE %}<strong><small>$</small> {{ deliveryOption.price|number_format(2, '.', ',') }}</strong>{% endif %} <br />
+
+                                    {% if deliveryOption.infoHeading %}
+                                        <a href="{{ deliveryOption.infoUrl }}" target="_blank">{{ deliveryOption.infoHeading }}</a>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-12 text-center cart-total-summary">
+                    <div class="row">
+                        <div class="col-md-10 ml-auto mr-auto">
+                            <div class="table-responsive">
+                                <table class="table table-shopping">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center"></th>
+                                            <th></th>
+                                            <th class="text-right">Price</th>
+                                            <th class="text-right">Quantity</th>
+                                            <th class="text-right" style="width: 10em;">Total</th>
+                                            <th class="text-right">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="js-cart-total-full">
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                Subtotal (Ex. {{ getenv('TAX_WORDING') }})
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                <small>$</small>
+                                                {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                        {% if orderContainer.discount %}
+                                            <tr class="calc-row">
+                                                <td colspan="2"></td>
+                                                <td></td>
+                                                <td class="td-total">
+                                                    Discount
+                                                </td>
+                                                <td class="td-total" colspan="2">
+                                                    -
+                                                    <small>$</small>
+                                                    {{ orderContainer.discount|number_format(2, '.', ',') }}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                {{ getenv('TAX_WORDING') }}
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                <small>$</small>
+                                                {{ orderContainer.gst|number_format(2, '.', ',') }}
+                                            </td>
+                                        </tr>
+
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                Delivery fee
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                {% if orderContainer.deliveryOptionStatus %}
+                                                    <small>$</small>
+                                                    {{ orderContainer.deliveryFee|number_format(2, '.', ',') }}
+                                                {% else %}
+                                                    <small>To be confirmed</small>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                Total
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                <small>$</small>
+                                                {{ orderContainer.total|number_format(2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 text-center mt-5">
+                    {{ form_rest(form) }}
+                    <a href="/wine" class="btn btn-default btn-round">&#10096; Continue Shopping</a>
+                    <button type="submit" class="btn btn-danger btn-round">Check out &#10097;</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extraFooter %}
+    <script id="order-total-full" type="text/x-handlebars-template">
+        {% verbatim %}
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+                    Subtotal (Ex. {{taxWording}})
+                </td>
+                <td class="td-total" colspan="2">
+                    <small>$</small>
+                    {{#formatMoney order.subtotal}}{{/formatMoney}}
+                </td>
+            </tr>
+            {{#compare order.discount 0 operator="!="}}
+                <tr class="calc-row">
+                    <td colspan="2"></td>
+                    <td></td>
+                    <td class="td-total">
+                        Discount
+                    </td>
+                    <td class="td-total" colspan="2">
+                        -
+                        <small>$</small>
+                        {{#formatMoney order.discount}}{{/formatMoney}}
+                    </td>
+                </tr>
+            {{/compare}}
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+                    {{taxWording}}
+                </td>
+                <td class="td-total" colspan="2">
+                    <small>$</small>
+                    {{#formatMoney order.gst}}{{/formatMoney}}
+                </td>
+            </tr>
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+                    Delivery fee
+                </td>
+                <td class="td-total" colspan="2">
+                    {{#compare order.deliveryOptionStatus 0 operator="=="}}
+                        <small>To be confirmed</small>
+                    {{/compare}}
+
+                    {{#compare order.deliveryOptionStatus 0 operator="!="}}
+                        <small>$</small>
+                        {{#formatMoney order.deliveryFee}}{{/formatMoney}}
+                    {{/compare}}
+                </td>
+            </tr>
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+                    Total
+                </td>
+                <td class="td-total" colspan="2">
+                    <small>$</small>
+                    {{#formatMoney order.total}}{{/formatMoney}}
+                </td>
+            </tr>
+        {% endverbatim %}
+    </script>
+    <script id="order-total" type="text/x-handlebars-template">
+        {% verbatim %}
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+
+                </td>
+                <td class="td-total" colspan="2">
+                    <p>Promo Code</p>
+                    <input class="form-control js-cart-promo-code" placeholder="Promo Code" type="text" value="{{ order.promoCode }}">
+                    <button type="submit" class="btn btn-primary btn-sm mt-1 js-cart-promo-apply">Apply</button>
+                </td>
+            </tr>
+            <tr class="calc-row">
+                <td colspan="2"></td>
+                <td></td>
+                <td class="td-total">
+                    Subtotal (Ex. {{taxWording}})
+                </td>
+                <td class="td-total" colspan="2">
+                    <small>$</small>
+                    {{#formatMoney order.subtotal}}{{/formatMoney}}
+                </td>
+            </tr>
+            {{#compare order.discount 0 operator="!="}}
+                <tr class="calc-row">
+                    <td colspan="2"></td>
+                    <td></td>
+                    <td class="td-total">
+                        Discount
+                    </td>
+                    <td class="td-total" colspan="2">
+                        -
+                        <small>$</small>
+                        {{#formatMoney order.discount}}{{/formatMoney}}
+                    </td>
+                </tr>
+                <tr class="calc-row">
+                    <td colspan="2"></td>
+                    <td></td>
+                    <td class="td-total">
+                        After discount
+                    </td>
+                    <td class="td-total" colspan="2">
+                        <small>$</small>
+                        {{#formatMoney order.afterDiscount}}{{/formatMoney}}
+                    </td>
+                </tr>
+            {{/compare}}
+        {% endverbatim %}
+    </script>
+    <script id="order-item" type="text/x-handlebars-template">
+        {% verbatim %}
+            <tr data-id="{{orderItem.uniqid}}">
+                <td>
+                    <div class="img-container">
+                        <a href="/wine-detail/{{ orderItem.objProduct.slug }}/{{ orderItem.objProduct.id }}">
+                            {{#compare orderItem.objProduct.thumbnail '' operator="!="}}<img src="/assets/image/{{ orderItem.objProduct.thumbnail }}/small" alt="{{ orderItem.title }}">{{/compare}}
+                            {{#compare orderItem.objProduct.thumbnail '' operator="=="}}<img src="/images/image-placeholder1.jpg" alt="{{ orderItem.title }}">{{/compare}}
+                        </a>
+                    </div>
+                </td>
+                <td class="td-product">
+                    <p>{{orderItem.title}}</p>
+                </td>
+                </td>
+                <td class="td-price">
+                    <small>$</small>
+                    {{#formatMoney orderItem.price}}{{/formatMoney}}
+                    <div><small>+{{taxWording}}</small></div>
+                </td>
+                <td class="td-number td-quantity">
+                    <input class="form-control qty js-oi-qty" type="text" value="{{ orderItem.quantity }}">
+                </td>
+                <td class="td-number">
+                    <small>$</small>
+                    {{#formatMoney orderItem.subtotal}}{{/formatMoney}}
+                    <div><small>+{{taxWording}}</small></div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-just-icon js-oi-delete"><i class="nc-icon nc-simple-remove" aria-hidden="true"></i></button>
+                </td>
+            </tr>
+        {% endverbatim %}
+    </script>
+    <script id="delivery-option" type="text/x-handlebars-template">
+        {% verbatim %}
+            <div class="form-check-radio">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="deliveryOption" value="{{ deliveryOption.id }}" {{#compare orderContainer.deliveryOptionId deliveryOption.id operator="=="}}checked{{/compare}} {{#compare orderContainer.deliveryOptionStatus DELIVERY_HIDDEN operator="=="}}disabled{{/compare}}>
+                    <span class="form-check-sign"></span>
+                    {{ deliveryOption.title }} {{#compare orderContainer.deliveryOptionStatus DELIVERY_VISIBLE operator="=="}}<strong><small>$</small> {{#formatMoney deliveryOption.price}}{{/formatMoney}}</strong>{{/compare}} <br />
+                    {{#compare deliveryOption.infoHeading '' operator="!="}}
+                        <a href="{{ deliveryOption.infoUrl }}" target="_blank">{{ deliveryOption.infoHeading }}</a>
+                    {{/compare}}
+                </label>
+            </div>
+        {% endverbatim %}
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkcd51QV8q0CxEG2gn-1vFpdb3pLFlIcQ&libraries=places&callback=initAutocomplete" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
+    <script>
+        var _order = null;
+        $(function () {
+            Handlebars.registerHelper('formatMoney', function(n, c, d, t, options) {
+                var c = isNaN(c = Math.abs(c)) ? 2 : c,
+                    d = d == undefined ? "." : d,
+                    t = t == undefined ? "," : t,
+                    s = n < 0 ? "-" : "",
+                    i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
+                    j = (j = i.length) > 3 ? j % 3 : 0;
+
+                return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+            });
+            Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
+                if (arguments.length < 3)
+                    throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+
+                var operator = options.hash.operator || "==";
+                var operators = {
+                    '==':       function(l,r) { return l == r; },
+                    '===':      function(l,r) { return l === r; },
+                    '!=':       function(l,r) { return l != r; },
+                    '<':        function(l,r) { return l < r; },
+                    '>':        function(l,r) { return l > r; },
+                    '<=':       function(l,r) { return l <= r; },
+                    '>=':       function(l,r) { return l >= r; },
+                    'typeof':   function(l,r) { return typeof l == r; }
+                }
+
+                if (!operators[operator])
+                    throw new Error("Handlerbars Helper 'compare' doesn't know the operator "+operator);
+
+                var result = operators[operator](lvalue,rvalue);
+                if( result ) {
+                    return options.fn(this);
+                } else {
+                    return options.inverse(this);
+                }
+            });
+
+
+            $(document).on('click', '.js-cart-delivery-options :radio', function () {
+                var id = $(this).val();
+
+                $('.js-cart-total-full').html('<tr><td class="text-center" colspan="6"><div class="uil-reload-css" style=""><div></div></div></td></tr>');
+                $.ajax({
+                    type: 'GET',
+                    url: '/xhr/cart/order/delivery/update',
+                    data: 'id=' + id,
+                    success: function (data) {
+                        _order = data;
+                        renderOrderTotalFull();
+                    }
+                });
+            });
+            $(document).on('click', '.js-oi-delete', function () {
+                var id = $(this).closest('tr').data('id');
+
+                $('.js-cart-items').html('<tr><td class="text-center" colspan="6"><div class="uil-reload-css" style=""><div></div></div></td></tr>');
+                $('.js-cart-total').empty();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/xhr/cart/item/delete',
+                    data: 'id=' + id,
+                    success: function (data) {
+                        _order = data;
+                        render();
+                    }
+                });
+            });
+            $(document).on('click', '.js-cart-promo-apply', function () {
+                var promoCode = $('.js-cart-promo-code').val();
+
+                $('.js-cart-total').html('<tr><td class="text-center" colspan="6"><div class="uil-reload-css" style=""><div></div></div></td></tr>');
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/xhr/cart/promo/apply',
+                    data: 'code=' + promoCode,
+                    success: function (data) {
+                        _order = data;
+                        renderOrderTotal();
+                        renderOrderTotalFull();
+                    }
+                });
+            });
+            $(document).on('change', '.js-oi-qty', function () {
+                var id = $(this).closest('tr').data('id');
+                var qty = $(this).val();
+
+                $('.js-cart-items').html('<tr><td class="text-center" colspan="6"><div class="uil-reload-css" style=""><div></div></div></td></tr>');
+                $('.js-cart-total').empty();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/xhr/cart/item/qty',
+                    data: 'id=' + id + '&qty=' + qty,
+                    success: function (data) {
+                        _order = data;
+                        render();
+                    }
+                });
+            });
+            $(document).on('change', '.js-address, .js-suburb, .js-city, .js-postcode, .js-state, .js-country, .js-same-as-shipping-button', function () {
+                updateDeliveryFee();
+            });
+            $(document).on('change', '.js-saved-address', function () {
+                var $o = $(this).find('option:selected');
+                var $p = $o.closest('.col-md-6');
+
+                $p.find('.js-firstname').val($o.data('firstname'));
+                $p.find('.js-lastname').val($o.data('lastname'));
+                $p.find('.js-phone').val($o.data('phone'));
+                $p.find('.js-address').val($o.data('address'));
+                $p.find('.js-suburb').val($o.data('suburb'));
+                $p.find('.js-city').val($o.data('city'));
+                $p.find('.js-postcode').val($o.data('postcode'));
+                $p.find('.js-state').val($o.data('state'));
+                $p.find('.js-country').val($o.data('country'));
+
+                $(this).val('');
+                updateDeliveryFee();
+            });
+        });
+
+        function updateDeliveryFee() {
+            var o = {
+                billingAddress: $('.js-billing').find('.js-address').val(),
+                billingAddress2: $('.js-billing').find('.js-suburb').val(),
+                billingCity: $('.js-billing').find('.js-city').val(),
+                billingPostcode: $('.js-billing').find('.js-postcode').val(),
+                billingState: $('.js-billing').find('.js-state').val(),
+                billingCountry: $('.js-billing').find('.js-country').val(),
+
+                billingSame: $('.js-shipping').find('.js-same-as-shipping-button').is(':checked') ? 1 : 0,
+                shippingAddress: $('.js-shipping').find('.js-address').val(),
+                shippingAddress2: $('.js-shipping').find('.js-suburb').val(),
+                shippingCity: $('.js-shipping').find('.js-city').val(),
+                shippingPostcode: $('.js-shipping').find('.js-postcode').val(),
+                shippingState: $('.js-shipping').find('.js-state').val(),
+                shippingCountry: $('.js-shipping').find('.js-country').val(),
+            };
+
+            $('.js-cart-delivery-options').empty();
+            $('.js-cart-total-full').html('<tr><td class="text-center" colspan="6"><div class="uil-reload-css" style=""><div></div></div></td></tr>');
+            $.ajax({
+                type: 'GET',
+                url: '/xhr/cart/order/address/update',
+                data: 'order=' + encodeURIComponent(JSON.stringify(o)),
+                success: function (data) {
+                    _order = data;
+                    renderOrderDeliveryOptions();
+                    renderOrderTotalFull();
+                }
+            });
+        }
+
+        function render() {
+            renderOrderItems();
+            renderOrderTotal();
+            renderOrderDeliveryOptions();
+            renderOrderTotalFull();
+        };
+
+        function renderOrderItems() {
+            $('.js-cart-items').empty();
+            var template = Handlebars.compile($('#order-item').html());
+
+            for (var idx in _order.pendingItems) {
+                var itm = _order.pendingItems[idx];
+                if (itm.objProduct) {
+                    $('.js-cart-items').append(template({
+                        taxWording: '{{ getenv('TAX_WORDING') }}',
+                        orderItem: itm
+                    }));
+                }
+            }
+        };
+
+        function renderOrderTotal() {
+            $('.js-cart-total').empty();
+            var template = Handlebars.compile($('#order-total').html());
+            $('.js-cart-total').append(template({
+                taxWording: '{{ getenv('TAX_WORDING') }}',
+                order: _order
+            }));
+        };
+
+        function renderOrderTotalFull() {
+            $('.js-cart-total-full').empty();
+            var template = Handlebars.compile($('#order-total-full').html());
+            $('.js-cart-total-full').append(template({
+                taxWording: '{{ getenv('TAX_WORDING') }}',
+                order: _order
+            }));
+        };
+
+        function renderOrderDeliveryOptions() {
+            $('.js-cart-delivery-options').empty();
+            var template = Handlebars.compile($('#delivery-option').html());
+            if ('{{ cart.DELIVERY_HIDDEN }}' == _order.deliveryOptionStatus) {
+                $('.js-cart-delivery-options').append('<p class="text-danger">Complete your address...</p>')
+            }
+            for (var idx in _order.deliveryOptions) {
+                var itm = _order.deliveryOptions[idx];
+
+                $('.js-cart-delivery-options').append(template({
+                    orderContainer: _order,
+                    deliveryOption: itm,
+                    DELIVERY_VISIBLE: '{{ cart.DELIVERY_VISIBLE }}',
+                    DELIVERY_HIDDEN: '{{ cart.DELIVERY_HIDDEN }}',
+                }));
+            }
+
+        };
+
+        function initAutocomplete() {
+
+            $.each($('.js-address'), function (idx, itm) {
+                $parent = $(itm).closest('.col-md-6');
+
+                var countries = [];
+                $.each($parent.find('.js-country').find('option'), function(oi, o) {
+                    if ($(o).val()) {
+                        countries.push($(o).val())
+                    }
+                });
+
+                var autocomplete = new google.maps.places.Autocomplete(
+                    $(itm)[0],
+                    {
+                        types: ['geocode'],
+                        componentRestrictions: {
+                            country: countries,
+                        }
+                    },
+                );
+                autocomplete.input = $(itm);
+                autocomplete.addListener('place_changed', fillInAddress);
+
+                setTimeout(function () {
+                    $(itm).attr('autocomplete', 'nope');
+                }, 500)
+            })
+        };
+
+        function fillInAddress() {
+            var place = this.getPlace();
+
+            var componentForm = {
+                street_number: 'short_name',
+                route: 'long_name',
+                sublocality_level_1: 'short_name',
+                locality: 'long_name',
+                postal_code: 'short_name',
+                administrative_area_level_1: 'short_name',
+                country: 'short_name',
+            };
+
+            var obj = {};
+            for (var i = 0; i < place.address_components.length; i++) {
+                var addressType = place.address_components[i].types[0];
+                if (componentForm[addressType]) {
+                    var val = place.address_components[i][componentForm[addressType]];
+                    obj[addressType] = val;
+                }
+            }
+
+            $parent = $(this.input).closest('.col-md-6');
+            if (obj.street_number && obj.route) {
+                $parent.find('.js-address').val(obj.street_number + ' ' + obj.route);
+            } else if (obj.street_number) {
+                $parent.find('.js-address').val(obj.street_number);
+            } else if (obj.route) {
+                $parent.find('.js-address').val(obj.route);
+            }
+
+            $parent.find('.js-suburb').val(obj.sublocality_level_1);
+            $parent.find('.js-city').val(obj.locality);
+            $parent.find('.js-postcode').val(obj.postal_code);
+            $parent.find('.js-state').val(obj.administrative_area_level_1);
+            $parent.find('.js-country').val(obj.country);
+
+            updateDeliveryFee();
+        };
+    </script>
+{% endblock %}

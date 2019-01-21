@@ -8,6 +8,7 @@ use Omnipay\Common\CreditCard;
 use Omnipay\Common\GatewayFactory;
 
 use Pz\Orm\CustomerAddress;
+use Pz\Orm\Order;
 use Pz\Service\CartService;
 
 use Symfony\Component\Form\Form;
@@ -31,12 +32,12 @@ trait TraitCartAccount
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        return $this->render('cart/login.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Login',
-            ),
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Login');
+        return $this->render('pz/cart/login.html.twig', array(
+            'node' => $page,
             'last_username' => $lastUsername,
             'error' => $error,
         ));
@@ -65,18 +66,16 @@ trait TraitCartAccount
         $request = Request::createFromGlobals();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $messageBody = $this->container->get('twig')->render("email/email-activate.twig", array(
+            $messageBody = $this->container->get('twig')->render("pz/cart/email/email-activate.twig", array(
                 'customer' => $orm,
             ));
 
 
             $message = (new \Swift_Message())
-                ->setSubject('West Brook - Acticate your account')
-                ->setFrom('noreply@westbrook.co.nz')
+                ->setSubject('Acticate your account')
+                ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo($orm->getTitle())
                 ->setBody($messageBody, 'text/html');
-
-
             $this->container->get('mailer')->send($message);
 
             $orm->setSource(CartService::CUSTOMER_WEBSITE);
@@ -86,12 +85,11 @@ trait TraitCartAccount
 
         }
 
-        return $this->render('cart/register.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Register',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Register');
+        return $this->render('pz/cart/register.html.twig', array(
+            'node' => $page,
             'form' => $form->createView(),
         ));
     }
@@ -102,12 +100,12 @@ trait TraitCartAccount
      */
     public function activationRequired()
     {
-        return $this->render('cart/confirmation.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Activation Required',
-            ),
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Activation Required');
+        return $this->render('pz/cart/confirmation.html.twig', array(
+            'node' => $page,
         ));
     }
 
@@ -137,28 +135,25 @@ trait TraitCartAccount
             $orm->setResetExpiry(date('Y-m-d H:i:s', strtotime('+24 hours')));
             $orm->save();
 
-            $messageBody = $this->container->get('twig')->render("email/email-forget.twig", array(
+            $messageBody = $this->container->get('twig')->render("pz/cart/email/email-forget.twig", array(
                 'customer' => $orm,
             ));
             $message = (new \Swift_Message())
-                ->setSubject('West Brook - Reset your password')
-                ->setFrom('noreply@westbrook.co.nz')
+                ->setSubject('Reset your password')
+                ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo($orm->getTitle())
                 ->setBody($messageBody, 'text/html');
-
-
             $this->container->get('mailer')->send($message);
 
             return new RedirectResponse('/reset-password-email-sent?id=' . $orm->getUniqid());
 
         }
 
-        return $this->render('cart/forget-password.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Forget Password',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Forget Password');
+        return $this->render('pz/cart/forget-password.html.twig', array(
+            'node' => $page,
             'form' => $form->createView(),
         ));
     }
@@ -169,12 +164,11 @@ trait TraitCartAccount
      */
     public function resetPasswordEmailSent()
     {
-        return $this->render('cart/confirmation.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Reset Password Email Sent',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Reset Password Email Sent');
+        return $this->render('pz/cart/confirmation.html.twig', array(
+            'node' => $page,
         ));
     }
 
@@ -274,12 +268,82 @@ trait TraitCartAccount
      */
     public function accountDashboard()
     {
-        return $this->render('cart/account-dashboard.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $customer = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $request = Request::createFromGlobals();
+        $pagination = $request->get('pagination') ?: 1;
+        $limit = 5;
+
+        $orders = $this->cartService->getOrderClass()::active($pdo, array(
+            'whereSql' => 'm.customerId = ?',
+            'params' => array($customer->getId()),
+            'sort' => 'm.id',
+            'order' => 'DESC',
+            'page' => $pagination,
+            'limit' => $limit,
+        ));
+
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        /** @var Form $form */
+        $form = $formFactory->create(\Pz\Form\Builder\ResendReceipt::class, null, array(
+            'orderId' => $request->get('resend_receipt')['orderId'],
+            'orderClass' => $this->cartService->getOrderClass(),
+            'container' => $this->container,
+        ));
+
+        $submitted = 0;
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $submitted = 1;
+
+            $data = $form->getData();
+            $orderContainer = $this->cartService->getOrderClass()::getByField($pdo, 'uniqid', $data['orderId']);
+            $orderContainer->setOrderItemClass($this->cartService->getOrderItemClass());
+
+            $messageBody = $this->container->get('twig')->render("pz/cart/email/invoice.twig", array(
+                'orderContainer' => $orderContainer,
+            ));
+
+            $message = (new \Swift_Message())
+                ->setSubject('Invoice #' . $orderContainer->getUniqid())
+                ->setFrom(array(getenv('EMAIL_FROM')))
+                ->setTo(array($data['email']))
+                ->setBody($messageBody, 'text/html');
+            $this->container->get('mailer')->send($message);
+
+        }
+
+        $totalSpent = $this->cartService->getOrderClass()::active($pdo, array(
+            'select' => 'SUM(m.total) AS total',
+            'whereSql' => 'm.customerId = ? AND m.payStatus = 2',
+            'params' => array($customer->getId()),
+            'orm' => 0,
+            'oneOrNull' => 1,
+        ));
+
+        $totalAddresses = CustomerAddress::active($pdo, array(
+            'select' => 'COUNT(m.id) AS count',
+            'whereSql' => 'm.customerId = ?',
+            'params' => array($customer->getId()),
+            'orm' => 0,
+            'oneOrNull' => 1,
+        ));
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-dashboard.html.twig', array(
+            'node' => $page,
+            'orders' => $orders,
+            'submitted' => $submitted,
+            'form' => $form->createView(),
+            'totalSpent' => $totalSpent['total'],
+            'totalAddresses' => $totalAddresses['count'],
         ));
     }
 
@@ -297,36 +361,93 @@ trait TraitCartAccount
 
         $request = Request::createFromGlobals();
         $pagination = $request->get('pagination') ?: 1;
+        $limit = 20;
 
         $orders = $this->cartService->getOrderClass()::active($pdo, array(
             'whereSql' => 'm.customerId = ?',
             'params' => array($customer->getId()),
+            'sort' => 'm.id',
+            'order' => 'DESC',
             'page' => $pagination,
-            'limit' => 10,
+            'limit' => $limit,
+        ));
+        $total = $this->cartService->getOrderClass()::active($pdo, array(
+            'whereSql' => 'm.customerId = ?',
+            'params' => array($customer->getId()),
+            'count' => 1,
         ));
 
-        return $this->render('cart/account-orders.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        /** @var FormFactory $formFactory */
+        $formFactory = $this->container->get('form.factory');
+        /** @var Form $form */
+        $form = $formFactory->create(\Pz\Form\Builder\ResendReceipt::class, null, array(
+            'orderId' => $request->get('resend_receipt')['orderId'],
+            'orderClass' => $this->cartService->getOrderClass(),
+            'container' => $this->container,
+        ));
+
+        $submitted = 0;
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $submitted = 1;
+
+            $data = $form->getData();
+            $orderContainer = $this->cartService->getOrderClass()::getByField($pdo, 'uniqid', $data['orderId']);
+            $orderContainer->setOrderItemClass($this->cartService->getOrderItemClass());
+
+            $messageBody = $this->container->get('twig')->render("pz/cart/email/invoice.twig", array(
+                'orderContainer' => $orderContainer,
+            ));
+
+            $message = (new \Swift_Message())
+                ->setSubject('Invoice #' . $orderContainer->getUniqid())
+                ->setFrom(array(getenv('EMAIL_FROM')))
+                ->setTo(array($data['email']))
+                ->setBody($messageBody, 'text/html');
+            $this->container->get('mailer')->send($message);
+
+        }
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-orders.html.twig', array(
+            'node' => $page,
             'orders' => $orders,
+            'pagination' => $pagination,
+            'total' => ceil($total['count'] / $limit),
+            'url' => $request->getPathInfo(),
+            'submitted' => $submitted,
+            'form' => $form->createView(),
         ));
     }
 
     /**
-     * @route("/account/order-detail")
+     * @route("/account/order-detail/{slug}/{id}")
      * @return Response
      */
-    public function accountOrder()
+    public function accountOrder($slug = null, $id = null)
     {
-        return $this->render('cart/account-order.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $customer = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
+        $orderContainer = $this->cartService->getOrderClass()::getById($pdo, $id);
+        if (!$orderContainer) {
+            throw new NotFoundHttpException();
+        }
+        if ($orderContainer->getCustomerId() != $customer->getId()) {
+            throw new NotFoundHttpException();
+        }
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-order.html.twig', array(
+            'node' => $page,
+            'orderContainer' => $orderContainer,
         ));
     }
 
@@ -340,12 +461,11 @@ trait TraitCartAccount
             throw new NotFoundHttpException();
         }
 
-        return $this->render('cart/account-favourites.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-favourites.html.twig', array(
+            'node' => $page,
         ));
     }
 
@@ -366,12 +486,11 @@ trait TraitCartAccount
             'params' => array($customer->getId()),
         ));
 
-        return $this->render('cart/account-addresses.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-addresses.html.twig', array(
+            'node' => $page,
             'customerAddresses' => $customerAddresses,
         ));
     }
@@ -462,12 +581,11 @@ trait TraitCartAccount
             return new RedirectResponse('/account/addresses');
         }
 
-        return $this->render('cart/account-address.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-address.html.twig', array(
+            'node' => $page,
             'submitted' => $submitted,
             'form' => $form->createView(),
             'customerAddress' => $customerAddress,
@@ -497,12 +615,11 @@ trait TraitCartAccount
             $customer->save();
         }
 
-        return $this->render('cart/account-password.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-password.html.twig', array(
+            'node' => $page,
             'submitted' => $submitted,
             'form' => $form->createView(),
         ));
@@ -531,12 +648,11 @@ trait TraitCartAccount
             $customer->save();
         }
 
-        return $this->render('cart/account-profile.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'My Account',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('My Account');
+        return $this->render('pz/cart/account-profile.html.twig', array(
+            'node' => $page,
             'submitted' => $submitted,
             'form' => $form->createView(),
         ));

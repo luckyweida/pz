@@ -5,9 +5,7 @@ namespace Pz\Service;
 use Cocur\Slugify\Slugify;
 use Pz\Form\Type\ContentBlock;
 use Pz\Orm\FragmentBlock;
-use Pz\Orm\PageCategory;
-use Pz\Orm\PageTemplate;
-use Pz\Router\Tree;
+
 
 class UtilsService
 {
@@ -27,43 +25,6 @@ class UtilsService
     public function slugify($string) {
         $slugify = new Slugify(['trim' => false]);
         return $slugify->slugify($string);
-    }
-
-    /**
-     * @param $categoryCode
-     * @return null
-     */
-    public function nav($categoryCode)
-    {
-        /** @var \PDO $pdo */
-        $pdo = $this->connection->getWrappedConnection();
-
-        $result = null;
-        /** @var PageCategory $category */
-        $category = PageCategory::getByField($pdo, 'code', $categoryCode);
-        if ($category) {
-            /** @var \Pz\Orm\Page[] $pages */
-            $pages = \Pz\Orm\Page::data($pdo, array(
-                'whereSql' => 'm.category LIKE ? ',
-                'params' => array('%"' . $category->getId() . '"%'),
-            ));
-
-            foreach ($pages as $itm) {
-                $categoryParent = !$itm->getCategoryParent() ? array() : (array)json_decode($itm->getCategoryParent());
-                $categoryRank = !$itm->getCategoryRank() ? array() : (array)json_decode($itm->getCategoryRank());
-
-                $parent = isset($categoryParent['cat' . $category->getId()]) ? $categoryParent['cat' . $category->getId()] : 0;
-                $rank = isset($categoryRank['cat' . $category->getId()]) ? $categoryRank['cat' . $category->getId()] : 0;
-
-                $itm->setParentId($parent);
-                $itm->setRank($rank);
-            }
-
-            $tree = new Tree($pages);
-            $result = $tree->getRoot();
-        }
-
-        return $result;
     }
 
     /**

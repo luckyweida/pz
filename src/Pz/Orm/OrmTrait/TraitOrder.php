@@ -4,12 +4,20 @@ namespace Pz\Orm\OrmTrait;
 
 use Pz\Orm\Country;
 use Pz\Orm\DeliveryOption;
-use Pz\Orm\OrderItem;
 use Pz\Orm\PromoCode;
 use Pz\Service\CartService;
 
 trait TraitOrder
 {
+    /** @var OrderItem[] $pendingItems */
+    private $pendingItems;
+
+    /** @var OrderItem[] $orderItems */
+    private $orderItems;
+
+    /** @var DeliveryOption[] $deliveryOptions */
+    private $deliveryOptions;
+
     /**
      * TraitOrder constructor.
      * @param \PDO $pdo
@@ -83,11 +91,14 @@ trait TraitOrder
      */
     public function getOrderItems()
     {
-        $this->orderItems = OrderItem::active($this->getPdo(), array(
-            'whereSql' => 'm.orderId = ?',
-            'params' => array($this->getUniqid()),
-        ));
-        return $this->orderItems;
+        if ($this->getOrderItemClass()) {
+            return $this->getOrderItemClass()::active($this->getPdo(), array(
+                'whereSql' => 'm.orderId = ?',
+                'params' => array($this->getUniqid()),
+            ));
+        } else {
+            return array();
+        }
     }
 
     /**
@@ -163,7 +174,7 @@ trait TraitOrder
         foreach ($pendingItems as $pendingItem) {
             $result += $pendingItem->getSubtotal();
         }
-        $subtotal = round($result * 20 / 23, 2);
+        $subtotal = $result;
 
         $discount = 0;
 

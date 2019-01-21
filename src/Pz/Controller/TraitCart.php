@@ -2,6 +2,9 @@
 
 namespace Pz\Controller;
 
+use Pz\Orm\Customer;
+use Pz\Orm\CustomerAddress;
+use Pz\Orm\Order;
 use Pz\Service\CartService;
 
 use Omnipay\Common\CreditCard;
@@ -55,12 +58,11 @@ trait TraitCart
 
         $form = $form->createView();
 
-        return $this->render('cart/cart.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Cart',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Cart');
+        return $this->render('pz/cart/cart.html.twig', array(
+            'node' => $page,
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -76,6 +78,7 @@ trait TraitCart
         /** @var \PDO $pdo */
         $pdo = $connection->getWrappedConnection();
 
+        /** @var Order $orderContainer */
         $orderContainer = $this->cartService->getOrderContainer();
 
         /** @var FormFactory $formFactory */
@@ -115,6 +118,46 @@ trait TraitCart
                         }
                         $orderContainer->setOrderItems($orderItems);
 
+                        /** @var Customer $customer */
+                        $customer = $this->container->get('security.token_storage')->getToken()->getUser();
+                        if ($customer) {
+                            $orderContainer->setCustomerId($customer->getId());
+
+                            if ($orderContainer->getBillingSave()) {
+                                $customerAddress = new CustomerAddress($pdo);
+                                $customerAddress->setTitle('');
+                                $customerAddress->setCustomerId($customer->getId());
+                                $customerAddress->setAddress($orderContainer->getBillingAddress());
+                                $customerAddress->setAddress2($orderContainer->getBillingAddress2());
+                                $customerAddress->setState($orderContainer->getBillingState());
+                                $customerAddress->setCity($orderContainer->getBillingCity());
+                                $customerAddress->setPostcode($orderContainer->getBillingPostcode());
+                                $customerAddress->setCountry($orderContainer->getBillingCountry());
+                                $customerAddress->setFirstname($orderContainer->getBillingFirstname());
+                                $customerAddress->setLastname($orderContainer->getBillingLastname());
+                                $customerAddress->setPhone($orderContainer->getBillingPhone());
+                                $customerAddress->setPrimaryAddress(count($customer->objAddresses()) ? 0 : 1);
+                                $customerAddress->save();
+                            }
+
+                            if ($orderContainer->getShippingSave()) {
+                                $customerAddress = new CustomerAddress($pdo);
+                                $customerAddress->setTitle('');
+                                $customerAddress->setCustomerId($customer->getId());
+                                $customerAddress->setAddress($orderContainer->getShippingAddress());
+                                $customerAddress->setAddress2($orderContainer->getShippingAddress2());
+                                $customerAddress->setState($orderContainer->getShippingState());
+                                $customerAddress->setCity($orderContainer->getShippingCity());
+                                $customerAddress->setPostcode($orderContainer->getShippingPostcode());
+                                $customerAddress->setCountry($orderContainer->getShippingCountry());
+                                $customerAddress->setFirstname($orderContainer->getShippingFirstname());
+                                $customerAddress->setLastname($orderContainer->getShippingLastname());
+                                $customerAddress->setPhone($orderContainer->getShippingPhone());
+                                $customerAddress->setPrimaryAddress(count($customer->objAddresses()) ? 0 : 1);
+                                $customerAddress->save();
+                            }
+                        }
+
                         $orderContainer->setPayStatus(CartService::STATUS_SUBMITTED);
                         $orderContainer->setPayRequest(json_encode($response->getData()));
                         $orderContainer->setPayToken($response->getTransactionReference());
@@ -130,12 +173,11 @@ trait TraitCart
 
         $form = $form->createView();
 
-        return $this->render('cart/cart-review.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Cart',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Cart');
+        return $this->render('pz/cart/cart-review.html.twig', array(
+            'node' =>$page,
             'orderContainer' => $orderContainer,
             'form' => $form,
         ));
@@ -159,12 +201,23 @@ trait TraitCart
             throw new NotFoundHttpException();
         }
 
-        return $this->render('cart/cart-success.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Cart',
-            ),
+//        $messageBody = $this->container->get('twig')->render("pz/cart/email/invoice.twig", array(
+//            'orderContainer' => $orderContainer,
+//        ));
+//
+//        $message = (new \Swift_Message())
+//            ->setSubject('Invoice #' . $orderContainer->getUniqid())
+//            ->setFrom(array(getenv('EMAIL_FROM')))
+//            ->setTo(array($orderContainer->getEmail()))
+//            ->setBcc(array(getenv('EMAIL_BCC')))
+//            ->setBody($messageBody, 'text/html');
+//        $this->container->get('mailer')->send($message);
+
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Cart');
+        return $this->render('pz/cart/cart-success.html.twig', array(
+            'node' => $page,
             'orderContainer' => $orderContainer,
         ));
     }
@@ -187,12 +240,11 @@ trait TraitCart
             throw new NotFoundHttpException();
         }
 
-        return $this->render('cart/cart-failed.html.twig', array(
-            'node' => array(
-                'description' => '',
-                'pageTitle' => '',
-                'title' => 'Cart',
-            ),
+        $pageClass = $this->pageService->getPageClass();
+        $page = new $pageClass($pdo);
+        $page->setTitle('Cart');
+        return $this->render('pz/cart/cart-failed.html.twig', array(
+            'node' => $page,
             'orderContainer' => $orderContainer,
         ));
     }
@@ -253,24 +305,19 @@ trait TraitCart
                 $orderContainer->setPayStatus(CartService::STATUS_SUCCESS);
                 $orderContainer->save();
 
-//                $messageBody = $this->container->get('twig')->render("email/invoice.twig", array(
-//                    'orderContainer' => $orderContainer,
-//                ));
-                $messageBody = '';
+                $messageBody = $this->container->get('twig')->render("pz/cart/email/invoice.twig", array(
+                    'orderContainer' => $orderContainer,
+                ));
                 $orderContainer->setEmailContent($messageBody);
+                $orderContainer->save();
 
-//                var_dump($this->container);
-//                exit;
-
-//                $message = \Swift_Message::newInstance()
-//                    ->setSubject('TradeKiwi Invoice #' . $orderContainer->getUniqid())
-//                    ->setFrom(array(EMAIL_FROM))
-//                    ->setTo(array($orderContainer->getEmail()))
-//                    ->setBcc(array(EMAIL_BCC))
-//                    ->setBody(
-//                        $messageBody, 'text/html'
-//                    );
-//                $app['mailer']->send($message);
+                $message = (new \Swift_Message())
+                    ->setSubject('Invoice #' . $orderContainer->getUniqid())
+                    ->setFrom(array(getenv('EMAIL_FROM')))
+                    ->setTo(array($orderContainer->getEmail()))
+                    ->setBcc(array(getenv('EMAIL_BCC')))
+                    ->setBody($messageBody, 'text/html');
+                $this->container->get('mailer')->send($message);
 
                 $this->container->get('session')->set('orderContainer', null);
                 return new RedirectResponse('/cart-success?id=' . $orderContainer->getUniqid());

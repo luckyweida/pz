@@ -1,0 +1,17 @@
+{% extends 'pz/cart/account.html.twig' %}
+
+{% set products = [] %}
+
+{% block memberContentWraper %}
+    <div class="row">
+        <div class="col-11 mx-auto">
+            <h4 class="mb-3">Favourite Products</h4>
+
+            <div class="row">
+                {% for product in products %}
+                    {% include '../includes/product.html.twig' with {product: product} %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

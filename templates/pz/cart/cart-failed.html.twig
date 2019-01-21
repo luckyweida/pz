@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block bodyClass %}cart{% endblock %}
+
+{% set orderContainer = shop.orderContainer %}
+
+{% block contentWrapper %}
+    <div class="features-1">
+        <div class="container pt-5">
+
+            <div class="row">
+                <div class="col-md-8 ml-auto mr-auto text-center">
+                    <hr />
+                    <h2 class="title">Your purchase was unsuccessful.</h2>
+                    <h5 class="description"> If you are having trouble or problems with your order, contact us and we will check out the transaction.<br />
+                        <a href="/wine" >Return to the shop.</a>
+                    </h5>
+                </div>
+            </div>
+
+            <div class="row pt-5">
+                <div class="col-md-6 mx-auto">
+                    <h5 class="description text-center">Your order identifier is <strong>#{{ orderContainer.uniqid }}</strong></h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td>Subtotal (ex. {{ getenv('TAX_WORDING') }})</td>
+                                <td class="text-right">${{ orderContainer.subtotal|number_format(2, '.', ',') }}</td>
+                            </tr>
+                            {% if orderContainer.discount %}
+                                <tr>
+                                    <td>Discount</td>
+                                    <td class="text-right">-${{ orderContainer.discount|number_format(2, '.', ',') }}</td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <td>{{ getenv('TAX_WORDING') }}</td>
+                                <td class="text-right">${{ orderContainer.gst|number_format(2, '.', ',') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Delivery fee</td>
+                                <td class="text-right">${{ orderContainer.deliveryFee|number_format(2, '.', ',') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td class="text-right">${{ orderContainer.total|number_format(2, '.', ',') }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

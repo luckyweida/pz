@@ -1,0 +1,185 @@
+{% extends 'pz/cart/account.html.twig' %}
+
+{% form_theme form 'form.twig' %}
+
+{% block memberContentWraper %}
+    <div class="col-10 mx-auto">
+        <h2 class="title text-center">Welcome back, {{ app.user.firstName }}!</h2>
+
+        <div class="space-top"></div>
+        <div class="row">
+            <div class="col-md-4 p-1">
+                <div class="card card-pricing" data-color="orange">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <span class="icon-simple"><i class="nc-icon nc-basket"></i></span>
+                        </div>
+                        <p class="card-description">
+                            You have spent
+                        </p>
+                        <h3 class="card-title">${{ totalSpent|number_format(2, '.', ',') }}</h3>
+                        <br />
+                        <div class="card-footer">
+                            <a href="/account/orders" class="btn btn-neutral btn-round">Previous orders &#10097;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 p-1">
+                <div class="card card-pricing" data-color="purple">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <span class="icon-simple"><i class="nc-icon nc-istanbul"></i></span>
+                        </div>
+                        <p class="card-description">
+                            You have addresses
+                        </p>
+                        <h3 class="card-title">{{ totalAddresses }}</h3>
+                        <br />
+                        <div class="card-footer">
+                            <a href="/account/addresses" class="btn btn-neutral btn-round">Manger addresses &#10097;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 p-1">
+                <div class="card card-pricing" data-color="green">
+                    <div class="card-body">
+                        <div class="card-icon">
+                            <span class="icon-simple"><i class="nc-icon nc-settings"></i></span>
+                        </div>
+                        <p class="card-description">
+                            Update your info
+                        </p>
+                        <h3 class="card-title">&nbsp;</h3>
+                        <br />
+                        <div class="card-footer">
+                            <a href="/account/profile" class="btn btn-neutral btn-round">Profile &#10097;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="mb-3">Recent Orders</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Full Name</th>
+                        <th>Total</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for itm in orders %}
+                    <tr data-id="{{ itm.uniqid }}" data-email="{{ itm.email }}">
+                        <td>#{{ itm.uniqid }}</td>
+                        <td>{{ itm.added|date('d/m/y') }}</td>
+                        <td>{{ itm.billingFirstName }} {{ itm.billingLastName }}</td>
+                        <td>${{ itm.total|number_format(2, '.', ',') }}</td>
+                        <td class="td-actions text-right">
+                            <button class="js-modal btn btn-round btn-sm btn-warning" data-toggle="modal" data-target="#resendInvoice">
+                                <i class="fa fa-envelope-o"></i>
+                            </button>
+                            <a class="btn btn-round btn-sm btn-success btn-just-icon" href="/account/order-detail/{{ itm.uniqid }}/{{ itm.id }}?returnURL={{ app.request.uri|url_encode }}">
+                                <i class="nc-icon nc-zoom-split"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% if not orders|length %}
+                    <tr>
+                        <td colspan="5">No results found</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/account/orders" class="btn btn-success">All Orders &#10095;</a>
+        <div class="modal fade" id="resendInvoice" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="js-resend-form" {% if submitted %}style="display: none;"{% endif %}>
+                        <form data-pjax method="post" novalidate autocomplete="off">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h5 class="modal-title text-center" id="deleteConfirmLabel">Resend the receipt</h5>
+                            </div>
+                            <div class="modal-body">
+                                <p>Do you want to resend the order "#<span class="js-resend-order"></span>" to this email address?</p>
+                                {{ form_widget(form.orderId, {attr: {class: 'js-resend-form-order form-control',style:'display: none;'}}) }}
+                                {{ form_errors(form.orderId) }}
+
+                                {{ form_widget(form.email, {attr: {class: 'js-resend-form-email form-control'}}) }}
+                                {{ form_errors(form.email) }}
+
+                                {{ form_rest(form) }}
+                            </div>
+                            <div class="modal-footer">
+                                <div class="left-side">
+                                    <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Never mind</button>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="right-side">
+                                    <button type="submit" class="btn btn-danger btn-link js-confirm">Send</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="js-resend-confirm" {% if not submitted %}style="display: none;"{% endif %}>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h5 class="modal-title text-center" id="deleteConfirmLabel">Receipt sent</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>The receipt has been sent to your email address. Please check your inbox</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-link" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraFooter %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+    <script>
+        $(function () {
+            $(document).on('click', 'button[data-dismiss="modal"]', function () {
+                $('#resendInvoice').modal('hide');
+            });
+
+            $(document).on('mouseup', '.js-modal', function () {
+                $('.js-resend-order').html($(this).closest('tr').data('id'));
+                $('.js-resend-form-order').val($(this).closest('tr').data('id'));
+                $('.js-resend-form-email').val($(this).closest('tr').data('email'));
+
+                $('.js-resend-form').find('.formValidationErrors').remove();
+                $('.js-resend-form').show();
+                $('.js-resend-confirm').hide();
+            });
+
+            $(document).on('submit', 'form[data-pjax]', function(event) {
+                $.pjax.submit(event, '#resendInvoice .modal-content', {
+                    fragment: '#resendInvoice .modal-content',
+                });
+            });
+
+            $('#resendInvoice .modal-content').on('pjax:send', function(event) {
+                $('.modal-body').html('It may take a while, please wait...');
+                $('.modal-footer').hide();
+            });
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'form.twig' %}
+
+{% block bodyClass %}register-page full-screen{% endblock %}
+
+{% block contentWrapper %}
+    <div class="wrapper">
+        <div class="page-header" style="background-image: url('/images/home-about.jpg');">
+            <div class="filter"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-7 col-12 ml-auto">
+                        <div class="info info-horizontal">
+                            <div class="icon">
+                                <i class="fa fa-umbrella"></i>
+                            </div>
+                            <div class="description">
+                                <h3> We've got you covered </h3>
+                                <p>Larger, yet dramatically thinner. More powerful, but remarkably power efficient. Everything you need in a single case.</p>
+                            </div>
+                        </div>
+                        <div class="info info-horizontal">
+                            <div class="icon">
+                                <i class="fa fa-map-signs"></i>
+                            </div>
+                            <div class="description">
+                                <h3> Clear Directions </h3>
+                                <p>Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas.</p>
+                            </div>
+                        </div>
+                        <div class="info info-horizontal">
+                            <div class="icon">
+                                <i class="fa fa-user-secret"></i>
+                            </div>
+                            <div class="description">
+                                <h3> We value your privacy </h3>
+                                <p>Completely synergize resource taxing relationships via premier niche markets.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-5 col-12 mr-auto">
+                        <div class="card card-register">
+                            <div class="text-center">
+                                <h3 class="text-center mt-0 text-dark">Register with</h3>
+                                <a href="/facebook/verify" class="btn btn-just-icon btn-facebook"><i class="fa fa-facebook"></i></button>
+                                <a href="/google/verify" class="btn btn-just-icon btn-google"><i class="fa fa-google"></i></a>
+                            </div>
+                            <div class="division">
+                                <div class="line l"></div>
+                                <span>or</span>
+                                <div class="line r"></div>
+                            </div>
+                            <form method="post" class="settings-form" novalidate autocomplete="off">
+                                {{ form_widget(form.title, {attr: {class: 'form-control',placeholder:'Email'}}) }}
+                                {{ form_errors(form.title) }}
+
+                                {{ form_widget(form.firstName, {attr: {class: 'form-control',placeholder:'First name'}}) }}
+                                {{ form_errors(form.firstName) }}
+
+                                {{ form_widget(form.lastName, {attr: {class: 'form-control',placeholder:'Last name'}}) }}
+                                {{ form_errors(form.lastName) }}
+
+
+                                {% for passwordField in form.passwordInput %}
+                                    {{ form_widget(passwordField,{attr:{class:'form-control',placeholder: loop.index == 1 ? 'Password' : 'Repeat Password'}}) }}
+                                    {{ form_errors(passwordField) }}
+                                {% endfor %}
+
+                                {#
+                                <input class="form-control" placeholder="Email" type="text">
+                                <input class="form-control" placeholder="First name" type="text">
+                                <input class="form-control" placeholder="Last name" type="text">
+                                <input class="form-control" placeholder="Password" type="password">
+                                <input class="form-control" placeholder="Confirm Password" type="password">
+                                #}
+                                {{ form_rest(form) }}
+                                <button class="btn btn-block btn-round">Register</button>
+                            </form>
+                            <div class="">
+                                <a href="/login" class="btn btn-link btn-primary"><span class="text-black-50">Already signed up?</span> Login &#10097;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

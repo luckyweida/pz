@@ -2,6 +2,8 @@
 //Last updated: 2019-01-02 17:25:06
 namespace Pz\Orm\OrmTrait;
 
+use Pz\Orm\AssetOrm;
+
 trait TraitAsset
 {
     public function delete()
