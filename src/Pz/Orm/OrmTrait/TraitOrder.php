@@ -42,7 +42,7 @@ trait TraitOrder
         $totalWeight = 0;
         $pendingItems = $this->getPendingItems();
         foreach ($pendingItems as $pendingItem) {
-            $totalWeight += $pendingItem->getTotalWeight();
+            $totalWeight += $pendingItem->getWeight() * $pendingItem->getQuantity();
         }
         return $totalWeight;
     }

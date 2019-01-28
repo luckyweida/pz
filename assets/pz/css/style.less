@@ -102,12 +102,14 @@ body {
   }
 
   #popup-container {
+    overflow-y: auto;
+
     .js-nav {
       .pz-label {
         float: none;
         margin-left: 0;
       }
-    }
+    } 
 
     #js-files {
       padding: 0;
@@ -123,6 +125,7 @@ body {
     }
 
     .extra-stuff {
+      z-index: 999;
       position: absolute;
       bottom: 0;
       width: 100%;

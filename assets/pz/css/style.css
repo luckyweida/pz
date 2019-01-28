@@ -78,6 +78,9 @@ body .js-gallery-widget .gallery-file-box {
 body #jstree-marker {
   z-index: 999999 !important;
 }
+body #popup-container {
+  overflow-y: auto;
+}
 body #popup-container .js-nav .pz-label {
   float: none;
   margin-left: 0;
@@ -92,6 +95,7 @@ body #popup-container .row {
   margin: 0;
 }
 body #popup-container .extra-stuff {
+  z-index: 999;
   position: absolute;
   bottom: 0;
   width: 100%;

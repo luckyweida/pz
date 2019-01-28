@@ -103,10 +103,9 @@ class CartService
             //sync order items
             foreach ($this->orderContainer->getPendingItems() as $pendingItem) {
                 $product = $pendingItem->objProduct();
-                if ($pendingItem->getPrice() != $product->getPrice($customer)) {
-                    $pendingItem->setPrice($product->getPrice($customer));
-                    $pendingItem->setSubtotal($product->getPrice($customer) * $pendingItem->getQuantity());
-                }
+                $pendingItem->setWeight($product->getWeight());
+                $pendingItem->setPrice($product->getPrice($customer));
+                $pendingItem->setSubtotal($product->getPrice($customer) * $pendingItem->getQuantity());
             }
             $this->orderContainer->update();
         }
@@ -175,6 +174,7 @@ class CartService
             $pendingItems = $this->orderContainer->getPendingItems();
             foreach ($pendingItems as $pendingItem) {
                 if ($pendingItem->getProductId() == $productId) {
+                    $pendingItem->setWeight($product->getWeight());
                     $pendingItem->setPrice($product->getPrice($customer));
                     $pendingItem->setQuantity($pendingItem->getQuantity() + $productQty);
                     $pendingItem->setSubtotal($product->getPrice($customer) * $pendingItem->getQuantity());

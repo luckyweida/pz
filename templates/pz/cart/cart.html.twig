@@ -16,99 +16,99 @@
                     <div class="table-responsive">
                         <table class="table table-shopping">
                             <thead>
-                                <tr>
-                                    <th class="text-center"></th>
-                                    <th></th>
-                                    <th class="text-right">Price</th>
-                                    <th class="text-right">Quantity</th>
-                                    <th class="text-right" style="width: 10em;">Total</th>
-                                    <th class="text-right">&nbsp;</th>
-                                </tr>
+                            <tr>
+                                <th class="text-center"></th>
+                                <th></th>
+                                <th class="text-right">Price</th>
+                                <th class="text-right">Quantity</th>
+                                <th class="text-right" style="width: 10em;">Total</th>
+                                <th class="text-right">&nbsp;</th>
+                            </tr>
                             </thead>
                             <tbody class="js-cart-items">
-                                {% for itm in orderContainer.pendingItems if itm.objProduct %}
-                                    <tr data-id="{{ itm.uniqid }}">
-                                        <td>
-                                            <div class="img-container">
-                                                <a href="/wine-detail/{{ itm.objProduct.slug }}/{{ itm.objProduct.id }}">
-                                                    <div class="card-back-image" style="background-image: url({% if itm.objProduct and itm.objProduct.thumbnail %}/assets/image/{{ itm.objProduct.thumbnail }}/small{% else %}/images/image-placeholder1.jpg{% endif %});">&nbsp;</div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td class="td-product">
-                                            <p>{{ itm.title }}</p>
-                                        </td>
-                                        <td class="td-price">
-                                            {#{% if itm.objProduct.displayCompareAtPrice %}#}
-                                                {#<small>#}
-                                                    {#<del>${{ itm.objProduct.displayCompareAtPrice|number_format(2, '.', ',') }}</del>#}
-                                                {#</small>#}
-                                            {#{% endif %}#}
-                                            <small>$</small>
-                                            {{ itm.price|number_format(2, '.', ',') }}
-                                        </td>
-                                        <td class="td-number td-quantity">
-                                            <input class="form-control qty js-oi-qty" type="text" value="{{ itm.quantity }}" autocomplete="off">
-                                        </td>
-                                        <td class="td-number">
-                                            <small>$</small>
-                                            {{ itm.subtotal|number_format(2, '.', ',') }}
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-danger btn-sm btn-just-icon js-oi-delete"><i class="nc-icon nc-simple-remove" aria-hidden="true"></i></button>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
+                            {% for itm in orderContainer.pendingItems if itm.objProduct %}
+                                <tr data-id="{{ itm.uniqid }}">
+                                    <td>
+                                        <div class="img-container">
+                                            <a href="/wine-detail/{{ itm.objProduct.slug }}/{{ itm.objProduct.id }}">
+                                                <div class="card-back-image" style="background-image: url({% if itm.objProduct and itm.objProduct.thumbnail %}/assets/image/{{ itm.objProduct.thumbnail }}/small{% else %}/images/image-placeholder1.jpg{% endif %});">&nbsp;</div>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="td-product">
+                                        <p>{{ itm.title }}</p>
+                                    </td>
+                                    <td class="td-price">
+                                        {#{% if itm.objProduct.displayCompareAtPrice %}#}
+                                        {#<small>#}
+                                        {#<del>${{ itm.objProduct.displayCompareAtPrice|number_format(2, '.', ',') }}</del>#}
+                                        {#</small>#}
+                                        {#{% endif %}#}
+                                        <small>$</small>
+                                        {{ itm.price|number_format(2, '.', ',') }}
+                                    </td>
+                                    <td class="td-number td-quantity">
+                                        <input class="form-control qty js-oi-qty" type="text" value="{{ itm.quantity }}" autocomplete="off">
+                                    </td>
+                                    <td class="td-number">
+                                        <small>$</small>
+                                        {{ itm.subtotal|number_format(2, '.', ',') }}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-danger btn-sm btn-just-icon js-oi-delete"><i class="nc-icon nc-simple-remove" aria-hidden="true"></i></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                             <tbody class="js-cart-total">
+                            <tr class="calc-row">
+                                <td colspan="2"></td>
+                                <td></td>
+                                <td class="td-total">
+
+                                </td>
+                                <td class="td-total" colspan="2">
+                                    <p>Promo Code</p>
+                                    <input class="form-control js-cart-promo-code" placeholder="Promo Code" type="text" value="{{ orderContainer.promoCode }}">
+                                    <button type="submit" class="btn btn-primary btn-sm mt-1 js-cart-promo-apply">Apply</button>
+                                </td>
+                            </tr>
+                            <tr class="calc-row">
+                                <td colspan="2"></td>
+                                <td></td>
+                                <td class="td-total">
+                                    Subtotal
+                                </td>
+                                <td class="td-total" colspan="2">
+                                    <small>$</small>
+                                    {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                </td>
+                            </tr>
+                            {% if orderContainer.discount %}
                                 <tr class="calc-row">
                                     <td colspan="2"></td>
                                     <td></td>
                                     <td class="td-total">
-
+                                        Discount
                                     </td>
                                     <td class="td-total" colspan="2">
-                                        <p>Promo Code</p>
-                                        <input class="form-control js-cart-promo-code" placeholder="Promo Code" type="text" value="{{ orderContainer.promoCode }}">
-                                        <button type="submit" class="btn btn-primary btn-sm mt-1 js-cart-promo-apply">Apply</button>
+                                        -
+                                        <small>$</small>
+                                        {{ orderContainer.discount|number_format(2, '.', ',') }}
                                     </td>
                                 </tr>
                                 <tr class="calc-row">
                                     <td colspan="2"></td>
                                     <td></td>
                                     <td class="td-total">
-                                        Subtotal
+                                        After discount
                                     </td>
                                     <td class="td-total" colspan="2">
                                         <small>$</small>
-                                        {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                        {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
                                     </td>
                                 </tr>
-                                {% if orderContainer.discount %}
-                                    <tr class="calc-row">
-                                        <td colspan="2"></td>
-                                        <td></td>
-                                        <td class="td-total">
-                                            Discount
-                                        </td>
-                                        <td class="td-total" colspan="2">
-                                            -
-                                            <small>$</small>
-                                            {{ orderContainer.discount|number_format(2, '.', ',') }}
-                                        </td>
-                                    </tr>
-                                    <tr class="calc-row">
-                                        <td colspan="2"></td>
-                                        <td></td>
-                                        <td class="td-total">
-                                            After discount
-                                        </td>
-                                        <td class="td-total" colspan="2">
-                                            <small>$</small>
-                                            {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
-                                        </td>
-                                    </tr>
-                                {% endif %}
+                            {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -118,7 +118,7 @@
     </div>
     <div id="order-info" class="container mb-5">
         {% if not app.user %}
-            <div class="alert alert-danger alert-with-icon" data-notify="container">
+            <div class="alert alert-info alert-with-icon" data-notify="container">
                 <div class="container">
                     <div class="alert-wrapper">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -161,7 +161,7 @@
                                             data-postcode="{{ itm.postcode }}"
                                             data-state="{{ itm.state }}"
                                             data-country="{{ itm.country }}"
-                                        >
+                                    >
                                         {{ itm.__toString }}
                                     </option>
                                 {% endfor %}
@@ -380,104 +380,104 @@
                             <div class="table-responsive">
                                 <table class="table table-shopping">
                                     <thead>
-                                        <tr>
-                                            <th class="text-center"></th>
-                                            <th></th>
-                                            <th class="text-right">Price</th>
-                                            <th class="text-right">Quantity</th>
-                                            <th class="text-right" style="width: 10em;">Total</th>
-                                            <th class="text-right">&nbsp;</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="text-center"></th>
+                                        <th></th>
+                                        <th class="text-right">Price</th>
+                                        <th class="text-right">Quantity</th>
+                                        <th class="text-right" style="width: 10em;">Total</th>
+                                        <th class="text-right">&nbsp;</th>
+                                    </tr>
                                     </thead>
                                     <tbody class="js-cart-total-full">
 
-                                        {% if orderContainer.discount %}
-                                            <tr class="calc-row">
-                                                <td colspan="2"></td>
-                                                <td></td>
-                                                <td class="td-total">
-                                                    Subtotal
-                                                </td>
-                                                <td class="td-total" colspan="2">
-                                                    <small>$</small>
-                                                    {{ orderContainer.subtotal|number_format(2, '.', ',') }}
-                                                </td>
-                                            </tr>
-                                            <tr class="calc-row">
-                                                <td colspan="2"></td>
-                                                <td></td>
-                                                <td class="td-total">
-                                                    Discount
-                                                </td>
-                                                <td class="td-total" colspan="2">
-                                                    -
-                                                    <small>$</small>
-                                                    {{ orderContainer.discount|number_format(2, '.', ',') }}
-                                                </td>
-                                            </tr>
-                                            <tr class="calc-row">
-                                                <td colspan="2"></td>
-                                                <td></td>
-                                                <td class="td-total">
-                                                    After discount
-                                                </td>
-                                                <td class="td-total" colspan="2">
-                                                    <small>$</small>
-                                                    {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
-                                                    <div>
-                                                        <small>
-                                                            (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% else %}
-                                            <tr class="calc-row">
-                                                <td colspan="2"></td>
-                                                <td></td>
-                                                <td class="td-total">
-                                                    Subtotal
-                                                </td>
-                                                <td class="td-total" colspan="2">
-                                                    <small>$</small>
-                                                    {{ orderContainer.subtotal|number_format(2, '.', ',') }}
-                                                    <div>
-                                                        <small>
-                                                            (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-
-
+                                    {% if orderContainer.discount %}
                                         <tr class="calc-row">
                                             <td colspan="2"></td>
                                             <td></td>
                                             <td class="td-total">
-                                                Delivery fee
-                                            </td>
-                                            <td class="td-total" colspan="2">
-                                                {% if orderContainer.deliveryOptionStatus %}
-                                                    <small>$</small>
-                                                    {{ orderContainer.deliveryFee|number_format(2, '.', ',') }}
-                                                {% else %}
-                                                    <small>To be confirmed</small>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-
-                                        <tr class="calc-row">
-                                            <td colspan="2"></td>
-                                            <td></td>
-                                            <td class="td-total">
-                                                Total
+                                                Subtotal
                                             </td>
                                             <td class="td-total" colspan="2">
                                                 <small>$</small>
-                                                {{ orderContainer.total|number_format(2, '.', ',') }}
+                                                {{ orderContainer.subtotal|number_format(2, '.', ',') }}
                                             </td>
                                         </tr>
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                Discount
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                -
+                                                <small>$</small>
+                                                {{ orderContainer.discount|number_format(2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                After discount
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                <small>$</small>
+                                                {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+                                                <div>
+                                                    <small>
+                                                        (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                                    </small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr class="calc-row">
+                                            <td colspan="2"></td>
+                                            <td></td>
+                                            <td class="td-total">
+                                                Subtotal
+                                            </td>
+                                            <td class="td-total" colspan="2">
+                                                <small>$</small>
+                                                {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                                <div>
+                                                    <small>
+                                                        (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                                    </small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+
+
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            Delivery fee
+                                        </td>
+                                        <td class="td-total" colspan="2">
+                                            {% if orderContainer.deliveryOptionStatus %}
+                                                <small>$</small>
+                                                {{ orderContainer.deliveryFee|number_format(2, '.', ',') }}
+                                            {% else %}
+                                                <small>To be confirmed</small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            Total
+                                        </td>
+                                        <td class="td-total" colspan="2">
+                                            <small>$</small>
+                                            {{ orderContainer.total|number_format(2, '.', ',') }}
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
