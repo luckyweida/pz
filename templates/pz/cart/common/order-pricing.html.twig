@@ -1,0 +1,50 @@
+<table class="table table-bordered">
+    <tbody>
+    {% if orderContainer.discount %}
+        <tr>
+            <td class="text-right"><strong>Subtotal</strong></td>
+            <td class="text-right">
+                ${{ orderContainer.subtotal|number_format(2, '.', ',') }}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right">
+                <strong>Discount</strong>
+                <div><small>{{ orderContainer.promoCode }}</small></div>
+            </td>
+            <td class="text-right">-${{ orderContainer.discount|number_format(2, '.', ',') }}</td>
+        </tr>
+        <tr>
+            <td class="text-right"><strong>After discount</strong></td>
+            <td class="text-right">
+                ${{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+                <div>
+                    <small>
+                        (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                    </small>
+                </div>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td class="text-right"><strong>Subtotal</strong></td>
+            <td class="text-right">
+                ${{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                <div>
+                    <small>
+                        (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                    </small>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td class="text-right"><strong>Delivery fee</strong></td>
+        <td class="text-right">${{ orderContainer.deliveryFee|number_format(2, '.', ',') }}</td>
+    </tr>
+    <tr>
+        <td class="text-right"><strong>Total</strong></td>
+        <td class="text-right">${{ orderContainer.total|number_format(2, '.', ',') }}</td>
+    </tr>
+    </tbody>
+</table>

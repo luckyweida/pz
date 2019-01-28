@@ -78,9 +78,41 @@ class UtilsService
     }
 
     /**
+     * @return array
+     */
+    public function getFormWidgets() {
+        return array(
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\ChoiceType' => 'Choice',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType' => 'Checkbox',
+//            '\\Pz\\Forms\\Types\\DatePicker' => 'Date picker',
+//            '\\Pz\\Forms\\Types\\DateTimePicker' => 'Date time picker',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\EmailType' => 'Email',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\HiddenType' => 'Hidden',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextType' => 'Text',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextareaType' => 'Textarea',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\RepeatedType' => 'Repeated',
+//            '\\Pz\\Forms\\Types\\Wysiwyg' => 'Wysiwyg',
+            '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\SubmitType' => 'Submit',
+        );
+    }
+
+    /**
      * @return string
      */
     public function getUniqId() {
         return uniqid();
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public function getFormData($value) {
+        if ($value[2] == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\TextareaType') {
+            return nl2br($value[1]);
+        } else if ($value[2] == '\\Pz\\Forms\\Types\\Wysiwyg') {
+            return $value[1];
+        }
+        return strip_tags($value[1]);
     }
 }

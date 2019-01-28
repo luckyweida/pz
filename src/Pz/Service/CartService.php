@@ -99,6 +99,16 @@ class CartService
                     $this->orderContainer->addPendingItem($orderItem);
                 }
             }
+
+            //sync order items
+            foreach ($this->orderContainer->getPendingItems() as $pendingItem) {
+                $product = $pendingItem->objProduct();
+                if ($pendingItem->getPrice() != $product->getPrice($customer)) {
+                    $pendingItem->setPrice($product->getPrice($customer));
+                    $pendingItem->setSubtotal($product->getPrice($customer) * $pendingItem->getQuantity());
+                }
+            }
+            $this->orderContainer->update();
         }
 
         return $this->orderContainer;
@@ -140,7 +150,12 @@ class CartService
         return $this->productClass::getById($pdo, $id);
     }
 
-
+    /**
+     * @param $productId
+     * @param $productQty
+     * @return mixed|null
+     * @throws \Exception
+     */
     public function addOrderItem($productId, $productQty) {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -152,12 +167,17 @@ class CartService
 
         $product = $this->getProductById($productId);
         if ($product) {
+            /** @var TokenStorage $tokenStorage */
+            $tokenStorage = $this->container->get('security.token_storage');
+            $customer = $tokenStorage->getToken()->getUser();
+
             $exist = false;
             $pendingItems = $this->orderContainer->getPendingItems();
             foreach ($pendingItems as $pendingItem) {
                 if ($pendingItem->getProductId() == $productId) {
+                    $pendingItem->setPrice($product->getPrice($customer));
                     $pendingItem->setQuantity($pendingItem->getQuantity() + $productQty);
-                    $pendingItem->setSubtotal($product->getPrice() * $pendingItem->getQuantity());
+                    $pendingItem->setSubtotal($product->getPrice($customer) * $pendingItem->getQuantity());
                     $exist = true;
                     break;
                 }
@@ -168,9 +188,9 @@ class CartService
                 $orderItem->setTitle(($product->getVariantProduct() ? $product->getParentProductId() . ' - ' : '') . $product->getTitle());
                 $orderItem->setOrderId($this->orderContainer->getUniqid());
                 $orderItem->setProductId($productId);
-                $orderItem->setPrice(round(($product->getPrice() * 20) / 23, 2));
+                $orderItem->setPrice($product->getPrice($customer));
                 $orderItem->setQuantity($productQty);
-                $orderItem->setSubtotal($orderItem->getPrice() * $orderItem->getQuantity());
+                $orderItem->setSubtotal($orderItem->getPrice($customer) * $orderItem->getQuantity());
                 $orderItem->setWeight($product->getWeight());
                 $orderItem->setTotalWeight($product->getWeight() * $productQty);
                 $this->orderContainer->addPendingItem($orderItem);

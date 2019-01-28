@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-03 17:22:32
+//Last updated: 2019-01-27 22:11:24
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -60,6 +60,11 @@ class Customer extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $isActivated;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $membership;
     
     /**
      * @return mixed
@@ -235,6 +240,22 @@ class Customer extends Walle
     public function setIsActivated($isActivated)
     {
         $this->isActivated = $isActivated;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getMembership()
+    {
+        return $this->membership;
+    }
+    
+    /**
+     * @param mixed membership
+     */
+    public function setMembership($membership)
+    {
+        $this->membership = $membership;
     }
     
 }

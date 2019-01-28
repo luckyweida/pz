@@ -36,7 +36,6 @@
                                         <td class="td-price">
                                             <small>$</small>
                                             {{ itm.price|number_format(2, '.', ',') }}
-                                            <div><small>+{{ getenv('TAX_WORDING') }}</small></div>
                                         </td>
                                         <td class="td-number td-quantity">
                                             {{ itm.quantity }}
@@ -44,30 +43,33 @@
                                         <td class="td-number">
                                             <small>$</small>
                                             {{ itm.subtotal|number_format(2, '.', ',') }}
-                                            <div><small>+{{ getenv('TAX_WORDING') }}</small></div>
                                         </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                             <tbody>
-                                <tr class="calc-row">
-                                    <td colspan="2"></td>
-                                    <td></td>
-                                    <td class="td-total">
-                                        Subtotal (Ex. {{ getenv('TAX_WORDING') }})
-                                    </td>
-                                    <td class="td-total">
-                                        <small>$</small>
-                                        {{ orderContainer.subtotal|number_format(2, '.', ',') }}
-                                    </td>
-                                </tr>
+
 
                                 {% if orderContainer.discount %}
                                     <tr class="calc-row">
                                         <td colspan="2"></td>
                                         <td></td>
                                         <td class="td-total">
-                                            Promo Code Discount <br /> {{ orderContainer.promoCode }}
+                                            Subtotal
+                                        </td>
+                                        <td class="td-total">
+                                            <small>$</small>
+                                            {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            Discount
+                                            <div>
+                                                <small>{{ orderContainer.promoCode }}</small>
+                                            </div>
                                         </td>
                                         <td class="td-total">
                                             -
@@ -75,19 +77,40 @@
                                             {{ orderContainer.discount|number_format(2, '.', ',') }}
                                         </td>
                                     </tr>
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            After discount
+                                        </td>
+                                        <td class="td-total">
+                                            <small>$</small>
+                                            {{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+                                            <div>
+                                                <small>
+                                                    (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                                </small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr class="calc-row">
+                                        <td colspan="2"></td>
+                                        <td></td>
+                                        <td class="td-total">
+                                            Subtotal
+                                        </td>
+                                        <td class="td-total">
+                                            <small>$</small>
+                                            {{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                            <div>
+                                                <small>
+                                                    (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                                </small>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {% endif %}
-
-                                <tr class="calc-row">
-                                    <td colspan="2"></td>
-                                    <td></td>
-                                    <td class="td-total">
-                                        {{ getenv('TAX_WORDING') }}
-                                    </td>
-                                    <td class="td-total">
-                                        <small>$</small>
-                                        {{ orderContainer.gst|number_format(2, '.', ',') }}
-                                    </td>
-                                </tr>
                                 <tr class="calc-row">
                                     <td colspan="2"></td>
                                     <td></td>
@@ -114,7 +137,6 @@
                                         {{ orderContainer.total|number_format(2, '.', ',') }}
                                     </td>
                                 </tr>
-
                                 <tr class="calc-row">
                                     <td colspan="2"></td>
                                     <td></td>
@@ -280,7 +302,7 @@
                 <a href="/cart" class="btn btn-default btn-round">&#10096; Back</a>
                 <form method="post" novalidate autocomplete="nope" style="display: inline">
                     <div style="display: none">
-                        {{ form_widget(form.action,{attr:{value:'paypal'}}) }}
+                        {{ form_widget(form.action,{attr:{value:getenv('PAYMENT_METHOD')}}) }}
                         {{ form_rest(form) }}
                     </div>
                     <button class="btn btn-danger btn-round">Pay Now &#10097;</button>

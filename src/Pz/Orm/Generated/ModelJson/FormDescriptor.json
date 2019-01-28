@@ -1,0 +1,20 @@
+{
+    "id": "23",
+    "uniqid": "5c4cc8960a4c8",
+    "slug": "form-descriptors",
+    "rank": "22",
+    "added": "2019-01-27 09:52:38",
+    "modified": "2019-01-27 17:53:33",
+    "status": "1",
+    "title": "Form Descriptors",
+    "className": "FormDescriptor",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 1,
+    "dataGroups": "[\"1\"]",
+    "listType": 0,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1548535843497\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535866496\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Code:\",\"field\":\"code\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535870054\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"From address:\",\"field\":\"fromAddress\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535873342\",\"column\":\"extra3\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextareaType\",\"label\":\"Recipients:\",\"field\":\"recipients\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535876660\",\"column\":\"extra4\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextareaType\",\"label\":\"Form fields\",\"field\":\"formFields\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535879988\",\"column\":\"extra5\",\"widget\":\"\\\\Pz\\\\Form\\\\Type\\\\Wysiwyg\",\"label\":\"Thank you message:\",\"field\":\"thankYouMessage\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548535883261\",\"column\":\"extra6\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\CheckboxType\",\"label\":\"Use antispam field:\",\"field\":\"antispam\",\"required\":0,\"sql\":\"\"}]"
+}

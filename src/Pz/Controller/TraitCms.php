@@ -140,8 +140,8 @@ trait TraitCms
 
                 foreach ($result as $idx => $itm) {
                     $fullClass = DbService::fullClassName($itm->getClassName());
-                    $nodes[] = new NodePage($dgId . '-' . $itm->getId(), $dgId, $idx, 1, $itm->getTitle(), "/pz/database/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
-                    $nodes[] = new NodePage($dgId . '-' . $itm->getId() . '-1', $dgId . '-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/database/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), '', 2, 1);
+                    $nodes[] = new NodePage($dgId . '-' . $itm->getId(), $dgId, $idx, 1, $itm->getTitle(), "/pz/database/" . $itm->getId(), class_exists($fullClass) ? $fullClass::getCmsOrmsTwig() : 'pz/orms.twig');
+                    $nodes[] = new NodePage($dgId . '-' . $itm->getId() . '-1', $dgId . '-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/database/" . $itm->getId() . '/detail', class_exists($fullClass) ? $fullClass::getCmsOrmTwig() : 'pz/orm.twig', '', 2, 1);
                 }
             }
         }
@@ -160,11 +160,10 @@ trait TraitCms
         foreach ($modelDatabase as $idx => $itm) {
             $fullClass = DbService::fullClassName($itm->getClassName());
             if ($itm->getDataType() == 1) {
-                $nodes[] = new NodePage('40-' . $itm->getId(), 40, $idx, 1, $itm->getTitle(), "/pz/admin/" . $itm->getId(), $fullClass::getCmsOrmsTwig());
-                $nodes[] = new NodePage('40-' . $itm->getId() . '-1', '40-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/admin/" . $itm->getId() . '/detail', $fullClass::getCmsOrmTwig(), '', 2, 1);
+                $nodes[] = new NodePage('40-' . $itm->getId(), 40, $idx, 1, $itm->getTitle(), "/pz/admin/" . $itm->getId(), class_exists($fullClass) ? $fullClass::getCmsOrmsTwig() : 'pz/orms.twig');
+                $nodes[] = new NodePage('40-' . $itm->getId() . '-1', '40-' . $itm->getId(), 0, 0, $itm->getTitle(), "/pz/admin/" . $itm->getId() . '/detail', class_exists($fullClass) ? $fullClass::getCmsOrmTwig() : 'pz/orm.twig', '', 2, 1);
             }
         }
-
         return $nodes;
     }
 }

@@ -500,7 +500,8 @@ trait TraitCmsAjaxAsset
             }
         }
         $tree = new Tree($nodes);
-        $root = $tree->getRootFromNode(new NodeAsset(0, null, 0, 1, 'Home', $baseurl . 0, array('opened' => true, 'selected' => $currentFolderId === 0 ? true : false)));
+        $root = $tree->getRootFromNode(new NodeAsset("0", null, 0, 1, 'Home', $baseurl . 0, array('opened' => true, 'selected' => $currentFolderId == "0" ? true : false)));
+
         return $root;
     }
 }

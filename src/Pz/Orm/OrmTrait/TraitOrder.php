@@ -199,7 +199,7 @@ trait TraitOrder
         }
 
         $afterDiscount = $subtotal - $discount;
-        $gst = round($afterDiscount * 0.15, 2);
+        $gst = round(($afterDiscount * 3) / 23, 2);
 
 
         $deliveryFee = 0;
@@ -228,7 +228,7 @@ trait TraitOrder
             $this->setDeliveryOptionStatus(CartService::DELIVERY_HIDDEN);
         }
 
-        $total = $subtotal - $discount + $gst + max($deliveryFee, 0);
+        $total = $subtotal - $discount + max($deliveryFee, 0);
 
         $this->setDeliveryFee($deliveryFee);
         $this->setDiscount($discount);

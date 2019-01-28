@@ -1,0 +1,20 @@
+{
+    "id": "25",
+    "uniqid": "5c4d75592c6f7",
+    "slug": "customer-membership",
+    "rank": "16",
+    "added": "2019-01-27 22:09:45",
+    "modified": "2019-01-27 22:10:03",
+    "status": "1",
+    "title": "Customer Membership",
+    "className": "CustomerMembership",
+    "namespace": "Pz\\Orm",
+    "modelType": 1,
+    "dataType": 0,
+    "dataGroups": "[\"2\"]",
+    "listType": 0,
+    "numberPerPage": "50",
+    "defaultSortBy": "id",
+    "defaultOrder": 1,
+    "columnsJson": "[{\"id\":\"z1548580144559\",\"column\":\"title\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Title:\",\"field\":\"title\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548632091826\",\"column\":\"extra2\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Code:\",\"field\":\"code\",\"required\":0,\"sql\":\"\"},{\"id\":\"z1548580166134\",\"column\":\"extra1\",\"widget\":\"\\\\Symfony\\\\Component\\\\Form\\\\Extension\\\\Core\\\\Type\\\\TextType\",\"label\":\"Discount %:\",\"field\":\"discount\",\"required\":0,\"sql\":\"\"}]"
+}

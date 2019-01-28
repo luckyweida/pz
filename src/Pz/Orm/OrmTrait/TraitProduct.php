@@ -6,10 +6,42 @@ use Pz\Orm\AssetOrm;
 
 trait TraitProduct
 {
+    /**
+     * TraitProduct constructor.
+     * @param \PDO $pdo
+     */
     public function __construct(\PDO $pdo)
     {
         $this->setProductType(1);
         parent::__construct($pdo);
+    }
+
+    public function getPrice($customer = null) {
+        $price = parent::getPrice();
+        if (!$customer || gettype($customer) == 'string') {
+            return $price;
+        } else {
+            $membership = $customer->objMembership();
+            if ($membership) {
+                return round(((100 - $membership->getDiscount()) / 100) * $price, 2);
+            } else {
+                return $price;
+            }
+        }
+    }
+
+    public function getDisplayPrice($customer = null) {
+        $price = parent::getDisplayPrice();
+        if (!$customer || gettype($customer) == 'string') {
+            return $price;
+        } else {
+            $membership = $customer->objMembership();
+            if ($membership) {
+                return round(((100 - $membership->getDiscount()) / 100) * $price, 2);
+            } else {
+                return $price;
+            }
+        }
     }
 
     /**
@@ -34,6 +66,9 @@ trait TraitProduct
         return static::getById($this->getPdo(), $this->getParentProductId());
     }
 
+    /**
+     * @return mixed
+     */
     public function nextProduct()
     {
         return static::active($this->getPdo(), array(
@@ -46,6 +81,9 @@ trait TraitProduct
         ));
     }
 
+    /**
+     * @return mixed
+     */
     public function prevProduct()
     {
         return static::active($this->getPdo(), array(
@@ -58,24 +96,36 @@ trait TraitProduct
         ));
     }
 
+    /**
+     * @return string
+     */
     public function getThumbnail() {
         /** @var AssetOrm $result */
         $result = $this->objGallery();
         return count($result) ? $result[0]->getTitle() : '';
     }
 
+    /**
+     * @return array|mixed
+     */
     public function objDescription()
     {
         $description = $this->getDescription();
         return $description ? json_decode($description) : array();
     }
 
+    /**
+     * @return array|mixed
+     */
     public function objVariants()
     {
         $variants = $this->getVariants();
         return $variants ? json_decode($variants) : array();
     }
 
+    /**
+     * @return array|null
+     */
     public function objGallery() {
         return AssetOrm::active($this->getPdo(), array(
             'whereSql' => 'm.modelName = ? AND m.attributeName = ? AND m.ormId = ?',
@@ -85,6 +135,10 @@ trait TraitProduct
         ));
     }
 
+    /**
+     * @param bool $doubleCheckExistence
+     * @return mixed
+     */
     public function save($doubleCheckExistence = false)
     {
         if ($this->getProductType() == 1) {
@@ -165,6 +219,9 @@ trait TraitProduct
         return parent::save($doubleCheckExistence);
     }
 
+    /**
+     * @return mixed
+     */
     public function delete()
     {
         $result = static::data($this->getPdo(), array(

@@ -30,6 +30,9 @@ trait TraitCartAccount
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
@@ -279,8 +282,8 @@ trait TraitCartAccount
         $limit = 5;
 
         $orders = $this->cartService->getOrderClass()::active($pdo, array(
-            'whereSql' => 'm.customerId = ?',
-            'params' => array($customer->getId()),
+            'whereSql' => 'm.customerId = ? AND m.payStatus = ?',
+            'params' => array($customer->getId(), CartService::STATUS_SUCCESS),
             'sort' => 'm.id',
             'order' => 'DESC',
             'page' => $pagination,
@@ -364,8 +367,8 @@ trait TraitCartAccount
         $limit = 20;
 
         $orders = $this->cartService->getOrderClass()::active($pdo, array(
-            'whereSql' => 'm.customerId = ?',
-            'params' => array($customer->getId()),
+            'whereSql' => 'm.customerId = ? AND m.payStatus = ?',
+            'params' => array($customer->getId(), CartService::STATUS_SUCCESS),
             'sort' => 'm.id',
             'order' => 'DESC',
             'page' => $pagination,
@@ -439,6 +442,9 @@ trait TraitCartAccount
             throw new NotFoundHttpException();
         }
         if ($orderContainer->getCustomerId() != $customer->getId()) {
+            throw new NotFoundHttpException();
+        }
+        if ($orderContainer->getPayStatus() != CartService::STATUS_SUCCESS) {
             throw new NotFoundHttpException();
         }
 

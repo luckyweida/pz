@@ -7,7 +7,7 @@
     </p>
     <table class="table">
         <tr>
-            <td>
+            <td style="padding-left: 20px; vertical-align: top;">
                 <h3>Billing address</h3>
                 {% if orderContainer.email %}
                     <div><strong>Email:</strong></div>
@@ -64,7 +64,7 @@
                     {{ orderContainer.note|nl2br }}
                 {% endif %}
             </td>
-            <td>
+            <td style="padding-right: 20px; vertical-align: top;">
                 <h3>Shipping address</h3>
                 {% if orderContainer.billingSame %}
                     <div class="form-check">
@@ -133,28 +133,54 @@
                         {% for itm in orderContainer.orderItems %}
                             <tr>
                                 <td>{{ itm.title }}</td>
-                                <td class="text-right">${{ itm.price|number_format(2, '.', ',') }} <div><small>+{{ getenv('TAX_WORDING') }}</small></div></td>
+                                <td class="text-right">${{ itm.price|number_format(2, '.', ',') }}</td>
                                 <td class="text-right">{{ itm.quantity }}</td>
-                                <td class="text-right">${{ itm.subtotal|number_format(2, '.', ',') }} <div><small>+{{ getenv('TAX_WORDING') }}</small></div></td>
+                                <td class="text-right">${{ itm.subtotal|number_format(2, '.', ',') }}</td>
                             </tr>
                         {% endfor %}
-                        <tr>
-                            <td></td>
-                            <td colspan="2"class="text-right font-weight-bold">Subtotal:</td>
-                            <td class="text-right font-weight-bold">${{ orderContainer.subtotal|number_format(2, '.', ',') }}</td>
-                        </tr>
+
                         {% if orderContainer.discount > 0 %}
                             <tr>
+                                <td></td>
+                                <td colspan="2"class="text-right font-weight-bold">Subtotal:</td>
+                                <td class="text-right font-weight-bold">
+                                    ${{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                </td>
+                            </tr>
+                            <tr>
                                 <td style="border-top: none"></td>
-                                <td colspan="2" class="text-right font-weight-bold">Promo Code Discount ({{ orderContainer.promoCode }}):</td>
+                                <td colspan="2" class="text-right font-weight-bold">
+                                    Discount:
+                                    <div><small>{{ orderContainer.promoCode }}</small></div>
+                                </td>
                                 <td class="text-right font-weight-bold">-${{ orderContainer.discount|number_format(2, '.', ',') }}</td>
                             </tr>
+                            <tr>
+                                <td style="border-top: none"></td>
+                                <td colspan="2"class="text-right font-weight-bold">After discount:</td>
+                                <td class="text-right font-weight-bold">
+                                    ${{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+                                    <div>
+                                        <small>
+                                            (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                        </small>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td></td>
+                                <td colspan="2"class="text-right font-weight-bold">Subtotal:</td>
+                                <td class="text-right font-weight-bold">
+                                    ${{ orderContainer.subtotal|number_format(2, '.', ',') }}
+                                    <div>
+                                        <small>
+                                            (Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+                                        </small>
+                                    </div>
+                                </td>
+                            </tr>
                         {% endif %}
-                        <tr>
-                            <td style="border-top: none"></td>
-                            <td colspan="2" class="text-right font-weight-bold">GST:</td>
-                            <td class="text-right font-weight-bold">${{ orderContainer.gst|number_format(2, '.', ',') }}</td>
-                        </tr>
                         <tr>
                             <td style="border-top: none"></td>
                             <td colspan="2" class="text-right font-weight-bold">Shipping:</td>

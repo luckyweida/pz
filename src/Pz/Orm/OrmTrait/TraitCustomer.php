@@ -5,12 +5,26 @@ namespace Pz\Orm\OrmTrait;
 use Doctrine\DBAL\Connection;
 use Pz\Orm\Customer;
 use Pz\Orm\CustomerAddress;
+use Pz\Orm\CustomerMembership;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 trait TraitCustomer
 {
-    public function objAddresses() {
+
+    /**
+     * @return array|null
+     */
+    public function objMembership()
+    {
+        return CustomerMembership::getById($this->getPdo(), $this->getMembership());
+    }
+
+    /**
+     * @return array|null
+     */
+    public function objAddresses()
+    {
 
         return CustomerAddress::active($this->getPdo(), array(
             'whereSql' => 'm.customerId = ?',
@@ -18,6 +32,9 @@ trait TraitCustomer
         ));
     }
 
+    /**
+     * @param bool $doubleCheck
+     */
     public function save($doubleCheck = false)
     {
         if ($this->getPasswordInput()) {

@@ -10,7 +10,7 @@ class Robot extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'antispam';
+        return 'robot';
     }
 
     public function configureOptions(OptionsResolver $resolver) {
