@@ -104,6 +104,9 @@ trait TraitCartAccount
     public function activationRequired()
     {
 
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
         $pageClass = $this->pageService->getPageClass();
         $page = new $pageClass($pdo);
         $page->setTitle('Activation Required');
