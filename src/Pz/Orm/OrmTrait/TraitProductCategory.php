@@ -4,7 +4,7 @@ namespace Pz\Orm\OrmTrait;
 
 trait TraitProductCategory
 {
-    public function getChildren() {
+    public function getChildren() :array {
         return static::data($this->getPdo(), array(
             'whereSql' => 'm.parentId = ?',
             'params' => array($this->getId()),
