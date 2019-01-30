@@ -23,7 +23,7 @@ trait TraitCartFacebookLogin
      * @route("/facebook/verify")
      * @return Response
      */
-	public function verifyFacebook() {
+    public function verifyFacebook() {
         $request = Request::createFromGlobals();
 
         $fb = new Facebook(array(
@@ -106,7 +106,7 @@ trait TraitCartFacebookLogin
                 'oneOrNull' => 1,
             ));
 
-            $redirectUrl = '/member/dashboard';
+            $redirectUrl = '/account/dashboard';
             if (!$customer) {
                 $customer = new Customer($pdo);
                 $customer->setTitle($fbUser->getEmail());
@@ -116,12 +116,11 @@ trait TraitCartFacebookLogin
                 $customer->setSourceId($fbUser->getId());
                 $customer->setIsActivated(1);
                 $customer->save();
-                $redirectUrl = '/member/password?returnUrl=' . urlencode('/cart');
+                $redirectUrl = '/account/password?returnUrl=' . urlencode('/cart');
             } else {
-                $cart = new CartService($this->container);
-                $orderContainer = $cart->getOrderContainer();
+                $orderContainer = $this->cartService->getOrderContainer();
                 if (count($orderContainer->getPendingItems())) {
-                    $redirectUrl = '/member/after_login';
+                    $redirectUrl = '/account/after_login';
                 }
             }
 
@@ -132,5 +131,5 @@ trait TraitCartFacebookLogin
             $this->get('session')->set('_security_member', serialize($token));
             return new RedirectResponse($redirectUrl);
         }
-	}
+    }
 }

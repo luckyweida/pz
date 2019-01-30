@@ -22,7 +22,7 @@ trait TraitCartGoogleLogin
      * @route("/google/verify")
      * @return Response
      */
-	public function verifyGoogle() {
+    public function verifyGoogle() {
         $request = Request::createFromGlobals();
 
         $client = new \Google_Client();
@@ -59,7 +59,7 @@ trait TraitCartGoogleLogin
                 'oneOrNull' => 1,
             ));
 
-            $redirectUrl = '/member/dashboard';
+            $redirectUrl = '/account/dashboard';
             if (!$customer) {
                 $customer = new Customer($pdo);
                 $customer->setTitle($userInfo->email);
@@ -69,12 +69,11 @@ trait TraitCartGoogleLogin
                 $customer->setSourceId($userInfo->id);
                 $customer->setIsActivated(1);
                 $customer->save();
-                $redirectUrl = '/member/password?returnUrl=' . urlencode('/cart');
+                $redirectUrl = '/account/password?returnUrl=' . urlencode('/cart');
             } else {
-                $cart = new CartService($this->container);
-                $orderContainer = $cart->getOrderContainer();
+                $orderContainer = $this->cartService->getOrderContainer();
                 if (count($orderContainer->getPendingItems())) {
-                    $redirectUrl = '/member/after_login';
+                    $redirectUrl = '/account/after_login';
                 }
             }
 
@@ -87,5 +86,5 @@ trait TraitCartGoogleLogin
             return new RedirectResponse($redirectUrl);
         }
 
-	}
+    }
 }
