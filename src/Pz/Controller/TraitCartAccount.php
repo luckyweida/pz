@@ -609,6 +609,10 @@ trait TraitCartAccount
     {
         $customer = $this->container->get('security.token_storage')->getToken()->getUser();
 
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
         /** @var Form $form */
@@ -642,6 +646,10 @@ trait TraitCartAccount
     {
         $customer = $this->container->get('security.token_storage')->getToken()->getUser();
 
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        /** @var \PDO $pdo */
+        $pdo = $connection->getWrappedConnection();
+        
         /** @var FormFactory $formFactory */
         $formFactory = $this->container->get('form.factory');
         /** @var Form $form */
