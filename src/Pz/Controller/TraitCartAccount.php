@@ -170,6 +170,9 @@ trait TraitCartAccount
      */
     public function resetPasswordEmailSent()
     {
+        $connection = $this->container->get('doctrine.dbal.default_connection');
+        $pdo = $connection->getWrappedConnection();
+
         $pageClass = $this->pageService->getPageClass();
         $page = new $pageClass($pdo);
         $page->setTitle('Reset Password Email Sent');
