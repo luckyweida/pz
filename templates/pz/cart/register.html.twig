@@ -46,11 +46,20 @@
                                 {{ form_widget(form.lastName, {attr: {class: 'form-control',placeholder:'Last name'}}) }}
                                 {{ form_errors(form.lastName) }}
 
-
                                 {% for passwordField in form.passwordInput %}
                                     {{ form_widget(passwordField,{attr:{class:'form-control',placeholder: loop.index == 1 ? 'Password' : 'Repeat Password'}}) }}
                                     {{ form_errors(passwordField) }}
                                 {% endfor %}
+
+                                <div>
+
+                                    <label style="color: black">
+                                        {{ form_widget(form.agree, {attr: {}}) }}
+                                        <span class="pl-2">Do you agree with our <a target="_blank" class="text-primary" href="/terms-and-conditions"><b>terms and conditions</b></a></span>
+                                    </label>
+                                    {{ form_errors(form.agree) }}
+                                </div>
+
 
                                 {#
                                 <input class="form-control" placeholder="Email" type="text">

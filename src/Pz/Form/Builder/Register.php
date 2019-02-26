@@ -68,6 +68,12 @@ class Register extends AbstractType
             'required' => true,
             'first_options'  => array('label' => 'Password'),
             'second_options' => array('label' => 'Repeat Password')
+        ))->add('agree', CheckboxType::class, array(
+            'label' => 'Agree:',
+            'mapped' => false,
+            'constraints' => array(
+                new Assert\NotBlank(),
+            )
         ));
     }
 

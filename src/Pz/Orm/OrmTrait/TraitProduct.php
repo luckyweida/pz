@@ -21,6 +21,9 @@ trait TraitProduct
         if (!$customer || gettype($customer) == 'string') {
             return $price;
         } else {
+            if ($this->getCompareAtPrice()) {
+                return $this->getPrice();
+            }
             $membership = $customer->objMembership();
             if ($membership) {
                 return round(((100 - $membership->getDiscount()) / 100) * $price, 2);
@@ -35,6 +38,9 @@ trait TraitProduct
         if (!$customer || gettype($customer) == 'string') {
             return $price;
         } else {
+            if ($this->getCompareAtPrice()) {
+                return $this->getPrice();
+            }
             $membership = $customer->objMembership();
             if ($membership) {
                 return round(((100 - $membership->getDiscount()) / 100) * $price, 2);
