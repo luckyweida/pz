@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ALL ^ E_DEPRECATED);
 #******************************************************************************
 #* Name          : PxPay_Curl.inc.php
 #* Description   : Classes used interact with the PxPay interface using PHP with the cURL extension installed
