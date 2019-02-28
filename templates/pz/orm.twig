@@ -21,12 +21,12 @@
 
 {% block content %}
     {% if fragments|length < 5 and not app.request.get('uniqId') %}
-        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId) }}
+        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId ~ (app.request.get('returnUrl') ? '&returnUrl=' ~ app.request.get('returnUrl')|url_encode : '')) }}
     {% endif %}
 
 	{% set exist = db.byField(model.className, 'uniqid', app.request.get('uniqId')) %}
 	{% if exist %}
-        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId) }}
+        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId ~ (app.request.get('returnUrl') ? '&returnUrl=' ~ app.request.get('returnUrl')|url_encode : '')) }}
     {% endif %}
 
 	<div class="row">

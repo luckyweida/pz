@@ -176,7 +176,9 @@ trait TraitCmsAjax
         $result["cat0"] = 0;
         foreach ($pages as $page) {
             $category = json_decode($page->getCategory());
-            if (in_array(0, $category) || !count($category)) {
+            if (gettype($category) == 'array' && (in_array(0, $category) || !count($category))) {
+                $result["cat0"]++;
+            } elseif (!$category) {
                 $result["cat0"]++;
             }
         }

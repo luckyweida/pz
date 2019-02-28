@@ -132,7 +132,7 @@ class OrmHandler
                 throw new RedirectException($returnUrl, 301);
             }
 
-            $returnUrl = '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId() . '/detail/' . $orm->getId();
+            $returnUrl = '/pz/' . ($model->getDataType() == 0 ? 'database' : 'admin') . '/' . $model->getId() . '/detail/' . $orm->getId() . ($request->get('returnUrl') ? '?returnUrl=' . urlencode($request->get('returnUrl')) : '');
             throw new RedirectException($returnUrl, 301);
         }
 
