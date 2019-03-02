@@ -7,5 +7,5 @@ use Pz\Axiom\Mo;
 
 class CmsController extends Mo
 {
-    use TraitCmsAjax, TraitCmsAjaxAsset, TraitCms, TraitInit;
+    use TraitCmsAjax, TraitCmsAjaxAsset, TraitCms;
 }

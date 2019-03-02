@@ -82,9 +82,11 @@ class CartService
             //attach customer email to order
             /** @var TokenStorage $tokenStorage */
             $tokenStorage = $this->container->get('security.token_storage');
-            $customer = $tokenStorage->getToken()->getUser();
-            if (!$this->orderContainer->getEmail() && gettype($customer) == 'object') {
-                $this->orderContainer->setEmail($customer->getTitle());
+            if ($tokenStorage->getToken()) {
+                $customer = $tokenStorage->getToken()->getUser();
+                if (!$this->orderContainer->getEmail() && gettype($customer) == 'object') {
+                    $this->orderContainer->setEmail($customer->getTitle());
+                }
             }
 
             //sync order items

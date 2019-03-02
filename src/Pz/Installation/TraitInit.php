@@ -1,6 +1,6 @@
 <?php
 
-namespace Pz\Controller;
+namespace Pz\Installation;
 
 
 use Doctrine\DBAL\Connection;
@@ -44,7 +44,8 @@ trait TraitInit
         foreach ($files as $file) {
             if ($file == '.'
                 || $file == '..'
-                || $file == 'Generated') {
+                || $file == 'Generated'
+                || $file == 'OrmTrait') {
                 continue;
             }
 
@@ -54,7 +55,8 @@ trait TraitInit
         foreach ($files as $file) {
             if ($file == '.'
                 || $file == '..'
-                || $file == 'Generated') {
+                || $file == 'Generated'
+                || $file == 'OrmTrait') {
                 continue;
             }
 
@@ -230,7 +232,7 @@ trait TraitInit
             $orm->setId(1);
             $orm->setTitle('Home');
             $orm->setType(1);
-            $orm->setTemplate(2);
+            $orm->setTemplateFile(2);
             $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/');
             $orm->setCategoryRank(json_encode(array("cat1" => 0)));
@@ -241,7 +243,7 @@ trait TraitInit
             $orm->setId(2);
             $orm->setTitle('About');
             $orm->setType(1);
-            $orm->setTemplate(3);
+            $orm->setTemplateFile(3);
             $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/about');
             $orm->setCategoryRank(json_encode(array("cat1" => 1)));
@@ -252,7 +254,7 @@ trait TraitInit
             $orm->setId(3);
             $orm->setTitle('News');
             $orm->setType(1);
-            $orm->setTemplate(4);
+            $orm->setTemplateFile(4);
             $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/news');
             $orm->setCategoryRank(json_encode(array("cat1" => 2)));
@@ -263,7 +265,7 @@ trait TraitInit
             $orm->setId(4);
             $orm->setTitle('News detail');
             $orm->setType(1);
-            $orm->setTemplate(5);
+            $orm->setTemplateFile(5);
             $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/news/detail');
             $orm->setCategoryRank(json_encode(array("cat1" => 0)));
@@ -275,7 +277,7 @@ trait TraitInit
             $orm->setId(5);
             $orm->setTitle('Contact');
             $orm->setType(1);
-            $orm->setTemplate(6);
+            $orm->setTemplateFile(6);
             $orm->setCategory(json_encode(array("1")));
             $orm->setUrl('/contact');
             $orm->setCategoryRank(json_encode(array("cat1" => 3)));

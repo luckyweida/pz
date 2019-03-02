@@ -43,6 +43,7 @@ class UserProvider implements UserProviderInterface
     {
 
         $pdo = $this->conn->getWrappedConnection();
+
         /** @var User $user */
         $user = User::getByField($pdo, 'title', $username);
 
