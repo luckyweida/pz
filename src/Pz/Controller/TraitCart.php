@@ -105,7 +105,7 @@ trait TraitCart
                 $data = $request->get($form->getName());
                 /** @var Customer $customer */
                 $customer = $this->container->get('security.token_storage')->getToken()->getUser();
-                if ($customer) {
+                if ($customer && gettype($customer) == 'object') {
                     $orderContainer->setCustomerId($customer->getId());
 
                     if ($orderContainer->getBillingSave()) {
