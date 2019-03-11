@@ -78,11 +78,7 @@ trait TraitInit
                 $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             }
 
-            $tableName = $className::getTableName();
-            $tableNameExists = $this->tableExists($pdo, $tableName);
-            if (!$tableNameExists) {
-                $className::updateModel($pdo);
-            }
+            $className::updateModel($pdo);
         }
 
         $pdo->commit();
