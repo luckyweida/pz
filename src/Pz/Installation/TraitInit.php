@@ -39,8 +39,13 @@ trait TraitInit
 
         $pdo->beginTransaction();
 
+        $files = array();
         $dir = $this->container->getParameter('kernel.project_dir') . '/vendor/pozoltd/pz/src/Pz/Orm';
-        $files = scandir($dir);
+        $files = array_merge($files, scandir($dir));
+
+        $dir = $this->container->getParameter('kernel.project_dir') . '/src/Web/Orm';
+        $files = array_merge($files, scandir($dir));
+
         foreach ($files as $file) {
             if ($file == '.'
                 || $file == '..'
@@ -50,7 +55,15 @@ trait TraitInit
             }
 
             $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
-            $className::sync($pdo);
+            if (!class_exists($className)) {
+                $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+            }
+
+            $tableName = $className::getTableName();
+            $tableNameExists = $this->tableExists($pdo, $tableName);
+            if (!$tableNameExists) {
+                $className::updateModel($pdo);
+            }
         }
         foreach ($files as $file) {
             if ($file == '.'
@@ -61,7 +74,15 @@ trait TraitInit
             }
 
             $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
-            $className::updateModel($pdo);
+            if (!class_exists($className)) {
+                $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+            }
+
+            $tableName = $className::getTableName();
+            $tableNameExists = $this->tableExists($pdo, $tableName);
+            if (!$tableNameExists) {
+                $className::updateModel($pdo);
+            }
         }
 
         $pdo->commit();
@@ -83,6 +104,17 @@ trait TraitInit
         $pdo->commit();
 
         return new Response('OK');
+    }
+
+    function tableExists($dbh, $id)
+    {
+        $results = $dbh->query("SHOW TABLES LIKE '$id'");
+        if (!$results) {
+            return false;
+        }
+        if ($results->rowCount() > 0) {
+            return true;
+        }
     }
 
     /**
