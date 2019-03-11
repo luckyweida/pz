@@ -62,7 +62,7 @@ trait TraitInit
             $tableName = $className::getTableName();
             $tableNameExists = $this->tableExists($pdo, $tableName);
             if (!$tableNameExists) {
-                $className::updateModel($pdo);
+                $className::sync($pdo);
             }
         }
         foreach ($files as $file) {
