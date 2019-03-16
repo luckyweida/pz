@@ -54,9 +54,9 @@ trait TraitInit
                 continue;
             }
 
-            $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+            $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             if (!class_exists($className)) {
-                $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+                $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             }
 
             $tableName = $className::getTableName();
@@ -73,9 +73,9 @@ trait TraitInit
                 continue;
             }
 
-            $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+            $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             if (!class_exists($className)) {
-                $className = "Web\\Orm\\" . substr($file, 0, strrpos($file, '.'));
+                $className = "Pz\\Orm\\" . substr($file, 0, strrpos($file, '.'));
             }
 
             $className::updateModel($pdo);
