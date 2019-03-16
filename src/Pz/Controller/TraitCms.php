@@ -8,6 +8,7 @@ use Pz\Orm\AssetOrm;
 use Pz\Orm\DataGroup;
 use Pz\Router\NodePage;
 use Pz\Service\DbService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,6 +16,15 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 trait TraitCms
 {
+    /**
+     * @route("/pz")
+     * @route("/pz/")
+     */
+    public function pz()
+    {
+        return new RedirectResponse('/pz/pages');
+    }
+
     /**
      * @route("/pz/login")
      */
