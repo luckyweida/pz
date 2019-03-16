@@ -98,10 +98,12 @@ class OrmHandler
 
                 $result = static::tree2Array($root, 1);
                 $opts['choices'] = array(
-                    '@1' => ''
+                    '@1@0' => ''
                 );
+                $count = 1;
                 foreach ($result as $key => $val) {
-                    $opts['choices'][$val->value] = $val->key;
+                    $opts['choices'][$val->value . "@$count"] = $val->key;
+                    $count++;
                 }
                 $opts['required'] = false;
             } else if ($itm->widget == '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType') {

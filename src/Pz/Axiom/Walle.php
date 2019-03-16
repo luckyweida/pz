@@ -320,6 +320,7 @@ abstract class Walle implements \JsonSerializable
         $options['limit'] = isset($options['limit']) ? $options['limit'] : 0;
         $options['orm'] = isset($options['orm']) ? $options['orm'] : 1;
         $options['debug'] = isset($options['debug']) ? $options['debug'] : 0;
+        $options['idArray'] = isset($options['idArray']) ? $options['idArray'] : 0;
 
         $options['oneOrNull'] = isset($options['oneOrNull']) ? $options['oneOrNull'] == true : false;
         if ($options['oneOrNull']) {
@@ -371,7 +372,11 @@ abstract class Walle implements \JsonSerializable
                         $orm->$method($itm[$field]);
                     }
                 }
-                $orms[] = $orm;
+                if ($options['idArray']) {
+                    $orms[$orm->getId()] = $orm;
+                } else {
+                    $orms[] = $orm;
+                }
             }
             $result = $orms;
         }

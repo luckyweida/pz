@@ -11,12 +11,12 @@
 
     <div class="text-center">
         <div class="btn-group">
-            <a class="btn btn-white" type="button" href="{{ url }}/?pageNum={{ max(pageNum - 1, 1) }}"><i class="fa fa-chevron-left"></i></a>
+            <a class="btn btn-white" type="button" href="{{ url }}{{ '?' in url ? '&' : '?' }}pageNum={{ max(pageNum - 1, 1) }}"><i class="fa fa-chevron-left"></i></a>
             {% for i in start..end %}
-                <a class="btn btn-white {% if pageNum == i %}active{% endif %}" href="{{ url }}?pageNum={{ i }}">{{ i }}</a>
+                <a class="btn btn-white {% if pageNum == i %}active{% endif %}" href="{{ url }}{{ '?' in url ? '&' : '?' }}pageNum={{ i }}">{{ i }}</a>
                 {#<li class="item {% if pageNum == i %}active{% endif %}"><a href="{{ url }}/{{ i }}">{{ i }}</a></li>#}
             {% endfor %}
-            <a class="btn btn-white" type="button" href="{{ url }}?pageNum={{ min(pageNum + 1, totalPages) }}"><i class="fa fa-chevron-right"></i></a>
+            <a class="btn btn-white" type="button" href="{{ url }}{{ '?' in url ? '&' : '?' }}pageNum={{ min(pageNum + 1, totalPages) }}"><i class="fa fa-chevron-right"></i></a>
         </div>
     </div>
 {% endif %}
