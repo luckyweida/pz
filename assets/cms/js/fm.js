@@ -480,6 +480,8 @@ fm = {
                     },
                     success: function (data) {
                         $('#js-edit-dialog').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
                         fm.getFolders();
                         fm.getNav();
                     }
