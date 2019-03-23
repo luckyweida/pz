@@ -1,5 +1,5 @@
 <?php
-//Last updated: 2019-01-02 17:27:30
+//Last updated: 2019-03-23 12:41:38
 namespace Pz\Orm\Generated;
 
 use Pz\Axiom\Walle;
@@ -10,6 +10,11 @@ class PromoCode extends Walle
      * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
      */
     private $title;
+    
+    /**
+     * #pz text COLLATE utf8mb4_unicode_ci DEFAULT NULL
+     */
+    private $freeShipping;
     
     /**
      * #pz datetime DEFAULT NULL
@@ -45,6 +50,22 @@ class PromoCode extends Walle
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getFreeShipping()
+    {
+        return $this->freeShipping;
+    }
+    
+    /**
+     * @param mixed freeShipping
+     */
+    public function setFreeShipping($freeShipping)
+    {
+        $this->freeShipping = $freeShipping;
     }
     
     /**

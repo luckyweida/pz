@@ -5,6 +5,8 @@ namespace Pz\Controller;
 use Pz\Orm\Asset;
 use Pz\Orm\AssetSize;
 
+use Pz\Orm\Page;
+use Pz\Redirect\RedirectException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -133,6 +135,11 @@ trait TraitWeb
         $request = Request::createFromGlobals();
         $requestUri = rtrim($request->getPathInfo(), '/');
         $params = $this->getParams($requestUri);
+        /** @var Page $node */
+        $node = $params['node'];
+        if ($node->getType() == 2 && $node->getRedirectTo()) {
+            throw new RedirectException($node->getRedirectTo());
+        }
         return $this->render($params['node']->getTemplate(), $params);
     }
 

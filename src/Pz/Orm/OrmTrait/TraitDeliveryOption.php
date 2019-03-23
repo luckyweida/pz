@@ -3,6 +3,7 @@
 namespace Pz\Orm\OrmTrait;
 
 use Pz\Orm\Country;
+use Pz\Orm\PromoCode;
 
 trait TraitDeliveryOption
 {
@@ -11,7 +12,25 @@ trait TraitDeliveryOption
      */
     public function calculatePrice($orderContainer): void
     {
+        $freeDelivery = 0;
 
+        /** @var PromoCode $promoCode */
+        $promoCode = PromoCode::getByField($this->getPdo(), 'title', $orderContainer->getPromoCode());
+        if ($promoCode) {
+            $valid = true;
+            if ($promoCode->getStartdate() && strtotime($promoCode->getStartdate()) >= time()) {
+                $valid = false;
+            }
+            if ($promoCode->getEnddate() && strtotime($promoCode->getEnddate()) <= time()) {
+                $valid = false;
+            }
+
+            if ($valid) {
+                if ($promoCode->getFreeShipping() == 1) {
+                    $freeDelivery = 1;
+                }
+            }
+        }
 
         $countryCode = $orderContainer->getCountryCode();
         if ($countryCode) {
@@ -36,13 +55,13 @@ trait TraitDeliveryOption
 
                     $totalWeight = $orderContainer->getTotalWeight();
                     if ($totalWeight <= $selectedBlock->values->baseWeight || !$selectedBlock->values->baseWeight) {
-                        $this->setPrice($selectedBlock->values->basePrice);
+                        $this->setPrice($freeDelivery ? 0 : $selectedBlock->values->basePrice);
                     }
 
                     if ($selectedBlock->values->baseWeight && $totalWeight > $selectedBlock->values->baseWeight) {
                         $units = ceil(($totalWeight - $selectedBlock->values->baseWeight) / $selectedBlock->values->extraWeight);
                         $deliveryFee = $selectedBlock->values->basePrice + ($units * $selectedBlock->values->extraPrice);
-                        $this->setPrice($deliveryFee);
+                        $this->setPrice($freeDelivery ? 0 : $deliveryFee);
                     }
                 }
             }

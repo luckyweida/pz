@@ -177,6 +177,7 @@ trait TraitOrder
         $subtotal = $result;
 
         $discount = 0;
+        $freeDelivery = 0;
 
         /** @var PromoCode $promoCode */
         $promoCode = PromoCode::getByField($this->getPdo(), 'title', $this->getPromoCode());
@@ -190,11 +191,16 @@ trait TraitOrder
             }
 
             if ($valid) {
-                if ($promoCode->getPerc() == 1) {
-                    $discount = round(($promoCode->getValue() / 100) * $subtotal, 2);
+                if ($promoCode->getFreeShipping() == 1) {
+                    $freeDelivery = 1;
                 } else {
-                    $discount = $promoCode->getValue();
+                    if ($promoCode->getPerc() == 1) {
+                        $discount = round(($promoCode->getValue() / 100) * $subtotal, 2);
+                    } else {
+                        $discount = $promoCode->getValue();
+                    }
                 }
+
             }
         }
 
@@ -217,7 +223,7 @@ trait TraitOrder
                 }
             }
 
-            $deliveryFee = $selectedDeliveryOption->getPrice();
+            $deliveryFee = $freeDelivery ? 0 : $selectedDeliveryOption->getPrice();
 
             $this->setDeliveryOptionDescription($selectedDeliveryOption->getTitle());
             $this->setDeliveryOptionId($selectedDeliveryOption->getId());
