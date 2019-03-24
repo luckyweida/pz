@@ -409,7 +409,7 @@ trait TraitCart
                     ->setSubject('Invoice #' . $orderContainer->getUniqid())
                     ->setFrom(array(getenv('EMAIL_FROM')))
                     ->setTo(array($orderContainer->getEmail()))
-                    ->setBcc(array(getenv('EMAIL_BCC')))
+                    ->setBcc(array(getenv('EMAIL_BCC'), getenv('EMAIL_BCC_ORDER')))
                     ->setBody($messageBody, 'text/html');
                 $this->container->get('mailer')->send($message);
 

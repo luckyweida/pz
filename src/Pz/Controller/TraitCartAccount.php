@@ -76,9 +76,10 @@ trait TraitCartAccount
 
 
             $message = (new \Swift_Message())
-                ->setSubject('Acticate your account')
+                ->setSubject('Activate your account')
                 ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo($orm->getTitle())
+                ->setBcc(array(getenv('EMAIL_BCC')))
                 ->setBody($messageBody, 'text/html');
             $this->container->get('mailer')->send($message);
 
@@ -149,6 +150,7 @@ trait TraitCartAccount
                 ->setSubject('Reset your password')
                 ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo($orm->getTitle())
+                ->setBcc(array(getenv('EMAIL_BCC')))
                 ->setBody($messageBody, 'text/html');
             $this->container->get('mailer')->send($message);
 
@@ -323,6 +325,7 @@ trait TraitCartAccount
                 ->setSubject('Invoice #' . $orderContainer->getUniqid())
                 ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo(array($data['email']))
+                ->setBcc(array(getenv('EMAIL_BCC')))
                 ->setBody($messageBody, 'text/html');
             $this->container->get('mailer')->send($message);
 
@@ -413,6 +416,7 @@ trait TraitCartAccount
                 ->setSubject('Invoice #' . $orderContainer->getUniqid())
                 ->setFrom(array(getenv('EMAIL_FROM')))
                 ->setTo(array($data['email']))
+                ->setBcc(array(getenv('EMAIL_BCC')))
                 ->setBody($messageBody, 'text/html');
             $this->container->get('mailer')->send($message);
 

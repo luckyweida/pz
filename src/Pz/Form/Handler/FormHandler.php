@@ -97,7 +97,7 @@ class FormHandler
                         ->setSubject("{$formDescriptor->getTitle()} #" . $submission->getUniqueId())
                         ->setFrom(array($formDescriptor->getFromAddress()))
                         ->setTo(array_filter(array_map('trim', explode(',', $formDescriptor->getRecipients()))))
-                        ->setBcc(array(getenv('EMAIL_FROM')))
+                        ->setBcc(array(getenv('EMAIL_BCC')))
                         ->setBody(
                             $messageBody, 'text/html'
                         );
