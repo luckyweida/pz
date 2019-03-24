@@ -475,7 +475,7 @@ trait TraitCart
         $baseUrl = $request->getScheme() . '://' . $request->getHost() . '/cart';
         $params = array(
             'amount' => (float)$orderContainer->getTotal(),
-            'currency' => 'NZD',
+            'currency' => getenv('CurrencyInput') ?: 'NZD',
             'description' => 'Online Shopping Payment',
             'transactionId' => $orderContainer->getUniqid(),
             'transactionReference' => $orderContainer->getBillingFirstname() . ' ' . $orderContainer->getBillingLastname(),
