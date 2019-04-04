@@ -413,7 +413,7 @@ trait TraitCart
 //                /** @var Product $objProduct */
                 $objProduct = $orderItem->objProduct();
                 if ($objProduct) {
-                    if ($objProduct->getStockEnabled() == 1) {
+                    if (method_exists($objProduct, 'getStockEnabled') && $objProduct->getStockEnabled() == 1) {
                         if (!$objProduct->getStock()) {
                             $objProduct->setStock(0);
                         }

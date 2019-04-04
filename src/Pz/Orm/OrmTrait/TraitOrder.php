@@ -174,7 +174,7 @@ trait TraitOrder
         foreach ($pendingItems as $idx => $pendingItem) {
             $objProduct = $pendingItem->objProduct();
             if ($objProduct) {
-                if ($objProduct->getStockEnabled() == 1) {
+                if (method_exists($objProduct, 'getStockEnabled') && $objProduct->getStockEnabled() == 1) {
                     $pendingItem->setQuantity(min($objProduct->getStock(), $pendingItem->getQuantity()));
                     $pendingItem->setSubtotal($pendingItem->getPrice() * $pendingItem->getQuantity());
                 }
