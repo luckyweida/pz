@@ -27,14 +27,20 @@
                     <div class="col-lg-6 col-md-6 col-sm-5 col-12 mr-auto">
                         <div class="card card-register">
                             <div class="text-center">
-                                <h3 class="text-center mt-0 text-dark">Register with</h3>
-                                <a href="/facebook/verify" class="btn btn-just-icon btn-facebook"><i class="fa fa-facebook"></i></button>
-                                <a href="/google/verify" class="btn btn-just-icon btn-google"><i class="fa fa-google"></i></a>
+                                <a href="/facebook/verify" class="btn btn-facebook btn-sm">
+                                    <i class="fa fa-facebook"></i> Login with Facebook
+                                </a>
+                                <a href="/google/verify" class="btn btn-google btn-sm">
+                                    <i class="fa fa-google"></i> Login with Google
+                                </a>
                             </div>
                             <div class="division">
                                 <div class="line l"></div>
                                 <span>or</span>
                                 <div class="line r"></div>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="mt-0">Register with</h3>
                             </div>
                             <form method="post" class="settings-form" novalidate autocomplete="off">
                                 {{ form_widget(form.title, {attr: {class: 'form-control',placeholder:'Email'}}) }}

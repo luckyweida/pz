@@ -12,14 +12,20 @@
                         <div class="card card-register">
                             {#<h3 class="card-title">Login</h3>#}
                             <div class="text-center">
-                                <h3 class="mt-0">Login with</h3>
-                                <a href="/facebook/verify" class="btn btn-just-icon btn-facebook"><i class="fa fa-facebook"></i></a>
-                                <a href="/google/verify" class="btn btn-just-icon btn-google"><i class="fa fa-google"></i></a>
+                                <a href="/facebook/verify" class="btn btn-facebook btn-sm">
+                                    <i class="fa fa-facebook"></i> Login with Facebook
+                                </a>
+                                <a href="/google/verify" class="btn btn-google btn-sm">
+                                    <i class="fa fa-google"></i> Login with Google
+                                </a>
                             </div>
                             <div class="division">
                                 <div class="line l"></div>
                                 <span>or</span>
                                 <div class="line r"></div>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="mt-0">Login with</h3>
                             </div>
                             <form class="m-t" action="/account/login_check" method="post" novalidate autocomplete="off">
                                 <label>Email</label>
