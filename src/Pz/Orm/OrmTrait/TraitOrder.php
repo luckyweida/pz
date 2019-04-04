@@ -171,7 +171,21 @@ trait TraitOrder
         $result = 0;
 
         $pendingItems = $this->getPendingItems();
-        foreach ($pendingItems as $pendingItem) {
+        foreach ($pendingItems as $idx => $pendingItem) {
+            $objProduct = $pendingItem->objProduct();
+            if ($objProduct) {
+                if ($objProduct->getStockEnabled() == 1) {
+                    $pendingItem->setQuantity(min($objProduct->getStock(), $pendingItem->getQuantity()));
+                    $pendingItem->setSubtotal($pendingItem->getPrice() * $pendingItem->getQuantity());
+                }
+            }
+            if (!$pendingItem->getQuantity()) {
+                array_splice($pendingItems, $idx, 1);
+                $this->setPendingItems($pendingItems);
+                break;
+            }
+
+
             $result += $pendingItem->getSubtotal();
         }
         $subtotal = $result;

@@ -5,6 +5,8 @@ namespace Pz\Controller;
 use Pz\Orm\Customer;
 use Pz\Orm\CustomerAddress;
 use Pz\Orm\Order;
+use Pz\Orm\OrderItem;
+use Pz\Orm\Product;
 use Pz\Service\CartService;
 
 use Omnipay\Common\CreditCard;
@@ -387,6 +389,9 @@ trait TraitCart
         $pxResponse = $pxaccess->getResponse($request->get('result'));
 
         $orderContainer = $this->cartService->getOrderContainerFromDb('payToken', $pxResponse->getTxnData1());
+//        /** @var Order $orderContainer */
+//        $orderContainer = $this->cartService->getOrderContainerFromDb('id', $request->get('id'));
+////        var_dump($orderContainer);exit;
         if (!$orderContainer) {
             throw new NotFoundHttpException();
         }
@@ -396,6 +401,23 @@ trait TraitCart
             $orderContainer->setPayStatus($pxResponse->getSuccess() ? CartService::STATUS_SUCCESS : CartService::STATUS_UNPAID);
             $orderContainer->setPayResponse(print_r($pxResponse, true));
             $orderContainer->save();
+
+//            /** @var OrderItem[] $orderItems */
+            $orderItems = $orderContainer->getOrderItems();
+
+            foreach ($orderItems as $orderItem) {
+//                /** @var Product $objProduct */
+                $objProduct = $orderItem->objProduct();
+                if ($objProduct) {
+                    if ($objProduct->getStockEnabled() == 1) {
+                        if (!$objProduct->getStock()) {
+                            $objProduct->setStock(0);
+                        }
+                        $objProduct->setStock($objProduct->getStock() - $orderItem->getQuantity());
+                        $objProduct->save();
+                    }
+                }
+            }
 
             if ($orderContainer->getPayStatus() == CartService::STATUS_SUCCESS) {
 
