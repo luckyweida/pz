@@ -56,6 +56,7 @@
                                         <th style="width: 40px;" class="text-left">ID</th>
                                         <th class="text-left">Title</th>
                                         <th style="width: 100px;" class="text-left">Status</th>
+                                        <th style="width: 100px;" class="text-left">Date</th>
                                         <th style="width: 150px;" class="text-left">&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -73,6 +74,7 @@
                                                     PAID
                                                 {% endif %}
                                             </td>
+                                            <td>{{ itm.added|date('Y-m-d') }}</td>
                                             <td>
                                                 {% set classes = [
                                                     {

@@ -45,7 +45,7 @@
 				<div class="ibox-title">
 					<h2>{{ orm.id ? '#' ~ orm.id ~ ' - Invoice #' ~ orm.uniqid : 'Creating new record...' }}</h2>
 				</div>
-				<div class="ibox-content">
+				<div class="ibox-content my-order">
 					{% block form %}
 						{#<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}{% if app.request.get('uniqId') %}&uniqId={{ app.request.get('uniqId') }}{% endif %}" data-modelname="{{ model.className }}" data-ormid="{{ orm.uniqId }}">#}
 							{#{% block formWidgets %}#}
