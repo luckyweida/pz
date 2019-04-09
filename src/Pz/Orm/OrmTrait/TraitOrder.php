@@ -18,6 +18,21 @@ trait TraitOrder
     /** @var DeliveryOption[] $deliveryOptions */
     private $deliveryOptions;
 
+
+    /**
+     * @return string
+     */
+    static public function getCmsOrmsTwig() {
+        return 'pz/orms-order.twig';
+    }
+
+    /**
+     * @return string
+     */
+    static public function getCmsOrmTwig() {
+        return 'pz/orm-order.twig';
+    }
+
     /**
      * TraitOrder constructor.
      * @param \PDO $pdo

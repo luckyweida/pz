@@ -1,0 +1,306 @@
+{% extends 'pz/layout.twig' %}
+{% block extraBodyClass %}page-content{% endblock %}
+
+{% block asset %}
+	<link rel="stylesheet" href="{{ asset('build/cms-orm.css') }}" as="style" rel="preload">
+	<script src="{{ asset('build/cms-orm.js') }}" async defer></script>
+{% endblock %}
+
+{% set model = db.byId('_Model', fragments.2) %}
+{% if orm is not defined %}
+	{% set orm = db.byId(model.className, fragments|last) ?: db.create(model.className, app.request.get('uniqId')) %}
+{% endif %}
+{% set form = ormHandler.handle(model, orm) %}
+{% form_theme form 'pz/form.twig' %}
+
+{% set returnUrl = app.request.get('returnUrl') ?: '/pz/' ~ (model.dataType == 0 ? 'database' : 'admin') ~ '/' ~ model.id %}
+
+{% block extraHeaderLeft %}
+	<h2>Manage <label class="label label-warning-light">{{ model.title }}</label></h2>
+{% endblock %}
+
+{% block content %}
+	<style>
+		.pt-2 {
+			padding-top: 10px;
+		}
+
+		.pb-3 {
+			padding-bottom: 15px;
+		}
+	</style>
+
+    {% if fragments|length < 5 and not app.request.get('uniqId') %}
+        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId ~ (app.request.get('returnUrl') ? '&returnUrl=' ~ app.request.get('returnUrl')|url_encode : '')) }}
+    {% endif %}
+
+	{% set exist = db.byField(model.className, 'uniqid', app.request.get('uniqId')) %}
+	{% if exist %}
+        {{ redirect(301, app.request.basePath ~ '?uniqId=' ~ utils.uniqId ~ (app.request.get('returnUrl') ? '&returnUrl=' ~ app.request.get('returnUrl')|url_encode : '')) }}
+    {% endif %}
+
+	<div class="row">
+		<div class="col-lg-12 max-1000">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h2>{{ orm.id ? '#' ~ orm.id ~ ' - Invoice #' ~ orm.uniqid : 'Creating new record...' }}</h2>
+				</div>
+				<div class="ibox-content">
+					{% block form %}
+						{#<form method="POST" novalidate autocomplete="off" action="?returnUrl={{ returnUrl }}{% if app.request.get('uniqId') %}&uniqId={{ app.request.get('uniqId') }}{% endif %}" data-modelname="{{ model.className }}" data-ormid="{{ orm.uniqId }}">#}
+							{#{% block formWidgets %}#}
+                                {#{{ form_widget(form) }}#}
+							{#{% endblock %}#}
+
+							{% set orderContainer = orm %}
+							<div class="row" style="padding: 0 80px;">
+								<div class="col-11 mx-auto">
+									<h3 class="mb-3">Order Detail</h3>
+									<div class="row pb-5">
+										<div class="col-lg-12 pb-3">
+											<div><strong>Invoice sent to:</strong></div>
+											{% if orderContainer.email %}{{ orderContainer.email }}{% else %}&nbsp;{% endif %}
+										</div>
+										<div class="col-lg-6">
+											<h3>Billing address</h3>
+
+											{% if orderContainer.billingFirstname %}
+												<div><strong>First name:</strong></div>
+												{{ orderContainer.billingFirstname }}
+											{% endif %}
+
+											{% if orderContainer.billingFirstname %}
+												<div class="pt-2"><strong>Last name:</strong></div>
+												{{ orderContainer.billingLastname }}
+											{% endif %}
+
+											{% if orderContainer.billingPhone %}
+												<div class="pt-2"><strong>Phone:</strong></div>
+												{{ orderContainer.billingPhone }}
+											{% endif %}
+
+											{% if orderContainer.billingAddress %}
+												<div class="pt-2"><strong>Address:</strong></div>
+												{{ orderContainer.billingAddress }}
+											{% endif %}
+
+											{% if orderContainer.billingAddress2 %}
+												<div class="pt-2"><strong>Address2:</strong></div>
+												{{ orderContainer.billingAddress2 }}
+											{% endif %}
+
+											{% if orderContainer.billingCity %}
+												<div class="pt-2"><strong>City:</strong></div>
+												{{ orderContainer.billingCity }}
+											{% endif %}
+
+											{% if orderContainer.billingPostcode %}
+												<div class="pt-2"><strong>Postcode:</strong></div>
+												{{ orderContainer.billingPostcode }}
+											{% endif %}
+
+											{% if orderContainer.billingState %}
+												<div class="pt-2"><strong>State:</strong></div>
+												{{ orderContainer.billingState }}
+											{% endif %}
+
+											{% if orderContainer.billingCountry %}
+												<div class="pt-2"><strong>Country:</strong></div>
+												{{ orderContainer.billingCountry }}
+											{% endif %}
+
+											{% if orderContainer.note %}
+												<div class="pt-2"><strong>Note:</strong></div>
+												{{ orderContainer.note|nl2br }}
+											{% endif %}
+										</div>
+										<div class="col-lg-6">
+											<h3>Shipping address</h3>
+											{% if orderContainer.billingSame %}
+												<div class="form-check">
+													<label>Same as Billing Address</label>
+												</div>
+											{% else %}
+												{% if orderContainer.shippingFirstname %}
+													<div><strong>First name:</strong></div>
+													{{ orderContainer.shippingFirstname }}
+												{% endif %}
+
+												{% if orderContainer.shippingFirstname %}
+													<div class="pt-2"><strong>Last name:</strong></div>
+													{{ orderContainer.shippingLastname }}
+												{% endif %}
+
+												{% if orderContainer.shippingPhone %}
+													<div class="pt-2"><strong>Phone:</strong></div>
+													{{ orderContainer.shippingPhone }}
+												{% endif %}
+
+												{% if orderContainer.shippingAddress %}
+													<div class="pt-2"><strong>Address:</strong></div>
+													{{ orderContainer.shippingAddress }}
+												{% endif %}
+
+												{% if orderContainer.shippingAddress2 %}
+													<div class="pt-2"><strong>Address2:</strong></div>
+													{{ orderContainer.shippingAddress2 }}
+												{% endif %}
+
+												{% if orderContainer.shippingCity %}
+													<div class="pt-2"><strong>City:</strong></div>
+													{{ orderContainer.shippingCity }}
+												{% endif %}
+
+												{% if orderContainer.shippingPostcode %}
+													<div class="pt-2"><strong>Postcode:</strong></div>
+													{{ orderContainer.shippingPostcode }}
+												{% endif %}
+
+												{% if orderContainer.shippingState %}
+													<div class="pt-2"><strong>State:</strong></div>
+													{{ orderContainer.shippingState }}
+												{% endif %}
+
+												{% if orderContainer.shippingCountry %}
+													<div class="pt-2"><strong>Country:</strong></div>
+													{{ orderContainer.shippingCountry }}
+												{% endif %}
+											{% endif %}
+										</div>
+									</div>
+									<div>&nbsp;</div>
+									<div class="table-responsive">
+										<table class="table">
+											<thead>
+											<tr>
+												<th>Product</th>
+												<th style="width: 8em;" class="text-right">Price</th>
+												<th style="width: 2em;" class="text-right">Qty</th>
+												<th style="width: 4em;" class="text-right">Subtotal</th>
+											</tr>
+											</thead>
+											<tbody>
+											{% for itm in orderContainer.orderItems %}
+												<tr>
+													<td>{{ itm.title|raw }}</td>
+													<td class="text-right">${{ itm.price|number_format(2, '.', ',') }}</td>
+													<td class="text-right">{{ itm.quantity }}</td>
+													<td class="text-right">${{ itm.subtotal|number_format(2, '.', ',') }}</td>
+												</tr>
+											{% endfor %}
+
+											{% if orderContainer.discount > 0 %}
+												<tr>
+													<td></td>
+													<td colspan="2" class="text-right font-weight-bold">Subtotal:</td>
+													<td class="text-right font-weight-bold">${{ orderContainer.subtotal|number_format(2, '.', ',') }}</td>
+												</tr>
+												<tr>
+													<td style="border-top: none"></td>
+													<td colspan="2" class="text-right font-weight-bold">
+														Discount:
+														<div><small>{{ orderContainer.promoCode }}</small></div>
+													</td>
+													<td class="text-right font-weight-bold">-${{ orderContainer.discount|number_format(2, '.', ',') }}</td>
+												</tr>
+												<tr>
+													<td style="border-top: none"></td>
+													<td colspan="2" class="text-right font-weight-bold">After discount:</td>
+													<td class="text-right font-weight-bold">
+														${{ orderContainer.afterDiscount|number_format(2, '.', ',') }}
+														<div>
+															<small>
+																(Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+															</small>
+														</div>
+													</td>
+												</tr>
+											{% else %}
+												<tr>
+													<td></td>
+													<td colspan="2" class="text-right font-weight-bold">Subtotal:</td>
+													<td class="text-right font-weight-bold">
+														${{ orderContainer.subtotal|number_format(2, '.', ',') }}
+														<div>
+															<small>
+																(Incl. {{ getenv('TAX_WORDING') }} ${{ orderContainer.gst|number_format(2, '.', ',') }})
+															</small>
+														</div>
+													</td>
+												</tr>
+											{% endif %}
+											<tr>
+												<td style="border-top: none"></td>
+												<td colspan="2" class="text-right font-weight-bold">Shipping:</td>
+												<td class="text-right font-weight-bold">
+													{% if orderContainer.deliveryFee == -1 %}
+														To be confirmed
+													{% else %}
+														${{ orderContainer.deliveryFee|number_format(2, '.', ',') }}
+													{% endif %}
+												</td>
+											</tr>
+											<tr>
+												<td style="border-top: none"></td>
+												<td colspan="2" class="text-right font-weight-bold">Total:</td>
+												<td class="text-right font-weight-bold">${{ orderContainer.total|number_format(2, '.', ',') }}</td>
+											</tr>
+											<tr>
+												<td style="border-top: none"></td>
+												<td colspan="3" class="text-right font-weight-bold">
+													<small>{{ orderContainer.deliveryOptionDescription }}</small>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-6">
+										<h3>System info</h3>
+
+										<div><strong>Payment Status:</strong></div>
+										{% if orderContainer.payStatus == 0 %}
+											CANCELLED
+										{% elseif orderContainer.payStatus == 1 %}
+											UNPAID
+										{% elseif orderContainer.payStatus == 2 %}
+											PAID
+										{% endif %}
+
+										<div class="pt-2"><strong>Paypal Request:</strong></div>
+										{{ orderContainer.payRequest }}
+
+										<div class="pt-2"><strong>Paypal Response:</strong></div>
+										{{ orderContainer.payResponse }}
+									</div>
+								</div>
+							</div>
+
+							<div style="clear: both;"></div>
+							<div>&nbsp;</div>
+							<div class="submit-container">
+								<a class="js-back btn btn-white" href="{{ returnUrl }}"><i class="fa fa-arrow-left"></i> &nbsp;Back</a>
+								{#<input class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="Save" name="submit" />#}
+								{#<input class="btn btn-sm btn-success pull-right m-t-n-xs" type="submit" value="Apply" name="submit" />#}
+								{#<input class="btn btn-sm btn-danger pull-right m-t-n-xs" type="submit" value="Delete" name="submit" />#}
+							</div>
+						{#</form>#}
+					{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+{% block extraFooter %}
+	<script id="gallery-file" type="text/x-handlebars-template">{% include 'pz/javascript/gallery-file.twig' %}</script>
+
+    {% include 'pz/html/file-manager.html.twig' %}
+
+	<script id="loading" type="text/x-handlebars-template">{% include 'pz/javascript/loading.twig' %}</script>
+	<script id="folder" type="text/x-handlebars-template">{% include 'pz/javascript/fm-folders.twig' %}</script>
+	<script id="file" type="text/x-handlebars-template">{% include 'pz/javascript/fm-file.twig' %}</script>
+	<script id="nav" type="text/x-handlebars-template">{% include 'pz/javascript/fm-nav.twig' %}</script>
+{% endblock %}
