@@ -208,9 +208,9 @@ $(function() {
             $(itm).on('click', '.js-asset-change', function(ev) {
                 var _this = this;
                 window._callback = function () {
-                    $($(_this).data('id')).val($(this).closest('.file-box').data('id'));
-                    $($(_this).data('id') + '-preview').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
-                    $($(_this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
+                    $(_this).closest('.assetpicker').find('.js-elem').val($(this).closest('.file-box').data('id'));
+                    $(_this).closest('.assetpicker').find('.js-fancybox').attr('href', '/assets/image/' + $(this).closest('.file-box').data('id') + '/large');
+                    $(_this).closest('.assetpicker').find('.image-holder').css('background', 'url("/assets/image/' + $(this).closest('.file-box').data('id') + '/small") no-repeat center center');
                     if (callback) {
                         callback();
                     };
@@ -220,9 +220,9 @@ $(function() {
             });
 
             $(itm).on('click', '.js-asset-delete', function(ev) {
-                $($(this).data('id')).val('');
-                $($(this).data('id') + '-preview').attr('href', '/assets/image/0/large');
-                $($(this).data('id') + '-preview').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
+                $(this).closest('.assetpicker').find('.js-elem').val('');
+                $(this).closest('.assetpicker').find('.js-fancybox').attr('href', '/assets/image/0/large');
+                $(this).closest('.assetpicker').find('.image-holder').css('background', 'url("/assets/image/0/small") no-repeat center center');
                 if (callback) {
                     callback();
                 };
