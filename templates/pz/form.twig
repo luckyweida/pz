@@ -61,7 +61,7 @@
 {%- endblock wysiwyg_widget -%}
 
 {% block assetpicker_widget -%}
-    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>
+    <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}" class="js-elem" />
     <div class="row">
         <div class="col-lg-6 text-center">
             <a class="js-fancybox" id="{{ id }}-preview" href="/assets/image/{{ value ?: 0 }}/large">

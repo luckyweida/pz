@@ -466,6 +466,7 @@ $(function() {
             }));
             $(`#${dataId}-modal-block`).modal();
             $(this).val('');
+            return false;
         });
 
         $(document).on('click', `#${dataId}_wrap .js-save-block`, function () {
