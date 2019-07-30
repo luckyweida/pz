@@ -127,6 +127,16 @@ class OrmHandler
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $isNew = $orm->getId() ? 0 : 1;
+
+            $columnsJson = json_decode($model->getColumnsJson());
+            foreach ($columnsJson as $itm) {
+                if ($itm->widget == '\\Pz\\Form\\Type\\TimePicker') {
+                    $getMethod = 'get' . ucfirst($itm->field);
+                    $setMethod = 'set' . ucfirst($itm->field);
+                    $orm->$setMethod('1970-01-01 ' . $orm->$getMethod());
+                }
+            }
+
             $orm->save();
 
             if ($request->get('submit') == 'Save') {

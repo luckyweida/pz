@@ -25,8 +25,12 @@
 {%- endblock datepicker_widget %}
 
 {% block datetimepicker_widget -%}
-    <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d H:i:s') : '' }}"/>
+    <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('Y-m-d H:i') : '' }}"/>
 {%- endblock datetimepicker_widget %}
+
+{% block timepicker_widget -%}
+    <input type="text" {{ block('widget_attributes') }} value="{{ value ? value|date('H:i') : '' }}"/>
+{%- endblock timepicker_widget %}
 
 {% block choice_multi_json_widget -%}
     <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}"/>

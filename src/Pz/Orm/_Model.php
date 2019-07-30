@@ -126,6 +126,7 @@ class _Model extends \Pz\Orm\Generated\_Model
             'Choice multi json tree' => '\\Pz\\Form\\Type\\ChoiceMultiJsonTree',
             'Date picker' => '\\Pz\\Form\\Type\\DatePicker',
             'Date time picker' => '\\Pz\\Form\\Type\\DateTimePicker',
+            'Time picker' => '\\Pz\\Form\\Type\\TimePicker',
             'Wysiwyg' => '\\Pz\\Form\\Type\\Wysiwyg',
             'Content blocks' => '\\Pz\\Form\\Type\\ContentBlock',
             'Checkbox' => '\\Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType',
