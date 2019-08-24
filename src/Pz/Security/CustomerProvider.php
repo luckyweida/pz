@@ -58,6 +58,12 @@ class CustomerProvider implements UserProviderInterface
             );
         }
 
+        if ($user->getIsActivated() != 1) {
+            throw new UsernameNotFoundException(
+                sprintf('User "%s" is not activated.', $username)
+            );
+        }
+
         return $user;
     }
 }
