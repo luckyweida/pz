@@ -44,6 +44,7 @@ class Register extends AbstractType
                 new Assert\Email(),
                 new ConstraintUnique(array(
                     'pdo' => $pdo,
+                    'extraSql' => 'm.isActivated = 1',
                     'fieldToCheck' => 'title',
                     'className' => 'Customer',
                 )),

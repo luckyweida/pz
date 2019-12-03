@@ -24,7 +24,7 @@ trait TraitWeb
      * @route("/assets/image/{id}/{size}")
      * @return Response
      */
-    public function preview($id, $size)
+    public function preview($id, $size = null)
     {
         $connection = $this->container->get('doctrine.dbal.default_connection');
         /** @var \PDO $pdo */
@@ -58,8 +58,8 @@ trait TraitWeb
                             $image->setImageFormat('jpg');
 //                        $image->setColorspace(imagick::COLORSPACE_RGB);
                             $image->setImageBackgroundColor('white');
-                            $image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
-                            $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+                            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_REMOVE);
+                            $image->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
                             $image->thumbnailImage($sizeOrm->getWidth(), null);
                             $image->writeImage($thumbnail);
                         } else {

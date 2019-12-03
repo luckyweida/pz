@@ -13,12 +13,13 @@ class ConstraintUniqueValidator extends ConstraintValidator
         if ($value) {
             $pdo = $constraint->pdo;
             $fieldToCheck = $constraint->fieldToCheck;
+            $extraSql = $constraint->extraSql;
             $className = $constraint->className;
             $fullClassName = DbService::fullClassName($className);
 
             $orm = $fullClassName::data($pdo, array(
                 'oneOrNull' => 1,
-                'whereSql' => "m.$fieldToCheck = ? AND m.status = 1",
+                'whereSql' => "m.$fieldToCheck = ? AND m.status = 1" . ($extraSql ? ' AND ' . $extraSql : ''),
                 'params' => array($value),
             ));
             if ($orm) {
