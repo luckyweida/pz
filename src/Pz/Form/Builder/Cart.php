@@ -39,7 +39,9 @@ class Cart extends AbstractType
             $result = array_merge($result, $itm->objCountries());
         }
         foreach ($result as $itm) {
-            $countries[$itm->getTitle()] = $itm->getCode();
+            if ($itm->getCode() != 'NULL') {
+                $countries[$itm->getTitle()] = $itm->getCode();
+            }
         }
 
         ksort($countries);
